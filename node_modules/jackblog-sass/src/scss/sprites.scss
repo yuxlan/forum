@@ -1,0 +1,21 @@
+@import "compass/utilities/sprites";
+$sort-spacing: 10px;
+//包括四种排列方式：vertical、horizontal、diagonal和smart。其中vertical为其默认的排列方式。
+$sort-layout: vertical;
+@import "sort/*.png";
+// @include all-sort-sprites;
+.icon-sort-desc{
+  @include sort-sprite(desc);
+}
+.icon-sort-desc-disabled{
+  @include sort-sprite(desc-disabled);
+}
+.icon-sort-asc{
+  @include sort-sprite(asc);
+}
+.icon-sort-asc-disabled{
+  @include sort-sprite(asc-disabled);
+}
+.icon-sort-both{
+  @include sort-sprite(both);
+}

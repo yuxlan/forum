@@ -1,0 +1,31 @@
+{
+  "name": "jackblog-sass",
+  "description": "jackblog css",
+  "version": "1.0.5",
+  "main": "dist/index.css",
+  "authors": [
+    "Jack Hu <hutufeia2009@sina.com>"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "jackblog",
+    "sass"
+  ],
+  "homepage": "https://github.com/jackhutu/jackblog-sass",
+  "moduleType": [
+    "es6",
+    "globals",
+    "node"
+  ],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap-sass": "~3.3.5",
+    "font-awesome": "~4.3.0"
+  }
+}
