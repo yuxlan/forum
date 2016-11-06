@@ -1,4 +1,4 @@
-import * as types from '../actions/types'
+import * as types from '../constants/index'
 import {createReducer} from 'redux-immutablejs'
 import {fromJS} from 'immutable'
 
@@ -12,9 +12,7 @@ const initialState = fromJS({
 export const articleList = createReducer(initialState,{
     [types.ARTICLE_LIST_REQUEST]:(state,action) => state.set('isFetching',true),
     [types.ARTICLE_LIST_SUCCESS]:(state,action) => {
-        // debugger;
-        // console.log(!(action.json.data.length < action.itemsPerPage))
-        console.log(action.json.data)
+        console.log(action.json.data);
         return state.merge({
             isFetching:false,
             isMore: !(action.json.data.length < action.itemsPerPage),
@@ -42,14 +40,13 @@ export const articleDetail = createReducer(fromJS({}),{
         var newNumber = state.get('comment_count')+1;
         return state.set('comment_count',newNumber)
     }
-})
+});
 
 export const prenextArticle = createReducer(fromJS({
     next:{},
     prev:{}
 }),{
     [types.PRENEXT_ARTICLE_SUCCESS]:(state,{json}) => {
-
         return state.merge(json.data)
     },
     [types.PRENEXT_ARTICLE_FAILURE]:(state,action) => {

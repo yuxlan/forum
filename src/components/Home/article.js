@@ -1,5 +1,3 @@
-// 文章列表，首页显示文章
-
 import React from 'react'
 import {Link} from 'react-router'
 import {customTime} from '../../utiles'
@@ -28,10 +26,11 @@ export default class Articles extends React.Component{
                             <p className="list-top">
                                 <span className="time">{customTime(article.created)}</span>
                             </p>
-                            <h5 className="title">
+                            <h4 className="title">
                                 <Link to={'/article/'+ article._id} className="link-title">{article.title}</Link>
-                            </h5>
+                            </h4>
                             <p className="list-footer">
+
                                 <span className="visit-count">  阅读 {article.visit_count}</span>
                                 <span className="comment-count">  评论 {article.comment_count}</span>
                                 <span className="like-count">  喜欢 {article.like_count}</span>
@@ -41,8 +40,9 @@ export default class Articles extends React.Component{
                                             <span>
                                                  <a href="javascript:;" onClick={this.handleClick(changeSort,{'currentPage':1,'sortName':'','tagId':tag._id})}>
                                                 {tag.name}
-                                            </a>
+                                            </a> /
                                             </span>
+
                                         )
                                     })}
                                 </span><br/>
@@ -59,7 +59,7 @@ export default class Articles extends React.Component{
 
                 }
             </ul>
-
+            
         )
     }
 }

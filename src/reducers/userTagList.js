@@ -1,5 +1,4 @@
-
-import * as types from '../actions/types'
+import * as types from '../constants/index'
 import {createReducer} from 'redux-immutablejs'
 import {fromJS,List} from 'immutable'
 
@@ -8,8 +7,8 @@ const initialState = fromJS({
 });
 
 export default createReducer(initialState,{
-    [types.GET_ADMINUSER_SUCCESS]:(state,{json}) => state.set('items',List(json.data)),
-    [types.ADD_ADMINUSER_SUCCESS]:(state,{json}) => {
+    [types.GET_ADMINTAG_SUCCESS]:(state,{json}) => state.set('items',List(json.data)),
+    [types.ADD_ADMINTAG_SUCCESS]:(state,{json}) => {
         const items = state.get('items');
         let newItems = items.push(json.data);
         return state.set(
@@ -17,7 +16,7 @@ export default createReducer(initialState,{
             newItems
         );
     },
-    [types.DELETE_ADMINUSER_SUCCESS]:(state,{id}) => {
+    [types.DELETE_ADMINTAG_SUCCESS]:(state,{id}) => {
         const items = state.get('items');
         var nowindex;
         items.forEach((item,index) => {

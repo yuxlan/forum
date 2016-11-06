@@ -1,103 +1,151 @@
+// 用户的登录注册行为
 
-import * as types from './types'
-import {push} from 'react-router-redux'
-import {saveCookie,getCookie,signOut} from '../utiles/authService'
-import {showMsg} from './other'
-import api from '../api'
-import {API_ROOT} from '../config'
+import { browserHistory } from 'react-router';
 
-export const getSnsLogins = ()=>{
+import {
+    REGISTER_USER_REQUEST,
+    REGISTER_USER_SUCCESS,
+    REGISTER_USER_FAILURE,
+    LOGIN_USER_REQUEST,
+    LOGIN_USER_SUCCESS,
+    LOGIN_USER_FAILURE,
+    LOGOUT_USER,
+} from '../constants/index';
+
+import { parseJSON } from '../utiles/misc';
+import api from '../api';
+
+// 注册
+export function registerUserRequest() {
     return {
-        type:types.GET_SNSLOGINS,
-        promise:api.getSnsLogins()
-    }
-};
-
-export function localLogin(userInfo){
-	return (dispatch,getState) => {
-		return api.localLogin(userInfo)
-		.then(response => ({json:response.data,status:response.statusText}))
-		.then(({json,status}) => {
-
-			if(status != 'OK'){
-				return dispatch(showMsg(json.data.error_msg||'登录失败'));
-			}
-
-			saveCookie('token',json.token);
-			dispatch(getUserInfo(json.token));
-			dispatch(loginSuccess(json.token));
-			dispatch(showMsg('登录成功','success'));
-			dispatch(push('/'));
-		}).catch(err=>{
-			console.log(err)
-			return dispatch(showMsg('登录失败'))
-		})
-	}
+        type: REGISTER_USER_REQUEST,
+    };
 }
-
-export function loginSuccess(token){
-	return{
-		type:types.LOGIN_SUCCESS,
-		token:token
-	}
+export function registerUserSuccess(u_id) {
+    localStorage.setItem('u_id', u_id);
+    return {
+        type: REGISTER_USER_SUCCESS,
+        payload: {
+            u_id,
+        },
+    };
 }
-
-export const getUserInfo = (token = getCookie('token'))=> {
-    return (dispatch,getState) => {
-        return api.getMe({
-                headers: {
-                    'Authorization': `Bearer ${token}`
+export function registerUserFailure(codeState) {
+    localStorage.removeItem('u_id');
+    return {
+        type: REGISTER_USER_FAILURE,
+        payload: {
+            codeState,
+        },
+    };
+}
+export function registerUser(u_email,u_name,u_psw) {
+    return function (dispatch) {
+        dispatch(registerUserRequest());
+        return api.userRegister(u_email,u_name,u_psw)
+            .then(parseJSON)
+            .then(response => {
+                try {
+                    dispatch(registerUserSuccess(response.u_id));
+                  //  browserHistory.push('/personalpage');
+                } catch (e) {
+                    dispatch(registerUserFailure(response.codeState));
                 }
             })
-            .then(response => ({json:response.data,status:response.statusText}))
-            .then(({json,status}) => {
-
-                let likeList = json.likes;
-                let currentArticle = getState().articleDetail.toJS();
-                let liked = false;
-                likeList.forEach(item => {
-                    if(String(item) === currentArticle._id){
-                        liked = true;
-                    }
-                });
-                saveCookie('role',json.role);
-                dispatch({type:types.TOGGLE_LIKE_EXBUG,liked})
-
-                return dispatch({type:types.GET_USERINFO_SUCCESS,json})
-            })
-    }
-};
-
-export function logout(){
-    return dispatch => {
-        signOut();
-        dispatch({type:types.LOGOUT_USER});
-        dispatch(push('/'));
-        dispatch(showMsg('登出成功','info'));
-    }
+            .catch(error => {
+                dispatch(registerUserFailure(error));
+            });
+    };
 }
 
-export function updateUser(userInfo){
-    return (dispatch,getState) => {
-        return api.mdUser(userInfo)
-            .then(response => ({json:response.data,status:response.statusText}))
-            .then(({json,status}) => {
-
-                if(status !== 'OK'){
-                    return dispatch(showMsg(json.data&&json.data.error_msg||'更新失败'))
-                }
-                dispatch(showMsg('更新成功','success'));
-                dispatch(push('/'))
-                return dispatch(successUpdateUser(json.data))
-            }).catch(err => {
-                return dispatch(showMsg(err.data.error_msg||'更新失败'))
-            })
-    }
-}
-
-function successUpdateUser(user) {
+// 登录
+export function loginUserRequest() {
     return {
-        type: types.UPDATE_USER_SUCCESS,
-        user:user
+        type: LOGIN_USER_REQUEST,
+    };
+}
+export function loginUserSuccess(u_id) {
+    localStorage.setItem('u_id', u_id);
+    return {
+        type: LOGIN_USER_SUCCESS,
+        payload: {
+            u_id,
+        },
+    };
+}
+/*
+export function loginUserSuccess(user) {
+    localStorage.setItem('u_id',user.u_id);
+    return {
+        type: LOGIN_USER_SUCCESS,
+        payload:{
+            u_id: user.u_id,
+            u_name: user.u_name,
+            u_email: user.u_email,
+            u_email_confirm: user.u_email_confirm,
+            u_level: user.u_level,
+            u_reputation: user.u_reputation,
+            u_realname: user.u_realname,
+            u_blog: user.u_blog,
+            u_github: user.u_github,
+            u_articles: user.u_articles,
+            u_questions: user.u_questions,
+            u_answers: user.u_answers,
+            u_watchusers: user.u_watchusers,
+            u_tags: user.u_tags,
+            u_intro: user.u_intro,
+        },
     }
 }
+*/
+export function loginUserFailure(codeState) {
+    localStorage.removeItem('u_id');
+    return {
+        type: LOGIN_USER_FAILURE,
+        payload: {
+            codeState,
+        },
+    };
+}
+export function loginUser(u_loginname,u_psw) {
+    return function (dispatch) {
+        dispatch(loginUserRequest());
+        return api.userLogin(u_loginname,u_psw)
+            .then(parseJSON)
+            .then(response => {
+                try {
+                    dispatch(loginUserSuccess(response.u_id));
+                    //  browserHistory.push('/personalpage');
+                } catch (e) {
+                    alert(e);
+                    dispatch(loginUserFailure(response.codeState));
+                }
+            })
+            .catch(error => {
+                dispatch(loginUserFailure(error));
+            });
+    };
+}
+
+
+// 退出
+export function logout() {
+    localStorage.removeItem('u_id');
+    return {
+        type: LOGOUT_USER,
+    };
+}
+
+// 跳转路径
+export function logoutAndRedirect() {
+    return (dispatch) => {
+        dispatch(logout());
+        browserHistory.push('/');
+    };
+}
+export function redirectToRoute(route) {
+    return () => {
+        browserHistory.push(route);
+    };
+}
+

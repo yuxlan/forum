@@ -1,5 +1,4 @@
-
-import * as types from '../actions/types'
+import * as types from '../constants/index'
 import {createReducer} from 'redux-immutablejs'
 import {fromJS,List} from 'immutable'
 

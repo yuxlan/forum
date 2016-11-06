@@ -1,4 +1,3 @@
-/*
 import React from 'react'
 import defaultAvatar from '../../assets/imgs/userimg.png'
 import {formatDate} from '../../utiles'
@@ -181,4 +180,3 @@ export default class Comment extends React.Component{
         )
     }
 }
-    */

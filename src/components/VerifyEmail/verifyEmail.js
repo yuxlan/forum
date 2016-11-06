@@ -11,7 +11,7 @@ class VerifyEmail extends React.Component{
         return(
             <div>
             <div className='container'>
-                <div className='row flipInX animated'>
+                <div className='row flipInX'>
                     <div className='col-sm-8'>
                         <h3 className="text-center">
                         <br/>

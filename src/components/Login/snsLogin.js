@@ -1,4 +1,5 @@
-// 第三方登录
+// 第三方登录，后期可加
+/*
 import React from 'react'
 import {getCookie} from '../../utiles/authService'
 import {API_ROOT} from '../../config'
@@ -37,3 +38,4 @@ export default class SNSLogin extends React.Component{
     }
     
 }
+    */

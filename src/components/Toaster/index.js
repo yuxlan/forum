@@ -1,4 +1,3 @@
-
 import React from 'react'
 import Alert from 'react-s-alert'
 import {getCookie,removeCookie,saveCookie} from '../../utiles/authService'

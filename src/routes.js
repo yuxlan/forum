@@ -3,60 +3,44 @@
 import React from 'react';
 import {Route,IndexRoute} from 'react-router';
 
-import {adminAuth,redirectToBack,redirectToLogin} from './utiles/authService';
-
 import App from './components/App'; // 应用入口
 import Home from './components/Home'; // 主页
 import Login from './components/Login'; // 登录
 import Register from './components/Register'; // 注册
 
-import PersonalPage from './components/PersonalPage';
-import MyData from './components/PersonalPage/myData';//我的资料
-import MyPrestige from './components/PersonalPage/myPrestige';//我的声望
-import MyAttention from './components/PersonalPage/myAttention';//我的关注
-import MyArticle from './components/PersonalPage/myArticle';//我的文章
-import HintVerifyEmail from './components/VerifyEmail/hintVerifyEmail';//验证邮箱
-import VerifyEmail from './components/VerifyEmail/verifyEmail';
-import WriteArticle from './components/WriteArticle';
-/*import Article from './components/Article';
-import PersonalPage from './components/PersonalPage';
-import Setting from './components/Setting';
-import Admin from './components/Admin';
-import AdminPage from './components/Admin/AdminPage';
-import AdminArticles from './components/Admin/AdminArticles';
-import AdminTags from './components/Admin/AdminTags';
-import AdminComments from './components/Admin/AdminComments';
-import AdminUsers from './components/Admin/AdminUsers';
-import WriteArticle from './components/WriteArticle';*/
+import WriteArticle from './components/WriteArticle';// 写文章
+
+import Article from './components/Article';//文章详情页
+
+import PersonalPage from './components/PersonalPage';// 个人中心
+import UserPage from './components/PersonalPage/UserPage';//个人页面
+import UserArticles from './components/PersonalPage/UserArticles';//我的文章
+import UserTags from './components/PersonalPage/UserTags';//管理标签
+import UserComments from './components/PersonalPage/UserComments';//我的评论
+import UserSetting from './components/PersonalPage/UserSetting';//个人设置
+
+import HintVerifyEmail from './components/VerifyEmail/hintVerifyEmail';// 验证邮箱
+import VerifyEmail from './components/VerifyEmail/verifyEmail';// 验证成功
+
+import { requireAuthentication } from './components/AuthenticatedComponent'; // 已经登录之后
+import { requireNoAuthentication } from './components/notAuthenticatedComponent';// 还未登录时
+
 
 export default ()=>(
-    <Route path="/" component={App}>
+    <Route path='/' component={App}>
         <IndexRoute component={Home}/>
-        <Route path="/login" component={Login} onEnter={redirectToBack}/>
-        <Route path="/register" component={Register} />
-        <Route path="/personalpage" component={PersonalPage} />
-        <Route path='/mydata' component={MyData} />
-        <Route path='/myprestige' component={MyPrestige} />
-        <Route path='/myattention' component={MyAttention} />
-        <Route path='/myarticle' component={MyArticle} />
-        <Route path='/hintverifyemail' component={HintVerifyEmail} />
-        <Route path='/verifyemail' component={VerifyEmail} />
-        <Route path="/write" component={WriteArticle} />
+        <Route path='/login' component={requireNoAuthentication(Login)}/>
+        <Route path='/register' component={requireNoAuthentication(Register)}/>
+        <Route path='/hintverifyemail' component={HintVerifyEmail}/>
+        <Route path='/verifyemail' component={VerifyEmail}/>
+        <Route path='/write' component={WriteArticle} />
+        <Route path='/article' components={Article} />
+        <PersonalPage path='/personalpage' component={PersonalPage}>
+            <IndexRoute component={UserPage} />
+            <Route path='/articles' component={UserArticles} />
+            <Route path='/tags' component={UserTags} />
+            <Route path='/comments' component={UserComments} />
+            <Route path='/users' component={UserSetting} />
+        </PersonalPage>
     </Route>
 )
-
-
-/*
-    <Route path="/personal" component={PersonalPage}/>
-    <Setting path="/setting" component={Setting} onEnter={redirectToLogin} />
-    <Article path="/article/:id" component={Article} />
-    <Route path="/write" component={WriteArticle} />
-    <Admin path="/admin" component={Admin} onEnter={adminAuth}>
-    <IndexRoute component={AdminPage} />
-    <Route path="articles" component={AdminArticles} />
-    <Route path="tags" component={AdminTags} />
-    <Route path="comments" component={AdminComments} />
-    <Route path="users" component={AdminUsers} />
-    </Admin>
-
- */

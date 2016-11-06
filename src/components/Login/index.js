@@ -1,83 +1,102 @@
-//登录
-import React,{Component} from 'react'
-import {bindActionCreators} from 'redux'
-import {connect} from 'react-redux'
-import {reduxForm} from 'redux-form'
-import {Link} from 'react-router'
-import * as Actions from '../../actions'
-import SNSLogin from './snsLogin'
+// 登录
 
-const mapStateToProps = (state) => {
-    return {
-        sns:state.sns.toJS()
-    }
-};
+import React from 'react';
+import {bindActionCreators} from 'redux';
+import {connect} from 'react-redux';
+import {Link} from 'react-router';
 
-const mapDispatchToProps = (dispatch) => {
-    return {
-        actions:bindActionCreators(Actions,dispatch)
-    }
-};
+import * as actionCreators from '../../actions/auth';
+// import SNSLogin from './snsLogin'; // 第三方登录，后期可加   <SNSLogin logins={sns.logins}/>
 
-const validate = values => {
-    const errors = {};
-    if(!values.email){
-        errors.email = 'Required';
-    }
+function mapStateToProps(state) {
+    return{
+        isAuthenticating: state.auth.isAuthenticating,
+        statusText: state.auth.statusText,
+    };
+}
 
-    if(!values.password){
-        errors.password = 'Required';
-    }
-
-    return errors;
-};
+function mapDispatchToProps(dispatch) {
+    return bindActionCreators(actionCreators,dispatch);
+}
 
 @connect(mapStateToProps,mapDispatchToProps)
-@reduxForm({
-    form:'signin',
-    fields:['email','password'],
-    validate
-})
-export default class Login extends Component{
+export default class Login extends React.Component{
     constructor(props){
         super(props);
-        this.handleSubmit = this.handleSubmit.bind(this);
+        const redirectRoute = '/login';
+        this.state = {
+            u_loginname: '',
+            u_psw:'',
+            u_loginname_error_text:null,
+            u_psw_error_text:null,
+            redirectTo:redirectRoute,
+            disabled: true,
+        };
     }
 
-    handleSubmit(e){
+    isDisabled(){
+        let u_loginname_is_valid = false;
+        let u_psw_is_valid = false;
+
+        if(this.state.u_loginname === ''){
+            this.setState({
+                u_loginname_error_text:'请输入用户名或邮箱',
+            });
+        }
+        else {
+            u_loginname_is_valid = true;
+            this.setState({
+                u_loginname_error_text:null,
+            });
+        }
+
+        if (this.state.u_psw === ''){
+            this.setState({
+                u_psw_error_text:'请输入密码',
+            });
+        }
+        else {
+            u_psw_is_valid = true;
+            this.setState({
+                u_psw_error_text:null
+            })
+        }
+
+        if (u_loginname_is_valid && u_psw_is_valid) {
+            this.setState({
+                disabled:false,
+            });
+        }
+
+    }
+
+    changeValue(e,type) {
+        const value = e.target.value;
+        const next_state = {};
+        next_state[type] = value;
+        this.setState(next_state,() => {
+            this.isDisabled();
+        });
+    }
+
+    _handleKeyPress(e) {
+        if (e.key === 'Enter') {
+            if (!this.state.disabled) {
+                this.login(e);
+            }
+        }
+    }
+
+    login(e) {
         e.preventDefault();
-        console.log('login');
-        const {values} = this.props;
-        console.log(values);
-        const {actions} = this.props;
-        actions.localLogin(values);
-    }
-    componentDidMount(){
-        const {actions,sns} = this.props;
-        if(sns.logins.length <1){
-            actions.getSnsLogins();
-        }
-
-    }
-
-    validatorCalss(field){
-        let initClass = 'form-control'
-        if(field.invalid){
-            initClass += ' ng-invalid'
-        }
-        if(field.dirty){
-            initClass += ' ng-dirty'
-        }
-        return initClass
+        this.props.loginUser(this.state.u_loginname,this.state.u_psw, this.state.redirectTo);
     }
 
     render(){
-        const {sns,fields:{email,password},dirty,invalid} = this.props;
-
         return (
             <div className="sign">
-                <div className='container'>
-                    <div className='row flipInX animated'>
+                <div className="container">
+                    <div className='row flipInX'>
                         <div className='col-sm-8'>
                             <h3 className="text-center signtitle">
                                 <br/>
@@ -88,29 +107,42 @@ export default class Login extends Component{
                             </h3>
                             <h4 className="text-center"><strong>欢迎回来</strong></h4>
                             <br />
+                            {
+                                this.props.statusText &&
+                                <div className="alert alert-info">
+                                    {this.props.statusText}
+                                </div>
+                            }
                             <div className='panel panel-default'>
                                 <div className='panel-body'>
-                                    <form   id="signin"
-                                            name="signin"
-                                            onSubmit={this.handleSubmit}
-                                            noValidate>
+                                    <form   onKeyPress={(e) => this._handleKeyPress(e)}>
                                         <div className='form-group '>
                                             <label className='control-label label-font'>输入用户名或邮箱
                                             </label>
-                                            <input type="email"
-                                                   className={ this.validatorCalss(email) }
-                                                   {...email} />
+                                            <input type="text"
+                                                   className='form-control'
+                                                    ref="u_loginname"
+                                                    onChange={(e) => this.changeValue(e,'u_loginname')}/>
+                                            <span className='help-block'>
+                                                    {this.state.u_loginname_error_text}
+                                            </span>
                                         </div>
                                         <div className='form-group '>
                                             <label className='control-label label-font'>输入密码
                                             </label>
                                             <input type="password"
-                                                   className={ this.validatorCalss(password) }
-                                                   {...password} />
+                                                   className='form-control'
+                                                    ref="u_psw"
+                                                    onChange={(e) => this.changeValue(e,'u_psw')}/>
+                                            <span className='help-block'>
+                                                    {this.state.u_psw_error_text}
+                                            </span>
                                         </div>
                                         <div className="form-group">
-                                            <button className="btn btn-primary btn-lg btn-block"
-                                                    type="submit">
+                                            <button className="btn btn-primary"
+                                                    type="submit"
+                                                    disabled={this.state.disabled}
+                                                    onClick={(e) => this.login(e)}>
                                                 登 录
                                             </button>
                                         </div>
@@ -126,7 +158,7 @@ export default class Login extends Component{
                                     </form>
                                     <hr/>
                                     <p className="text-center">您还可以通过以下方式直接登录</p>
-                                    <SNSLogin logins={sns.logins}/>
+                                    <hr />
                                 </div>
                             </div>
                         </div>
@@ -136,3 +168,8 @@ export default class Login extends Component{
         )
     }
 }
+
+Login.propTypes ={
+    loginUser: React.PropTypes.func,
+    statusText: React.PropTypes.string,
+};

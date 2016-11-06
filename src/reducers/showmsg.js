@@ -1,5 +1,4 @@
-
-import {SHOW_MSG,HIDE_MSG} from '../actions/types'
+import {SHOW_MSG,HIDE_MSG} from '../constants/index'
 import {createReducer} from 'redux-immutablejs'
 import {fromJS} from 'immutable'
 

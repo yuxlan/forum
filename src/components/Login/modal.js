@@ -1,4 +1,4 @@
-//
+/*
 import React from 'react'
 import {Modal} from 'react-bootstrap'
 import SNSLogin from './snsLogin'
@@ -22,3 +22,4 @@ export default class loginModal extends React.Component{
         )
     }
 }
+    */

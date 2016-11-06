@@ -1,4 +1,4 @@
-// redux 中间件
+// 请求中间件，
 
 export default function promiseMiddleware(){
     return next => action =>{

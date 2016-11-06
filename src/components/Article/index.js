@@ -1,4 +1,3 @@
-/*
 import React from 'react'
 import {bindActionCreators} from 'redux'
 import {connect} from 'react-redux'
@@ -11,11 +10,11 @@ import LoginModal from '../Login/modal'
 
 const mapStateToProps = state =>{
     return {
-        auth:state.auth.toJS(),
+      //  auth:state.auth.toJS(),
         articleDetail:state.articleDetail.toJS(),
         prenextArticle:state.prenextArticle.toJS(),
         commentList:state.commentList.toJS(),
-        sns:state.sns.toJS()
+     //   sns:state.sns.toJS()
     }
 };
 
@@ -121,15 +120,6 @@ export default class Article extends React.Component{
             </div>
         </div>
         </div>
-        
-
-            // <div className="article-box">
-            //     <Content articleDetail={articleDetail}/>
-            //     <Like toggleLike={this.toggleLike} likeCount={articleDetail.like_count} isLike={articleDetail.isLike}/>
-            //     <Prenext prenextArticle={prenextArticle}  />
-            //     <Comment commentList={commentList} auth={auth} submitComment={this.handleSubmitComment} submitReply={this.handleSubmitReply} openLoginModal={this.openLoginModal.bind(this)}/>
-            //     <LoginModal logins={sns.logins} isShowModal={this.state.showModal} closeModal={this.closeLoginModal.bind(this)}/>
-            // </div>
         )
     }
-}*/
+}

@@ -1,18 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-
 import '../../stylesheets/writePage.less'
-
-import markIt from './marked'
+import markIt from'./marked'
 import Controller from './controller';
-
 import {bindActionCreators} from 'redux'
 import {connect} from 'react-redux'
-
 import * as actions from '../../actions'
 import {parseArticle} from '../../utiles'
 import $ from 'jquery'
-
 import {API_ROOT} from '../../config'
 
 const mapStateToProps = (state) => {
@@ -211,6 +206,8 @@ export default class WriteArticle extends React.Component{
                                 </form>
                             </div>
                         </div>
+                        <br />
+                        <br />
                         <div className="row work-container">
                             <div className={class1}>
                                 <div className="page editor">

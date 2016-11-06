@@ -1,14 +1,30 @@
 // 页头导航
 
-import React from 'react'
-import {Link} from 'react-router'
-import {Dropdown} from 'react-bootstrap'
+import React from 'react';
+import {Link,browserHistory} from 'react-router';
+import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
+import {Dropdown} from 'react-bootstrap';
 
+import * as actionCreators from '../../actions/auth';
 
+function mapStateToProps(state) {
+    return{
+        userId: state.auth.userId,
+        isAuthenticated: state.auth.isAuthenticated,
+    };
+}
+
+function mapDispatchToProps(dispatch) {
+    return bindActionCreators(actionCreators,dispatch);
+}
+
+@connect(mapStateToProps,mapDispatchToProps)
 export default class Navbar extends React.Component{
     constructor(props){
         super(props);
         this.state = {
+            open: false,
             isDown:true
         };
 
@@ -28,10 +44,31 @@ export default class Navbar extends React.Component{
             })
         }
     }
+    dispatchNewRoute(route) {
+        browserHistory.push(route);
+        this.setState({
+            open:false,
+        });
+    }
+    handleClickOutside(){
+        this.setState({
+            open:false,
+        });
+    }
+    logout(e){
+        e.preventDefault();
+        this.props.logoutAndRedirect();
+        this.setState({
+            open:false,
+        });
+    }
+    openNav(){
+        this.setState({
+            open:true,
+        });
+    }
 
     render(){
-        const {location,auth,logout} = this.props;
-        console.log(auth)
         return (
             <div>
                 <nav className="fixed">
@@ -68,13 +105,8 @@ export default class Navbar extends React.Component{
                                         </div>
                                     </form>
                                 </li>
-                                {auth.token && auth.user && auth.user.role === 'admin' &&
-                                <li><Link  activeClassName="active" title="admin" to="/admin">
-                                    <i className="fa fa-envira"> </i>管理
-                                </Link></li>
-                                }
-                                {(auth.token && auth.user)?
-                                    (
+                                {
+                                    this.props.isAuthenticated ?
                                         <li className="dropdown pull-right">
                                             <a  href="#"
                                                 data-toggle="dropdown"
@@ -103,25 +135,19 @@ export default class Navbar extends React.Component{
                                                 <li className="divider">
                                                 </li>
                                                 <li>
-                                                    <a href="#" onClick={logout}>
+                                                    <a href="#" onClick={(e) => this.logout(e)}>
                                                         退出
                                                     </a>
                                                 </li>
                                             </ul>
                                         </li>
-                                    )
-                                    :
-                                    <li className="pull-right">
-                                        <Link to="/login" activeClassName="active">
-                                            <i className="fa fa-sign-in"> </i>登录|注册
-                                        </Link>
-                                    </li>
+                                        :
+                                        <li className="pull-right">
+                                            <Link to="/login" activeClassName="active" >
+                                                <i className="fa fa-sign-in"> </i>登录|注册
+                                            </Link>
+                                        </li>
                                 }
-                                {auth.token && auth.user&&
-                                <li ><Link to="/setting" title={auth.user.nickname}>
-                                    <img src={auth.user.avatar || defaultAvatar} className="user-avatar"/>
-                                </Link></li>}
-
                             </ul>
                         </div>
                     </div>
@@ -176,7 +202,11 @@ export default class Navbar extends React.Component{
                     </div>
                 </div>
             </div>
-
         )
     }
 }
+
+Navbar.propTypes = {
+    logoutAndRedirect: React.PropTypes.func,
+    isAuthenticated: React.PropTypes.bool,
+};

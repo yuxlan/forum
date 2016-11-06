@@ -18,7 +18,7 @@ const mapStateToProps = (state) => {
         tagList:state.tagList.toJS(),
         articleList:state.articleList.toJS(),
         options:state.options.toJS(),
-        auth:state.auth.toJS()
+        // auth:state.auth.toJS()
     }
 };
 

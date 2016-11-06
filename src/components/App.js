@@ -13,7 +13,7 @@ import Toaster from '../components/Toaster';
 const mapStateToProps = state => {
     return {
         showmsg:state.showmsg.toJS(),
-        auth:state.auth.toJS()
+     //   auth:state.auth.toJS()
     }
 };
 
@@ -28,7 +28,7 @@ export default class App extends React.Component{
     constructor(props){
         super(props)
     }
-    
+
     static fetchDate(){
         return [];
     }
@@ -44,13 +44,13 @@ export default class App extends React.Component{
             console.log('top-box-sc')
         })
     }
-    
+
     componentWillReceiveProps(nextProps){
-            
+
     }
-    
+
     render(){
-      
+
         const {showmsg,actions,children} = this.props;
 
         return (

@@ -5,6 +5,7 @@ import {TagResource,VerifyResource,KeyResource,RegisterResource,LoginResource, Q
         AddArticleResource,DeleteArticleResource,GetArticleResource,QueryArticleResource} from './resources';
 
 export default {
+
     // 获取标签
     getTagList: function () {
         return TagResource('get');
@@ -21,18 +22,18 @@ export default {
     },
 
     // 用户注册
-    userRegister: function (data) {
-        return RegisterResource('post', data);
+    userRegister: function (u_email,u_name,u_psw) {
+        return RegisterResource('post', {u_email,u_name,u_psw});
     },
 
     // 用户登录
-    userLogin: function (data) {
-        return LoginResource('post', data);
+    userLogin: function (u_loginname,u_psw) {
+        return LoginResource('post', {u_loginname,u_psw});
     },
 
     // 查询用户信息
-    queryUser: function (data) {
-        return QueryUserResource('post', data);
+    queryUser: function (u_id) {
+        return QueryUserResource('post', {u_id});
     },
 
     // 更新用户信息
@@ -56,23 +57,38 @@ export default {
     },
 
     // 添加文章
-    addArticle: function (data) {
-        return AddArticleResource('post', data);
+    addArticle: function (u_id,u_psw,u_title,u_text,u_tags) {
+        return AddArticleResource('post', {u_id,u_psw,u_title,u_text,u_tags});
     },
 
     // 删除文章
-    deleteArticle: function (data) {
-        return DeleteArticleResource('post', data);
+    deleteArticle: function (u_id,u_psw,t_id) {
+        return DeleteArticleResource('post', {u_id,u_psw,t_id});
     },
 
     // 获取文章展示列表
-    getArticleList: function (data) {
-        return GetArticleResource('post', data);
+    getArticleList: function (t_tags,show_count) {
+        return GetArticleResource('post', {t_tags,show_count});
     },
 
     // 查询文章信息
-    queryArticle: function (data) {
-        return QueryArticleResource('post', data);
+    queryArticle: function (t_id) {
+        return QueryArticleResource('post', {t_id});
+    },
+
+    // 获取评论
+    getComment: function (c_id) {
+        return QueryCommentResource('post',{c_id});
+    },
+
+    // 添加评论
+    addComment: function (u_id,u_psw,ec_type,ec_id,c_text){
+        return AddCommentResource('post',{u_id,u_psw,ec_type,ec_id,c_text});
+    },
+    
+    // 删除评论
+    deleteComment: function (u_id,u_psw,c_id) {
+        return DeleteCommentResource('post',{u_id,u_psw,c_id});
     },
 
 }

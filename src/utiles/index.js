@@ -9,7 +9,7 @@ export function customTime(item){
     let monthTime = 30*dayTime;
     let yearTime = monthTime*12;
 
-    let created = new Date(item).getTime();
+    let created = new Date(item).getTime()
     let delta = parseInt(nowTime) - parseInt(created);
     let descTime;
     if(delta >= yearTime){
@@ -49,6 +49,7 @@ export function parseArticle(text){
             content:''
         }
     }
+
 
     let title = text.slice(0,divide).replace(titleRegex,'');
     var content = text.slice(divide+1);

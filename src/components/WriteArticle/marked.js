@@ -1,10 +1,7 @@
-// markdown编辑器
+
 
 ;(function() {
 
-/**
- * Block-Level Grammar
- */
 
 var block = {
   newline: /^\n+/,
