@@ -1,147 +1,98 @@
-import React from 'react'
-import {connect} from 'react-redux'
+import React,{Component} from 'react'
 import {bindActionCreators} from 'redux'
-import * as actions from '../../actions'
+import {connect} from 'react-redux'
 import {reduxForm} from 'redux-form'
-import {formatDate} from '../../utiles'
+import * as Actions from '../../actions'
+
+const validate = values => {
+    const errors ={};
+    if(!values.nickname){
+        errors.nickname = "Required"
+    }else if(!/^$/.test(values.nickname))  {
+        errors.nickname = '昵称不合法';
+    }
+    return errors;
+};
 
 const mapStateToProps = state => {
     return {
-        adminUserList:state.adminUserList.toJS(),
-        initialValues:{
-            email:'user@qq.com',
-            password:'user',
-            nickname:'user',
-            role:'user'
-        }
-    }
-}
-
-const mapDispatchToProps = dispatch => {
-    return {
-        actions:bindActionCreators(actions,dispatch)
+        auth:state.auth.toJS(),
+        initialValues:state.auth.toJS().user
     }
 };
 
-const validate = values => {
-    const errors = {};
-    if(!values.email){
-        errors.email = 'Required';
+const mapDispatchToProps = dispatch => {
+    return {
+        actions: bindActionCreators(Actions, dispatch)
     }
-    if(!values.password){
-        errors.password = 'Required'
-    }
-    if(!values.nickname){
-        errors.nickname = 'Required'
-    }
-    return errors;
-}
+};
 
 @connect(mapStateToProps,mapDispatchToProps)
 @reduxForm({
-    form:'user',
-    fields:['email','password','nickname','role'],
+    form:'setting',
+    fields:['nickname'],
     validate
 })
-export default class AdminUsers extends React.Component{
+export default class UserSetting extends Component{
     constructor(props){
         super(props);
-        this.deleteUser = this.deleteUser.bind(this);
-        this.handleAddUser = this.handleAddUser.bind(this)
+        this.handleSubmit = this.handleSubmit.bind(this)
     }
 
-    componentDidMount(){
-        const {actions} = this.props;
-        actions.getAdminUserList();
-    }
-
-    deleteUser(id){
-        const {actions} = this.props;
-        actions.deleteUser(id)
-    }
-
-    handleAddUser(e){
+    handleSubmit(e){
         e.preventDefault();
-        const {actions,values} = this.props;
-        actions.addUser(values)
+        const {values,actions} = this.props;
+        console.log(values);
+        actions.updateUser(values);
     }
-
     validatorClass(field){
-        let initClass = 'form-control'
+        let initClass = 'form-control';
         if(field.invalid){
             initClass += ' ng-invalid'
         }
         if(field.dirty){
             initClass += ' ng-dirty'
         }
-        return initClass
+        return initClass;
     }
-
     render(){
-
-        const {adminUserList,dirty,invalid,fields:{email,password,nickname,role}} = this.props;
-
-        const style = {marginRight:'20px'};
+        const {fields:{nickname},dirty,invalid} = this.props;
+        // console.log(nickname)
         return (
-            <div className="col-sm-offset-2 col-sm-10">
-                <div className="admin-user" style={style}>
-                    <div className="userForm-container">
-                        <form className="form-inline" name="userForm" onSubmit={this.handleAddUser}>
-                            <div className="form-group">
-                                <label className="sr-only" for="email">email</label>
-                                <input type="text" ref="email" className={this.validatorClass(email)} id="email" name="email" placeholder="请输入邮箱" {...email} />
+            <div>
+                <div className="background">
+                </div>
+                <div className="outer-container">
+                    <div className="wrap-container">
+                        <div className="content-outer">
+                            <div className="content-inner">
+                                <div className="settings-box">
+                                    <div className="settings-container">
+                                        <h2 className="title">设置</h2>
+                                        <hr />
+                                        <div className="profile">
+                                            <div className="control-group">
+                                                <form className="settings-form" name="settingForm" onSubmit={this.handleSubmit} noValidate>
+                                                    <div className="form-group">
+                                                        <label className="control-label">昵称</label>
+                                                        <input placeholder="2-15字符，英文、数字"
+                                                               {...nickname}
+                                                               type="text"
+                                                               className={ this.validatorClass(nickname) }
+                                                               minLength="2" maxLength="15" />
+                                                    </div>
+                                                    <button type="submit" disabled={ dirty && invalid } className="btn btn-block btn-lg btn-primary">保 存</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div className="form-group">
-                                <label className="sr-only" for="password">password</label>
-                                <input type="text" ref="password" className={this.validatorClass(password)} id="password" name="password" placeholder="请输入密码" {...password}  />
-                            </div>
-                            <div className="form-group">
-                                <label className="sr-only" for="nickname">nickname</label>
-                                <input type="text" ref="nickname" className={this.validatorClass(nickname)} id="nickname" name="nickname" placeholder="请输入昵称" {...nickname} />
-                            </div>
-                            <div className="form-group">
-                                <label className="sr-only" for="sort">role</label>
-                                <input type="text" ref="role" className={this.validatorClass(role)} id="role" name="role" placeholder="请输入权限类型" {...role}  />
-                            </div>
-                            <button type="submit" className="btn btn-primary" disabled={invalid}>
-                                添加
-                            </button>
-                        </form>
+                        </div>
                     </div>
-                    <table className="table table-striped table-hover">
-                        <thead>
-                        <tr>
-                            <th>邮箱</th>
-                            <th>昵称</th>
-                            <th>provider</th>
-                            <th>role</th>
-                            <th>喜爱数</th>
-                            <th>创建时间</th>
-                            <th>操作</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {adminUserList.items.map((item,index) =>
-                            <tr key={index}>
-                                <td>{item.email}</td>
-                                <td>{item.nickname}</td>
-                                <td>{item.provider}</td>
-                                <td>{item.role}</td>
-                                <td>{item.likeList.length}</td>
-                                <td>{formatDate(item.created)}</td>
-                                <td>
-                                    <a href="javascript:;" className="btn btn-danger" onClick={e=>this.deleteUser(item._id)}>
-                                        <i className="fa fa-remove"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                        )
-
-                        }
-                        </tbody>
-                    </table>
                 </div>
             </div>
+
         )
     }
 }

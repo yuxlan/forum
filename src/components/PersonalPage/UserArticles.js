@@ -6,7 +6,7 @@ import {formatDate} from '../../utiles'
 
 const mapStateToProps = state => {
     return {
-        adminArticleList:state.adminArticleList.toJS()
+        ArticleList:state.ArticleList.toJS()
     }
 };
 
@@ -17,9 +17,9 @@ const mapDispatchTopROPS = dispatch => {
 };
 
 @connect(mapStateToProps,mapDispatchTopROPS)
-export default class AdminArticles extends React.Component{
+export default class UserArticles extends React.Component{
     constructor(props){
-        super(props)
+        super(props);
         this.deleteArticle = this.deleteArticle.bind(this)
     }
 
@@ -36,8 +36,8 @@ export default class AdminArticles extends React.Component{
 
     render(){
         const style = {marginRight:'20px'};
-        const {adminArticleList} = this.props;
-        console.log(adminArticleList.items)
+        const {ArticleList} = this.props;
+
         return (
             <div className="col-sm-offset-2 col-sm-10">
                 <div className="admin-articles" style={style}>
@@ -61,7 +61,9 @@ export default class AdminArticles extends React.Component{
                                 <td>{item.visit_count}</td>
                                 <td>{item.like_count}</td>
                                 <td>
-                                    <a href="javascript:;" className="btn btn-danger" onClick={e=>this.deleteArticle(item._id)}>
+                                    <a href="#"
+                                       className="btn btn-danger"
+                                       onClick={e=>this.deleteArticle(item._id)}>
                                         <i className="fa fa-remove"></i>
                                     </a>
                                 </td>

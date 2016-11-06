@@ -10,7 +10,6 @@ import Footer from './footer'
 import Navbar from './navbar'
 import LoadMore from './loadMore'
 import ScrollTop from '../ScrollTop'
-import {getCookie} from '../../utiles/authService'
 
 const mapStateToProps = (state) => {
 
@@ -18,7 +17,7 @@ const mapStateToProps = (state) => {
         tagList:state.tagList.toJS(),
         articleList:state.articleList.toJS(),
         options:state.options.toJS(),
-        // auth:state.auth.toJS()
+        auth:state.auth.u_id,
     }
 };
 
@@ -46,22 +45,6 @@ export default class Home extends Component{
         if(tagList.length < 1){
             actions.getTagList()
         }
-        // if(articleList.items.length < 1){
-        actions.getArticleList();
-        // }
-        //bug!
-
-        // let token = getCookie('token');
-        // if(token){
-        //     actions.loginSuccess(token);
-        //     actions.getUserInfo(token);
-        // }
-        // actions.loginSuccess(token);
-        // debugger;
-        // let {auth} = this.props;
-        // if(auth.token&&!auth.user){
-        //     actions.getUserInfo();
-        // }
     }
 
     componentWillReceiveProps(nextProps){
@@ -72,7 +55,7 @@ export default class Home extends Component{
         e.preventDefault();
         const {actions} = this.props;
         actions.changeOptions(option);
-        actions.getArticleList(isAdd)
+        actions.getArticleList(t_id);
     }
 
     render(){
@@ -98,9 +81,13 @@ export default class Home extends Component{
                                         <span className="list-count">共{articleList.count}篇文章</span>
                                     </h4>
 
-                                    <Articles articleList={articleList.items} changeSort={this.handleChange}/>
-                                    {(articleList.items.length > 0&&
-                                        <LoadMore options={options} isMore={articleList.isMore} isFetching={articleList.isFetching} addData={this.handleChange}/>
+                                    <Articles articleList={articleList.items}
+                                              changeSort={this.handleChange}/>
+                                    {(articleList.length > 0&&
+                                        <LoadMore options={options}
+                                                  isMore={articleList.isMore}
+                                                  isFetching={articleList.isFetching}
+                                                  addData={this.handleChange}/>
                                     )}
                                 </div>
                             </div>

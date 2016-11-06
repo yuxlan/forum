@@ -1,7 +1,7 @@
 import React from 'react'
 import {Link} from 'react-router'
 
-export default class AdminPage extends React.Component{
+export default class UserPage extends React.Component{
     render(){
         const style = {marginRight:'20px'};
         return (

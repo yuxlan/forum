@@ -5,7 +5,6 @@ import {routerReducer} from 'react-router-redux'
 import showmsg from './showmsg'
 import auth from './auth'
 import data from './data'
-import sns from './sns'
 import tagList from './tagList'
 import {articleList,articleDetail,prenextArticle} from './article'
 import commentList from './comment'
@@ -21,7 +20,6 @@ const rootReducer = combineReducers({
     showmsg,
     auth,
     data,
-    sns,
     tagList,
     options,
     articleDetail,

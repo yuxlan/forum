@@ -6,26 +6,26 @@ import {formatDate} from '../../utiles'
 
 const mapStateToProps = state => {
     return {
-        adminCommentList:state.adminCommentList.toJS()
+        CommentList:state.CommentList.toJS()
     }
-}
+};
 
 const mapDispatchToProps = dispatch => {
     return {
         actions:bindActionCreators(actions,dispatch)
     }
-}
+};
 
 @connect(mapStateToProps,mapDispatchToProps)
-export default class AdminComments extends React.Component{
+export default class UserComments extends React.Component{
     constructor(props){
         super(props);
         this.deleteComment = this.deleteComment.bind(this);
     }
 
     componentDidMount(){
-        const {actions,adminCommentList} = this.props;
-        actions.getAdminComment()
+        const {actions,CommentList} = this.props;
+        actions.getComment()
     }
 
     deleteComment(id){
@@ -35,7 +35,8 @@ export default class AdminComments extends React.Component{
 
     render(){
         const style = {marginRight:'20px'};
-        const {actions,adminCommentList} = this.props;
+        const {actions,CommentList} = this.props;
+
         return (
             <div className="col-sm-offset-2 col-sm-10">
                 <div className="admin-comments" style={style}>

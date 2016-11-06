@@ -38,7 +38,7 @@ export function formatDate(time){
     return month + '月' + day + '日';
 }
 
-//分离title和content，并处理content中的image地址
+// 并处理image地址
 export function parseArticle(text){
 
     let titleRegex = /#*\s+/;
@@ -49,12 +49,8 @@ export function parseArticle(text){
             content:''
         }
     }
-
-
     let title = text.slice(0,divide).replace(titleRegex,'');
     var content = text.slice(divide+1);
-
-    
     content = content.replace(/([^\(]*\.(jpe?g|png|gif))(?=\))/g,function(match,$1,$2){
         return API_ROOT + 'upload/' + match
     });

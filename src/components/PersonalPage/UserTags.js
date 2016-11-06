@@ -6,7 +6,7 @@ import {reduxForm} from 'redux-form'
 
 const mapStateToProps = state => {
     return {
-        adminTagList:state.adminTagList.toJS(),
+        TagList:state.TagList.toJS(),
         initialValues:{
             name:'javascript',
             sort:'1'
@@ -18,7 +18,7 @@ const mapDispatchToProps = dispatch => {
     return {
         actions:bindActionCreators(actions,dispatch)
     }
-}
+};
 
 const validate = values => {
     const errors = {};
@@ -26,7 +26,7 @@ const validate = values => {
         errors.name = 'Required'
     }
     return errors
-}
+};
 
 @connect(mapStateToProps,mapDispatchToProps)
 @reduxForm({
@@ -34,7 +34,7 @@ const validate = values => {
     fields:['name','sort'],
     validate
 })
-export default class AdminTags extends React.Component{
+export default class UserTags extends React.Component{
     constructor(props){
         super(props);
         this.handleAddTag = this.handleAddTag.bind(this);
@@ -43,8 +43,7 @@ export default class AdminTags extends React.Component{
 
     componentDidMount(){
         const {actions} = this.props;
-        actions.getAdminTagList();
-        
+        actions.getTagList();
     }
 
     deleteTag(id){
@@ -80,13 +79,26 @@ export default class AdminTags extends React.Component{
                         <form className="form-inline" name="tagForm" onSubmit={this.handleAddTag}>
                             <div className="form-group form-group-lg">
                                 <label className="sr-only" for="name">标签名</label>
-                                <input type="text" ref="name" className={this.validatorClass(name)} id="name" name="name" placeholder="请输入标签名" {...name} />
+                                <input type="text"
+                                       ref="name"
+                                       className={this.validatorClass(name)}
+                                       id="name"
+                                       name="name"
+                                       placeholder="请输入标签名" {...name} />
                             </div>
                             <div className="form-group form-group-lg">
-                                <label className="sr-only" for="sort">优先值</label>
-                                <input type="number" ref="sort" className="form-control" id="sort" name="sort" placeholder="请输入优先值" {...sort}  />
+                                <label className="sr-only"
+                                       for="sort">优先值</label>
+                                <input type="number"
+                                       ref="sort"
+                                       className="form-control"
+                                       id="sort"
+                                       name="sort"
+                                       placeholder="请输入优先值" {...sort}  />
                             </div>
-                            <button type="submit" className="btn btn-primary" disabled={dirty && invalid}>
+                            <button type="submit"
+                                    className="btn btn-primary"
+                                    disabled={dirty && invalid}>
                                 添加
                             </button>
                         </form>

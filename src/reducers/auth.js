@@ -35,14 +35,14 @@ export default createReducer(initialState, {
             isRegistering: false,
             //token: payload.token,
             userId: payload.u_id,
-            registerStatusText: 'You have been successfully logged in.',
+            registerStatusText: '你已经注册成功.',
         }),
     [REGISTER_USER_FAILURE]: (state, codeState) =>
         Object.assign({}, state, {
             isAuthenticated: false,
            // token: null,
             userId: null,
-            registerStatusText: `Register Error: ${codeState}`,
+            registerStatusText: `注册失败: ${codeState}`,
         }),
     [LOGIN_USER_REQUEST]: (state) =>
         Object.assign({}, state, {
@@ -55,7 +55,7 @@ export default createReducer(initialState, {
             isAuthenticated: true,
            // token: payload.token,
             userId: payload.u_id,
-            statusText: 'You have been successfully logged in.',
+            statusText: '你已经成功登陆.',
         }),
     [LOGIN_USER_FAILURE]: (state, codeState) =>
         Object.assign({}, state, {
@@ -63,13 +63,13 @@ export default createReducer(initialState, {
             isAuthenticated: false,
            // token: null,
             userId: null,
-            statusText: `Authentication Error: ${codeState}`,
+            statusText: `验证失败: ${codeState}`,
         }),
     [LOGOUT_USER]: (state) =>
         Object.assign({}, state, {
             isAuthenticated: false,
            // token: null,
             userId: null,
-            statusText: 'You have been successfully logged out.',
+            statusText: '你已经成功退出.',
         }),
 });

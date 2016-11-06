@@ -37,23 +37,23 @@ export default {
     },
 
     // 更新用户信息
-    updateUser: function (data) {
-        return UpdateResource('post', data);
+    updateUser: function (u_id,u_psw,u_realname,u_blog,u_github,u_tags,u_intro) {
+        return UpdateResource('post', {u_id,u_psw,u_realname,u_blog,u_github,u_tags,u_intro});
     },
 
     // 验证邮箱
-    verifyEmail: function (data) {
-        return VerifyEmailResource('post', data);
+    verifyEmail: function (u_id,u_email,u_verify) {
+        return VerifyEmailResource('post', {u_id,u_email,u_verify});
     },
 
     // 邮箱验证通过
-    confirmEmail: function (data) {
-        return ConfirmEmailResource('post', data);
+    confirmEmail: function (u_id,u_psw) {
+        return ConfirmEmailResource('post', {u_id,u_psw});
     },
 
     // 修改用户邮箱
-    changeEmail: function (data) {
-        return ChangeEmailResource('post', data);
+    changeEmail: function (u_id,u_psw,u_email) {
+        return ChangeEmailResource('post', {u_id,u_psw,u_email});
     },
 
     // 添加文章
