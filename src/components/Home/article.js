@@ -15,8 +15,8 @@ export default class Articles extends React.Component{
     }
 
     render(){
-        const {articleList,changeSort} = this.props;
-
+        const {articleDetail,articleList,changeSort} = this.props;
+        console.log(articleDetail,articleList);
         return (
             <ul className="article-list list-unstyled clearfix">
                 {articleList.length > 0&&
@@ -24,29 +24,33 @@ export default class Articles extends React.Component{
                     <li key={i} className="article-item">
                         <div className="articleList-item">
                             <p className="list-top">
-                                <span className="time">{customTime(article.t_date_latest)}</span>
+                                <span className="time">{customTime(article.created)}</span>
                             </p>
                             <h4 className="title">
-                                <Link to={'/article/'+ article.t_id} className="link-title">{article.t_title}</Link>
+                                <Link to={'/article/'+ article._id} className="link-title">{article.title}</Link>
                             </h4>
                             <p className="list-footer">
 
-                                <span className="visit-count">  阅读 {article.t_star}</span>
-                                <span className="comment-count">  评论 {article.t_comments}</span>
-                                <span className="like-count">  喜欢 {article.t_like}</span>
+                                <span className="visit-count">  阅读 {article.visit_count}</span>
+                                <span className="comment-count">  评论 {article.comment_count}</span>
+                                <span className="like-count">  喜欢 {article.like_count}</span>
                                 <span>  标签&nbsp;
                                     {article.tags.map((tag,index) => {
                                         return (
                                             <span>
-                                                 <a href="#"
-                                                    onClick={this.handleClick(changeSort,{'currentPage':1,'sortName':'','tagId':''})}>
-                                                {tag[index]}
+                                                 <a href="javascript:;" onClick={this.handleClick(changeSort,{'currentPage':1,'sortName':'','tagId':tag._id})}>
+                                                {tag.name}
                                             </a> /
                                             </span>
 
                                         )
                                     })}
                                 </span><br/>
+                                {article.images&&article.images.map((url,index) =>
+                                    <Link key={index} to={'/article/'+ article._id} className="thumb-box">
+                                        <img src={url} alt=""/>
+                                    </Link>
+                                )}
                                 <Link to=""/>
                             </p>
                         </div>
@@ -55,7 +59,7 @@ export default class Articles extends React.Component{
 
                 }
             </ul>
-            
+
         )
     }
 }

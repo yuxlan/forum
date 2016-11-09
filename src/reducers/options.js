@@ -1,6 +1,8 @@
-import * as types from '../constants/index'
-import {createReducer} from 'redux-immutablejs'
-import {fromJS} from 'immutable'
+// option的数据状态变化
+
+import * as types from '../actions/types';
+import {createReducer} from 'redux-immutablejs';
+import {fromJS} from 'immutable';
 
 const initialState = fromJS({
     currentPage:1,

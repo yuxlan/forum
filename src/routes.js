@@ -34,7 +34,7 @@ export default ()=>(
         <Route path='/hintverifyemail' component={HintVerifyEmail}/>
         <Route path='/verifyemail' component={VerifyEmail}/>
         <Route path='/write' component={WriteArticle} />
-        <Route path='/article' components={Article} />
+        <Article path="/article/:id" component={Article} />
         <PersonalPage path='/personalpage' component={PersonalPage}>
             <IndexRoute component={UserPage} />
             <Route path='/articles' component={UserArticles} />

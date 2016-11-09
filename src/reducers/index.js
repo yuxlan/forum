@@ -1,33 +1,39 @@
-import {combineReducers} from 'redux'
-import {reducer as formReducer} from 'redux-form'
-import {routerReducer} from 'react-router-redux'
+import {combineReducers} from 'redux';
+import {reducer as formReducer} from 'redux-form';
+import {routerReducer} from 'react-router-redux';
 
-import showmsg from './showmsg'
-import auth from './auth'
-import data from './data'
-import tagList from './tagList'
-import {articleList,articleDetail,prenextArticle} from './article'
-import commentList from './comment'
-import options from './options'
-import userCommentList from './userCommentList'
-import userTagList from './userTagList'
-import userUserList from './userUserList'
-import userArticleList from './userArticleList'
+import apps from './apps';
+import showmsg from './showmsg';
+
+import auth from './auth';
+import sns from './sns';
+
+import tagList from './tagList';
+import {articleList,articleDetail,prenextArticle} from './article';
+import options from './options';
+import commentList from './comment';
+
+import adminCommentList from './adminCommentList';
+import adminTagList from './adminTagList';
+import adminUserList from './adminUserList';
+import adminArticleList from './adminArticleList';
 
 const rootReducer = combineReducers({
+    apps,
     form:formReducer,
     routing:routerReducer,
     showmsg,
     auth,
-    data,
+    sns,
     tagList,
+    articleList,
     options,
     articleDetail,
     prenextArticle,
     commentList,
-    userCommentList,
-    userTagList,
-    userUserList,
+    adminCommentList,
+    adminTagList,
+    adminUserList,
     adminArticleList
 })
 

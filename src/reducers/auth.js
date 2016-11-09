@@ -1,5 +1,4 @@
 // 用户登录注册之后的数据变化
-//import jwtDecode from 'jwt-decode';
 
 import { createReducer } from '../utiles/misc';
 import {
@@ -10,7 +9,7 @@ import {
     LOGIN_USER_SUCCESS,
     LOGIN_USER_FAILURE,
     LOGOUT_USER,
-} from '../constants/index';
+} from '../actions/types';
 
 const initialState = {
     userId: null,

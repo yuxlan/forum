@@ -13,7 +13,6 @@ import Toaster from '../components/Toaster';
 const mapStateToProps = state => {
     return {
         showmsg:state.showmsg.toJS(),
-     //   auth:state.auth.toJS()
     }
 };
 
@@ -43,10 +42,6 @@ export default class App extends React.Component{
         $('body').scroll(function(){
             console.log('top-box-sc')
         })
-    }
-
-    componentWillReceiveProps(nextProps){
-
     }
 
     render(){

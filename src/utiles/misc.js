@@ -1,4 +1,11 @@
-
+/*
+ var str1='1,2,3,4,5,6,7';
+ var strArray=Array();
+ //字符串拆分为数组
+ strArray=str1.split(',',5);//后面的5是可选参数，指返回的数组最大长度
+ //数组合并为字符串
+ str1=strArray.join('-');//这时候str1中的值是：1-2-3-4-5
+ */
 // 验证邮箱
 export function validateEmail(u_email) {
     const re = /^([A-Za-z0-9_.]+@[A-Za-z0-9.]+.[A-Za-z]{2,4})$/;

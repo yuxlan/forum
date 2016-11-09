@@ -10,10 +10,12 @@ import {
     LOGIN_USER_SUCCESS,
     LOGIN_USER_FAILURE,
     LOGOUT_USER,
-} from '../constants/index';
+} from './types';
 
 import { parseJSON } from '../utiles/misc';
 import api from '../api';
+
+// 登录注册 -> 保存用户u_id和u_psw -> 根据用户u_id获取用户的相关信息，并且保存相关信息 -> 将相关信息显示在个人中心的相关页面
 
 // 注册
 export function registerUserRequest() {

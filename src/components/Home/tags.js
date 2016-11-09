@@ -1,3 +1,5 @@
+// 显示所有的标签
+
 import React from 'react'
 import tiny from '../../assets/imgs/tiny.gif'
 
@@ -7,16 +9,18 @@ export default class Tags extends React.Component{
         super();
         this.handleClick = this.handleClick.bind(this);
     }
+
     handleClick(changeSort,options){
         return function(e){
             changeSort(e,options);
         }
     }
+
     render(){
         const {tagList,options,changeSort,isFetching} = this.props;
+        console.log(tagList);
 
         return(
-
             <ul className="sort-tags list-unstyled clearfix">
                 <li>
                     <a href="#"
@@ -36,10 +40,10 @@ export default class Tags extends React.Component{
                     tagList.map((tag,i) => {
                         return (
                             <li key={i}>
-                                <a className={(options.tagId == i)&&'active'}
+                                <a className={(options.tagId == tag)&&'active'}
                                    href="#"
-                                   onClick={this.handleClick(changeSort,{'currentPage':1,'sortName':'','tagId':''})}>
-                                    {tag[i]}
+                                   onClick={this.handleClick(changeSort,{'currentPage':1,'sortName':'','tagId':tag})}>
+                                    {tag}
                                 </a>
                             </li>
                         )

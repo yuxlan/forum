@@ -1,4 +1,5 @@
-// cookies // 只是尝试，无用
+// cookies，尝试使用，正式无用
+
 import cookie from 'react-cookie'
 import {CookieDomain} from '../config'
 
@@ -11,7 +12,9 @@ if(CookieDomain !== ''){
 }
 
 export function saveCookie(name,value){
+   
     cookie.save(name,value,cookieConfig);
+    
 }
 
 export function getCookie(name){
@@ -19,16 +22,23 @@ export function getCookie(name){
 }
 
 export function removeCookie(name){
+
     cookie.remove(name,cookieConfig);
+
 }
 
 export function signOut(){
     cookie.remove('role',{domain: CookieDomain,path:'/'});
     cookie.remove('role',{domain: CookieDomain,path:'/article'});
+    cookie.remove('role',{domain: CookieDomain,path:'/admin'});
+    cookie.remove('token',{domain: CookieDomain,path:'/'});
+    cookie.remove('token',{domain: CookieDomain,path:'/article'});
+    cookie.remove('token',{domain: CookieDomain,path:'/admin'});
+    
 }
 
 export function isLogin(){
-    return
+    return !!cookie.load('token')
 }
 
 export function redirectToBack(nextState,replaceState){
@@ -37,10 +47,19 @@ export function redirectToBack(nextState,replaceState){
     }
 }
 
+export function isAdmin(){
+    return cookie.load('role') === 'admin'
+}
+
 export function redirectToLogin(nextState,replaceState){
     if(!isLogin()){
         replaceState(null,'/login')
     }
 }
 
+export function adminAuth(nextState,replaceState){
+    if(!isAdmin()){
+        replaceState(null,'/')
+    }
+}
 

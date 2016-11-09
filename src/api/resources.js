@@ -1,67 +1,11 @@
-// 获取后端接口
-// 本地测试使用
-/*
-require('es6-promise').polyfill();
-import axios from 'axios'
-import {API_ROOT} from '../config'
-import {getCookie,signOut} from '../utiles/authService'
+// 使用axios获取api接口
 
-axios.defaults.baseURL = API_ROOT;
-
-console.log(API_ROOT)
-
-axios.defaults.withCredentials = true;
-
-axios.interceptors.request.use(function(config){
-    config.headers = config.headers || {};
-    if(getCookie('token')){
-        config.headers.Authorization = 'Bearer '+getCookie('token').replace(/(^\")|(\"$)/g,'');
-    }
-    return config;
-},function(err){
-    return Promise.reject(error)
-});
-
-axios.interceptors.response.use(function(response){
-   if(response.status === 401){
-       signOut();
-       window.location.pathname = '/login'
-   } 
-    return response;
-},function(err){
-    return Promise.reject(err)
-});
-
-export const UserResource = (method, id, data, api='users') => {
-
-    return axios[method](api + (id ? ('/' + id) : ''), data)
-}
-export const AuthResource = (method, id, data, api='auth') => {
-    return axios[method](api + (id ? ('/' + id) : ''), data)
-}
-export const ArticleResource = (method, id, controller, data, api='article') => {
-    return axios[method](api + (id ? ('/' + id) : '') + (controller ? ('/' + controller) : ''), data)
-}
-export const TagResource = (method, id, data, api='tags') => {
-    return axios[method](api + (id ? ('/' + id) : ''), data)
-}
-export const CommentResource = (method, id, controller, data, api='comment') => {
-    return axios[method](api + (id ? ('/' + id) : '') + (controller ? ('/' + controller) : ''), data)
-}
-export const MobileResource = (method, id, data, api='mobile') => {
-    return axios[method](api + (id ? ('/' + id) : ''), data)
-}
-*/
-
-
-// 获取后端接口
-// 正式使用时使用
 require('es6-promise').polyfill();
 
 import axios from 'axios';// 请求http
 
 import {API_ROOT} from '../config';
-import {getCookie,signOut} from '../utiles/authService';
+import {getCookie,signOut} from '../utiles/authService'
 
 axios.defaults.baseURL = API_ROOT;   // 基本url
 console.log(API_ROOT);
@@ -78,7 +22,7 @@ axios.interceptors.request.use(function(config){  // 请求头信息
     return Promise.reject(error);
 });
 
-axios.interceptors.response.use(function(response){  // 处理401登录失败
+axios.interceptors.response.use(function(response){  // 处理401
      if(response.status === 401){
          signOut();
          window.location.pathname = '/login';

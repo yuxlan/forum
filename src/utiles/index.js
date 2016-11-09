@@ -1,6 +1,6 @@
-import {API_ROOT} from '../config.js'
+import {API_ROOT} from '../config.js';
 
-// 计算文章或者问答发布的时间
+// 计算文章或者问答的发布时间
 export function customTime(item){
     let nowTime = new Date().getTime();
     let minuteTime = 60*1000;
@@ -9,7 +9,7 @@ export function customTime(item){
     let monthTime = 30*dayTime;
     let yearTime = monthTime*12;
 
-    let created = new Date(item).getTime()
+    let created = new Date(item).getTime();
     let delta = parseInt(nowTime) - parseInt(created);
     let descTime;
     if(delta >= yearTime){
@@ -38,7 +38,7 @@ export function formatDate(time){
     return month + '月' + day + '日';
 }
 
-// 并处理image地址
+//分离title和content
 export function parseArticle(text){
 
     let titleRegex = /#*\s+/;
@@ -49,8 +49,12 @@ export function parseArticle(text){
             content:''
         }
     }
+
+
     let title = text.slice(0,divide).replace(titleRegex,'');
-    var content = text.slice(divide+1);
+    let content = text.slice(divide+1);
+
+    
     content = content.replace(/([^\(]*\.(jpe?g|png|gif))(?=\))/g,function(match,$1,$2){
         return API_ROOT + 'upload/' + match
     });

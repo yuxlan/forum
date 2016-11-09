@@ -8,7 +8,9 @@ export default {
 
     // 获取标签
     getTagList: function () {
-        return TagResource('get');
+        let res = TagResource('get');
+        console.log('getTagList:',res);
+        return res;
     },
 
     // 获取随机验证码
@@ -68,12 +70,16 @@ export default {
 
     // 获取文章展示列表
     getArticleList: function (t_tags,show_count) {
-        return GetArticleResource('post', {t_tags,show_count});
+        let res = GetArticleResource('post', {t_tags,show_count});
+        console.log('ArticleIds:',res);
+        return res;
     },
 
     // 查询文章信息
     queryArticle: function (t_id) {
-        return QueryArticleResource('post', {t_id});
+        let res = QueryArticleResource('post', {t_id});
+        console.log('queryArticle:',res);
+        return res;
     },
 
     // 获取评论

@@ -1,4 +1,7 @@
-import {SHOW_MSG,HIDE_MSG} from '../constants/index'
+/**
+ * Created by jialao on 2016/7/21.
+ */
+import {SHOW_MSG,HIDE_MSG} from '../actions/types'
 import {createReducer} from 'redux-immutablejs'
 import {fromJS} from 'immutable'
 
