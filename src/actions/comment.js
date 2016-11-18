@@ -1,3 +1,8 @@
+/*
+ * 用户评论文章或者问答，包括回复评论等相关操作
+ * 以及个人中心的用户评论管理
+ */
+
 import * as types from './types'
 import api from '../api'
 import {showMsg} from './other'

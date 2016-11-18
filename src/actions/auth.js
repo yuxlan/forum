@@ -1,4 +1,5 @@
 // 用户的登录注册行为
+// 登录注册 -> 保存用户u_id和u_psw -> 根据用户u_id获取用户的相关信息，并且保存相关信息 -> 将相关信息显示在个人中心的相关页面
 
 import { browserHistory } from 'react-router';
 
@@ -12,13 +13,13 @@ import {
     LOGOUT_USER,
 } from './types';
 
-import { parseJSON } from '../utiles/misc';
 import api from '../api';
+import {showMsg} from '../actions/other';
+import $ from 'jquery';
 
-// 登录注册 -> 保存用户u_id和u_psw -> 根据用户u_id获取用户的相关信息，并且保存相关信息 -> 将相关信息显示在个人中心的相关页面
 
 // 注册
-export function registerUserRequest() {
+/*export function registerUserRequest() {
     return {
         type: REGISTER_USER_REQUEST,
     };
@@ -58,23 +59,34 @@ export function registerUser(u_email,u_name,u_psw) {
                 dispatch(registerUserFailure(error));
             });
     };
-}
+}*/
+export const registerUser = (u_email,u_name,u_psw) => {
+    return (dispatch,getState) => {
+        return api.userRegister(u_email,u_name,u_psw)
+            .then(response => ({
+                json:response.data,
+                status:response.statusText,
+            }))
+            .then(({json,status}) => {
+                if(status !== 'ok'){
+                    return dispatch(showMsg('注册失败','fail'));
+                }
+                console.log('u_id:',json);
+                localStorage.setItem('u_id', json.u_id);
+                dispatch(showMsg('注册成功','success'));
+                return dispatch({
+                    type:REGISTER_USER_SUCCESS,
+                    json:json
+                })
+            })
+            .catch(error => {
+                console.log(error);
+                dispatch(showMsg(error||'注册失败'));
+            })
+    }
+};
 
 // 登录
-export function loginUserRequest() {
-    return {
-        type: LOGIN_USER_REQUEST,
-    };
-}
-export function loginUserSuccess(u_id) {
-    localStorage.setItem('u_id', u_id);
-    return {
-        type: LOGIN_USER_SUCCESS,
-        payload: {
-            u_id,
-        },
-    };
-}
 /*
 export function loginUserSuccess(user) {
     localStorage.setItem('u_id',user.u_id);
@@ -100,31 +112,28 @@ export function loginUserSuccess(user) {
     }
 }
 */
-export function loginUserFailure(codeState) {
-    localStorage.removeItem('u_id');
-    return {
-        type: LOGIN_USER_FAILURE,
-        payload: {
-            codeState,
-        },
-    };
-}
 export function loginUser(u_loginname,u_psw) {
-    return function (dispatch) {
-        dispatch(loginUserRequest());
+    return (dispatch,getState) => {
         return api.userLogin(u_loginname,u_psw)
-            .then(parseJSON)
-            .then(response => {
-                try {
-                    dispatch(loginUserSuccess(response.u_id));
-                    //  browserHistory.push('/personalpage');
-                } catch (e) {
-                    alert(e);
-                    dispatch(loginUserFailure(response.codeState));
+            .then(response => ({
+                json:response.data,
+                status:response.statusText,
+            }))
+            .then(({json,status}) => {
+                if(status !== 'ok'){
+                    return dispatch(showMsg('登录失败'));
                 }
+                console.log('json:',json);
+                localStorage.setItem('u_id',json.u_id);
+                dispatch(showMsg('登录成功'));
+                return dispatch({
+                    type:LOGIN_USER_SUCCESS,
+                    json:json
+                })
             })
             .catch(error => {
-                dispatch(loginUserFailure(error));
+                console.log(error);
+                dispatch(showMsg('登录失败'));
             });
     };
 }

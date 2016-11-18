@@ -36,6 +36,5 @@ export default class SNSLogin extends React.Component{
             </div>
         )
     }
-    
 }
-    */
+*/

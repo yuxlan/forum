@@ -26,7 +26,7 @@ export default class Container extends React.Component{
             <div className="pull-right">
                 <button className="btn btn-danger controller-item" onClick={clearAll}><i className="glyphicon glyphicon-trash"></i>清空文本</button>
                 <a className="btn btn-default" href={downloadURL} download="README.md" onMouseEnter={changeData}><i className="icon1-markdown"></i>导出md</a>
-                <button className="btn btn-success controller-item" onClick={save}><i className="fa fa-save"></i>上传博客</button>
+                <button className="btn btn-success controller-item" onClick={save}><i className="fa fa-save"></i>发布博客</button>
             </div>
         </div>
         )

@@ -8,6 +8,7 @@
 
 import * as types from './types';
 import api from '../api';
+import {showMsg} from './other';
 
 // 获取标签
 export const getTagList = () => {
@@ -25,8 +26,32 @@ export const changeOptions = (option) => {
     }
 };
 
+// 首页文章通过所有的tags获取所有的文章
+export const getArticleList = (t_tags,show_count) => {
+    return (dispatch,getState) => {
+        return api.getArticleList(t_tags,show_count)
+            .then(response => ({
+                json:response.data,
+                status:response.statusText}))
+            .then(({json,status}) => {
+                console.log('get_t_ids:',json);
+               // localStorage.setItem('t_id', json.t_ids);
+                return dispatch({
+                    type:types.ARTICLE_LIST_SUCCESS,
+                    json:json,
+                })
+            })
+            .catch(error => {
+                dispatch(showMsg(error));
+                return dispatch({
+                    type:types.ARTICLE_LIST_FAILURE,
+                })
+            })
+    }
+};
+
 // 根据所选的标签获取文章id
-export const getArticleList = (isAdd) => {
+/*export const getArticleList = (isAdd) => {
     return (dispatch,getState) => {
         const options = getState().options.toJS();
         return api.getArticleList(options)
@@ -52,48 +77,21 @@ export const getArticleList = (isAdd) => {
                 })
             })
     }
-};
+};*/
 
 // 获取文章详情
 export const getArticleDetail = (t_id) => {
     return (dispatch,getState) => {
-        const articlelist = getState().articleList.toJS();
-        let t_id = articlelist.t_id;
         return api.queryArticle(t_id)
             .then(response => ({
-                status:response.code,
-                articleid:response.t_id,
-                userid:response.u_id,
-                articletitle:response.t_title,
-                articletext:response.t_text,
-                articledate:response.t_date,
-                articlelike:response.t_like,
-                articlecomments:response.t_comments,
-                articletags:response.t_tags,
-                articledatelatest:response.t_date_latest,
-                articlestar:response.t_star,
+                status:response.statusText,
+                json:response.data,
             }))
-            .then(({articleid,userid,articletitle,articletext,
-                articledate,articlelike,articlecomments,articletags,
-                articledatelatest,articlestar,status}) => {
-                if(status != 1){
-                    return;
-                }
-                /*   let isLike = false;
-                 console.log(auth);
-                 if(auth.user){
-                 auth.user.likes.forEach(item => {
-                 if(item.toString() === article._id){
-                 isLike =true
-                 }
-                 })
-                 }*/
+            .then(({json,status}) => {
+                console.log('getArticleDetail_1:',json);
                 return dispatch({
                     type:types.ARTICLE_DETAIL_SUCCESS,
-                    articleDetail:{articleid,userid,articletitle,articletext,
-                        articledate,articlelike,articlecomments,articletags,
-                        articledatelatest,articlestar}
-                    //  articleDetail:{...article,isLike}
+                    json:json,
                 })
             })
             .catch(error => {

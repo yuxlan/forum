@@ -8,7 +8,7 @@ import {API_ROOT} from '../config';
 import {getCookie,signOut} from '../utiles/authService'
 
 axios.defaults.baseURL = API_ROOT;   // 基本url
-console.log(API_ROOT);
+console.log('API_ROOT:',API_ROOT);
 
 axios.defaults.withCredentials = true;
 
@@ -69,6 +69,10 @@ export const ConfirmEmailResource = (method,data,api='u/email/confirm') => { // 
 };
 
 export const ChangeEmailResource = (method,data,api='u/email/change') => { // 修改用户邮箱
+    return axios[method](api,data);
+};
+
+export const QeuryReputationResource = (method,data,api='/u/rep/history') => { // 查询声望变化
     return axios[method](api,data);
 };
 

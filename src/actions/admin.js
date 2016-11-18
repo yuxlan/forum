@@ -1,171 +1,120 @@
+/*
+ * 用户的操作，包括：
+ * 更改个人信息 -> 邮箱验证身份 ->
+ * 管理个人文章，包括发布新文章、删除更改文章等操作 ->
+ * 查看个人信息，包括用户的声望变化以及关注的人和收藏的文章等信息 ->
+ * 以及后期需要实现的其它功能
+ */
+
 import * as types from './types'
 import api from '../api'
 import {getTagList} from './article'
 import {showMsg} from './other'
 import {push} from 'react-router-redux'
 
-export const getAdminComment = () => {
-    return {
-        type:types.GET_ADMINCOMMENT,
-        promise:api.getAdminCommentList()
-    }
-}
-
-export const deleteComment = (id) => {
+// 添加文章
+export const addArticle = (u_id,u_psw,u_title,u_text,u_tags) => {
     return (dispatch,getState) => {
-        return api.deleteComment(id)
-            .then(response => ({json:response.data,status:response.statusText}))
+        return api.addArticle(u_id,u_psw,u_title,u_text,u_tags)
+            .then(response => ({
+                json:response.t_id,
+                status:response.code}))
             .then(({json,status}) => {
-                if(status !== 'OK'){
+                if(status !== 1){
                     return ;
                 }
-                dispatch(showMsg('删除标签成功','success'))
+                dispatch(push('/'));
+                dispatch(showMsg('发布文章成功','success'));
                 return dispatch({
-                    type:types.DELETE_COMMENT_SUCCESS,
-                    id:id
-                })
-            })
-    }
-}
-
-export const getAdminTagList = () => {
-    return {
-        type:types.GET_ADMINTAG,
-        promise:api.getTagList()
-    }
-}
-
-export const deleteTag = (id) => {
-    return (dispatch,getState) => {
-        return api.deleteTag(id)
-            .then(response => ({json:response.data,status:response.statusText}))
-            .then(({json,status}) => {
-                if(status !== 'OK'){
-                    return ;
-                }
-                dispatch(showMsg('删除标签成功','success'))
-                dispatch(getTagList())
-                return dispatch({
-                    type:types.DELETE_ADMINTAG_SUCCESS,
-                    id:id
-                })
-            })
-    }
-}
-
-export const addTag = (data) => {
-    return (dispatch,getState) => {
-        return api.addTag(data)
-            .then(response => ({json:response.data,status:response.statusText}))
-            .then(({json,status}) => {
-                if(status !== 'OK'){
-                    return ;
-                }
-                dispatch(showMsg('添加标签成功','success'))
-                dispatch(getTagList())
-                return dispatch({
-                    type:types.ADD_ADMINTAG_SUCCESS,
-                    json:json
+                    type:types.ADD_ARTICLE_SUCCESS,
+                    t_id:json,
                 })
             })
             .catch(error => {
-                return dispatch(showMsg(error.data.error_msg||'添加标签失败'))
+                dispatch(showMsg(error.t_id.error_msg||'发布文章失败'))
             })
-    }
-}
-
-export const getAdminUserList = () => {
-    return {
-        type:types.GET_ADMINUSER,
-        promise:api.getUserList()
-    }
-}
-
-export const deleteUser = (id) => {
-    return (dispatch,getState) => {
-        return api.deleteUser(id)
-            .then(response => ({json:response.data,status:response.statusText}))
-            .then(({json,status}) => {
-                if(status !== 'OK'){
-                    return ;
-                }
-                dispatch(showMsg('删除用户成功','success'))
-                return dispatch({
-                    type:types.DELETE_ADMINUSER_SUCCESS,
-                    id:id
-                })
-            })
-            .catch(error => {
-                dispatch(showMsg(error.data.message||'删除用户失败'))
-            })
-    }
-}
-
-export const addUser = (data) => {
-    return (dispatch,getState) => {
-        return api.addUser(data)
-            .then(response => ({json:response.data,status:response.statusText}))
-            .then(({json,status}) => {
-                if(status !== 'OK'){
-                    return ;
-                }
-                dispatch(showMsg('添加用户成功','success'))
-                return dispatch({
-                    type:types.ADD_ADMINUSER_SUCCESS,
-                    json:json
-                })
-            })
-            .catch(error => {
-                console.log(error)
-                dispatch(showMsg(error.msg||'添加用户失败'))
-            })
-    }
-}
-
-export const getAdminArticleList = () => {
-    return {
-        type:types.GET_ADMINARTICLE,
-        promise:api.getAdminArticleList()
     }
 };
 
-export const deleteArticle = (id) => {
+// 删除文章
+export const deleteArticle = (u_id,u_psw,t_id) => {
     return (dispatch,getState) => {
-        return api.deleteArticle(id)
-            .then(response => ({json:response.data,status:response.statusText}))
+        return api.deleteArticle(u_id,u_psw,t_id)
+            .then(response => ({
+                json:response.data,
+                status:response.statusText,
+            }))
             .then(({json,status}) => {
-                if(status != 'OK'){
+                if(status !== 'ok'){
                     return ;
                 }
-                dispatch(showMsg('删除文章成功','success'));
+                dispatch(showMsg('删除文章成功'));
                 return dispatch({
                     type:types.DELETE_ADMINARTICLE_SUCCESS,
-                    id:id
+                    json: json,
                 })
             })
             .catch(error => {
-                return dispatch(showMsg('删除文章失败'))
-            })
-    }
-}
-
-export const addArticle = (data) => {
-    return (dispatch,getState) => {
-        return api.addArticle(data)
-            .then(response => ({json:response.data,status:response.statusText}))
-            .then(({json,status}) => {
-                if(status !== 'OK'){
-                    return ;
-                }
-                dispatch(push('/'))
-                dispatch(showMsg('上传文章成功','success'))
+                dispatch(showMsg('删除文章失败'));
                 return dispatch({
-                    type:types.ADD_ARTICLE_SUCCESS,
-                    json:json
+                    type:types.DELETE_ADMINARTICLE_FAILURE,
+                })
+            })
+    }
+};
+
+// 查询声望记录
+export const queryReputationHistory = (u_id,u_psw) => {
+    return (dispatch,getState) => {
+        return api.queryReputation(u_id,u_psw)
+            .then(response => ({
+                json:response.data,
+                status:response.statusText,
+            }))
+            .then(({json,status}) => {
+                if(status !== 'ok'){
+                    return dispatch(showMsg('声望更新失败'));
+                }
+                console.log('json:',json);
+                dispatch(showMsg('声望已更新'));
+                return dispatch({
+                    type:types.QUERY_REPUTATION_SUCCESS,
+                    json:json,
                 })
             })
             .catch(error => {
-                dispatch(showMsg(error.data.error_msg||'上传文章失败'))
+                dispatch(showMsg('声望更新失败'));
+                return dispatch({
+                    type:types.QUERY_REPUTATION_FAILURE,
+                })
             })
     }
-}
+};
+
+// 更新用户信息
+export const updateUserInformation = (u_id,u_psw,u_realname,u_blog,u_github,u_tags,u_intro) => {
+    return (dispatch,getState) => {
+        return api.updateUser(u_id,u_psw,u_realname,u_blog,u_github,u_tags,u_intro)
+            .then(response => ({
+                json:response.data,
+                status:response.statusText,
+            }))
+            .then(({json,status}) => {
+                if(status !== 'ok'){
+                    return dispatch(showMsg('更新用户信息失败'));
+                }
+                console.log('json:',json);
+                dispatch(showMsg('信息已更新'));
+                return dispatch({
+                    type:types.UPDATE_USER_INFORMATION_SUCCESS,
+                    json:json,
+                })
+            })
+            .catch(error => {
+                dispatch(showMsg('更新用户信息失败'));
+                return dispatch({
+                    type:types.UPDATE_USER_INFORMATION_FAILURE,
+                })
+            })
+    }
+};

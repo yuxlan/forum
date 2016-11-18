@@ -1,3 +1,5 @@
+// 喜欢一篇文章，即类似于点赞
+
 import React from 'react'
 
 export default class Like extends React.Component{

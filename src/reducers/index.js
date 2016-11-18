@@ -9,10 +9,12 @@ import auth from './auth';
 import sns from './sns';
 
 import tagList from './tagList';
-import {articleList,articleDetail,prenextArticle} from './article';
+import articleList from './articleList';
+import articleDetail from './articleDetail';
 import options from './options';
 import commentList from './comment';
 
+import adminQueryReputation from './adminQueryReputation';
 import adminCommentList from './adminCommentList';
 import adminTagList from './adminTagList';
 import adminUserList from './adminUserList';
@@ -29,12 +31,12 @@ const rootReducer = combineReducers({
     articleList,
     options,
     articleDetail,
-    prenextArticle,
     commentList,
     adminCommentList,
     adminTagList,
     adminUserList,
-    adminArticleList
-})
+    adminArticleList,
+    adminQueryReputation
+});
 
 export default rootReducer
