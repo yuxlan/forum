@@ -2,7 +2,8 @@
 
 import {TagResource,VerifyResource,KeyResource,RegisterResource,LoginResource, QueryUserResource,UpdateResource,
         VerifyEmailResource,ConfirmEmailResource,ChangeEmailResource,
-        AddArticleResource,DeleteArticleResource,GetArticleResource,QueryArticleResource} from './resources';
+        AddArticleResource,DeleteArticleResource,GetArticleResource,QueryArticleResource,
+        QeuryReputationResource} from './resources';
 
 export default {
 
@@ -25,12 +26,16 @@ export default {
 
     // 用户注册
     userRegister: function (u_email,u_name,u_psw) {
-        return RegisterResource('post', {u_email,u_name,u_psw});
+        let res = RegisterResource('post', {u_email, u_name, u_psw});
+        console.log('userRegister:', res);
+        return res;
     },
 
     // 用户登录
     userLogin: function (u_loginname,u_psw) {
-        return LoginResource('post', {u_loginname,u_psw});
+        let res = LoginResource('post', {u_loginname,u_psw});
+        console.log('userLogin:',res);
+        return res;
     },
 
     // 查询用户信息
@@ -40,7 +45,9 @@ export default {
 
     // 更新用户信息
     updateUser: function (u_id,u_psw,u_realname,u_blog,u_github,u_tags,u_intro) {
-        return UpdateResource('post', {u_id,u_psw,u_realname,u_blog,u_github,u_tags,u_intro});
+        let res = UpdateResource('post', {u_id,u_psw,u_realname,u_blog,u_github,u_tags,u_intro});
+        console.log('updateUser:',res);
+        return res;
     },
 
     // 验证邮箱
@@ -58,6 +65,13 @@ export default {
         return ChangeEmailResource('post', {u_id,u_psw,u_email});
     },
 
+    // 查询声望记录
+    queryReputation: function (u_id,u_psw) {
+        let res = QeuryReputationResource('post',{u_id,u_psw});
+        console.log('queryReputation:',res);
+        return res;
+    },
+
     // 添加文章
     addArticle: function (u_id,u_psw,u_title,u_text,u_tags) {
         return AddArticleResource('post', {u_id,u_psw,u_title,u_text,u_tags});
@@ -65,7 +79,9 @@ export default {
 
     // 删除文章
     deleteArticle: function (u_id,u_psw,t_id) {
-        return DeleteArticleResource('post', {u_id,u_psw,t_id});
+        let res = DeleteArticleResource('post', {u_id,u_psw,t_id});
+        console.log('deleteArticle:',res);
+        return res;
     },
 
     // 获取文章展示列表

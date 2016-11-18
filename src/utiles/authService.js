@@ -22,7 +22,6 @@ export function getCookie(name){
 }
 
 export function removeCookie(name){
-
     cookie.remove(name,cookieConfig);
 
 }
@@ -62,4 +61,3 @@ export function adminAuth(nextState,replaceState){
         replaceState(null,'/')
     }
 }
-

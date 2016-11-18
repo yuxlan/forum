@@ -1,8 +1,8 @@
 // 开启服务 开发环境下
 
-var webpack = require('webpack');
-var WebpackDevServer = require('webpack-dev-server');
-var config = require('./webpack.config');
+let webpack = require('webpack');
+let WebpackDevServer = require('webpack-dev-server');
+let config = require('./webpack.config');
 
 new WebpackDevServer(webpack(config), {
     publicPath: config.output.publicPath,

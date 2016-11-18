@@ -3,5 +3,17 @@ npm-debug.log
 logs/*
 public/*
 !public/favicon.jpg
+!public/animate.js
+!public/app_configure.js
+!public/auto_play.js
+!public/backTop.js
+!public/focus_img.js
+!public/index.js
+!public/jquery.js
+!public/jquery-1.12.4.min.js
+!public/main.js
+!public/require.js
+!public/slide_show.js
+!public/tabs.js
 .idea/
 

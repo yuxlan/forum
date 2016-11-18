@@ -1,4 +1,4 @@
-// 用户的详细评论
+// 用户对于某一篇文章的评论，需要登陆之后才能评论
 
 import React from 'react';
 import defaultAvatar from '../../assets/imgs/userimg.png';

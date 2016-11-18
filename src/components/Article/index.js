@@ -1,3 +1,5 @@
+// 文章详情页
+
 import React from 'react'
 import {bindActionCreators} from 'redux'
 import {connect} from 'react-redux'
@@ -11,7 +13,7 @@ const mapStateToProps = state =>{
     return {
         auth:state.auth.u_id,
         articleDetail:state.articleDetail.toJS(),
-        prenextArticle:state.prenextArticle.toJS(),
+        //prenextArticle:state.prenextArticle.toJS(),
         commentList:state.commentList.toJS(),
     }
 };

@@ -6,7 +6,9 @@ import {connect} from 'react-redux';
 import {Link} from 'react-router';
 
 import * as actionCreators from '../../actions/auth';
+import * as actions from '../../actions';
 // import SNSLogin from './snsLogin'; // 第三方登录，后期可加   <SNSLogin logins={sns.logins}/>
+
 
 function mapStateToProps(state) {
     return{
@@ -89,80 +91,92 @@ export default class Login extends React.Component{
 
     login(e) {
         e.preventDefault();
-        this.props.loginUser(this.state.u_loginname,this.state.u_psw, this.state.redirectTo);
+        localStorage.setItem('u_psw',this.state.u_psw);
+        actions.loginUser(this.state.u_loginname,this.state.u_psw, this.state.redirectTo);
     }
 
     render(){
+        const style={display: 'block',width: '100%',margin:'0px',};
         return (
-            <div className="sign">
-                <div className="container">
-                    <div className='row flipInX'>
-                        <div className='col-sm-8'>
-                            <h3 className="text-center signtitle">
-                                <br/>
-                                <br/>
-                                <br/>
-                                <br/>
-                                <br/>
-                            </h3>
-                            <h4 className="text-center"><strong>欢迎回来</strong></h4>
-                            <br />
-                            {
-                                this.props.statusText &&
-                                <div className="alert alert-info">
-                                    {this.props.statusText}
-                                </div>
-                            }
-                            <div className='panel panel-default'>
-                                <div className='panel-body'>
-                                    <form   onKeyPress={(e) => this._handleKeyPress(e)}>
-                                        <div className='form-group '>
-                                            <label className='control-label label-font'>输入用户名或邮箱
-                                            </label>
-                                            <input type="text"
-                                                   className='form-control'
-                                                    ref="u_loginname"
-                                                    onChange={(e) => this.changeValue(e,'u_loginname')}/>
-                                            <span className='help-block'>
+            <div className="main">
+                <h1>实验班问答交流平台</h1>
+                <div className="login-form">
+                    <div className="login-left">
+                        <div className="logo">
+                            <h2>欢迎回来</h2>
+                            <p> </p>
+                        </div>
+                        <div className="social-icons">
+                            <ul>
+                            </ul>
+                        </div>
+                    </div>
+                    <div className="login-right">
+                        <div className="sap_tabs">
+                            <div id="horizontalTab" style={style}>
+                                <ul className="resp-tabs-list">
+                                    <li className="resp-tab-item" aria-controls="tab_item-0" role="tab"><span>登录</span></li>
+                                    <div className="clear"> </div>
+                                </ul>
+                                <div className="resp-tabs-container">
+                                    <div className="tab-1 resp-tab-content" aria-labelledby="tab_item-0">
+                                        <div className="login-top">
+                                            {
+                                                this.props.statusText &&
+                                                <div className="alert alert-info">
+                                                    {this.props.statusText}
+                                                </div>
+                                            }
+                                            <form   onKeyPress={(e) => this._handleKeyPress(e)}>
+                                                <input type="text"
+                                                       className="email"
+                                                       ref="u_loginname"
+                                                       placeholder="用户名"
+                                                       required=""
+                                                       onChange={(e) => this.changeValue(e,'u_loginname')}/>
+                                                <span className='help-block'>
                                                     {this.state.u_loginname_error_text}
-                                            </span>
-                                        </div>
-                                        <div className='form-group '>
-                                            <label className='control-label label-font'>输入密码
-                                            </label>
-                                            <input type="password"
-                                                   className='form-control'
-                                                    ref="u_psw"
-                                                    onChange={(e) => this.changeValue(e,'u_psw')}/>
-                                            <span className='help-block'>
+                                                </span>
+                                                <input type="password"
+                                                       className="password"
+                                                       ref="u_psw"
+                                                       placeholder="密码"
+                                                       required=""
+                                                       onChange={(e) => this.changeValue(e,'u_psw')}/>
+                                                <span className='help-block'>
                                                     {this.state.u_psw_error_text}
-                                            </span>
+                                                </span>
+                                            </form>
+                                            <div className="login-text">
+                                                <ul>
+                                                    <li><label><input type="checkbox" value="Remember-Me" /> 记住密码？</label></li>
+                                                    <li><Link to="/register">前往注册 >></Link></li>
+                                                </ul>
+                                            </div>
+                                            <div className="login-bottom login-bottom1">
+                                                <div className="submit">
+                                                    <form>
+                                                        <input type="submit"
+                                                               value="登录"
+                                                               disabled={this.state.disabled}
+                                                               onClick={(e) => this.login(e)}/>
+                                                    </form>
+                                                </div>
+                                                <ul>
+                                                    <li><p>通过其它方式登录</p></li>
+                                                    <li><a href="#"><i className="iconfont">&#xe620;</i></a></li>
+                                                    <li><a href="#" className="twt"><i className="iconfont">&#xe63a;</i></a></li>
+                                                    <li><a href="#" className="ggl"><i className="iconfont">&#xe602;</i></a></li>
+                                                </ul>
+                                                <div className="clear"></div>
+                                            </div>
                                         </div>
-                                        <div className="form-group">
-                                            <button className="btn btn-primary"
-                                                    type="submit"
-                                                    disabled={this.state.disabled}
-                                                    onClick={(e) => this.login(e)}>
-                                                登 录
-                                            </button>
-                                        </div>
-                                        <br/>
-                                        <Link to='/'>
-                                            返回首页
-                                        </Link>
-                                        <br/>
-                                        <br/>
-                                        <Link to='/register' className="link-font">
-                                            新用户吗？请先前往注册 >>
-                                        </Link>
-                                    </form>
-                                    <hr/>
-                                    <p className="text-center">您还可以通过以下方式直接登录</p>
-                                    <hr />
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    <div className="clear"> </div>
                 </div>
             </div>
         )

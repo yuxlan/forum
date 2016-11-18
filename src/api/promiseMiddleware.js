@@ -14,6 +14,7 @@ export default function promiseMiddleware(){
         next({...rest,type:REQUEST});
         
         return promise.then(response => {
+            console.log('response:',response);
             return {
                 json:response.data,
                 status:response.statusText

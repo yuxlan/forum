@@ -1,3 +1,5 @@
+// 一篇文章的相关信息，包括文章的收藏数、评论数、以及喜欢这篇文章的数量
+
 import React from 'react'
 
 export default class Content extends React.Component{
@@ -9,7 +11,7 @@ export default class Content extends React.Component{
                 <h1 className="title">{articleDetail.t_title}</h1>
                 <div className="counts">
                     <span className="views-count">
-                        阅读{articleDetail.t_star}
+                        收藏{articleDetail.t_star}
                     </span>
                     <span className="comments-count">
                         评论{articleDetail.t_comments}

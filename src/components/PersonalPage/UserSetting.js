@@ -75,8 +75,7 @@ export default class UserSetting extends Component{
                                                 <form className="settings-form" name="settingForm" onSubmit={this.handleSubmit} noValidate>
                                                     <div className="form-group">
                                                         <label className="control-label">昵称</label>
-                                                        <input placeholder="2-15字符，英文、数字"
-                                                               {...nickname}
+                                                        <input {...nickname}
                                                                type="text"
                                                                className={ this.validatorClass(nickname) }
                                                                minLength="2" maxLength="15" />
