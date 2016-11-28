@@ -4,9 +4,11 @@ import React,{Component} from 'react'
 import {Link} from 'react-router';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
+import $ from 'jquery';
 
 import * as Actions from '../../actions';
 import {customTime} from '../../utiles';
+import {API_ROOT} from '../../config';
 
 import Tags from './tags';
 import Nav from './navbar';
@@ -56,12 +58,26 @@ export default class Home extends Component{
     }
 
     getArticleAbout(t_id){
-        const {actions} = this.props;
-        actions.getArticleDetail(t_id);
+       // const {actions} = this.props;
+       // actions.getArticleDetail(t_id);
+        let url = API_ROOT + 't/query';
+        $.get(url,{t_id:t_id},
+            function(data){
+                localStorage.setItem('t_id',data.t_id);
+                localStorage.setItem('t_title',data.t_title);
+                localStorage.setItem('t_text',data.t_text);
+                localStorage.setItem('t_date',data.t_date);
+                localStorage.setItem('t_like',data.t_like);
+                localStorage.setItem('t_comments',data.t_comments);
+                localStorage.setItem('t_tags',data.t_tags);
+                localStorage.setItem('t_date_latest',data.t_date_latest);
+                localStorage.setItem('t_star',data.t_star);
+                console.log('queryArticle:',data);
+            })
     }
 
     render(){
-        const {tagList,articleList,articleDetail,options,actions,auth,location,showmsg,children} = this.props;
+        const {tagList,articleList,options,actions,auth,location,showmsg,children,articleDetail} = this.props;
         console.log('tagList:',tagList,'articleList:',articleList,'articleDetail:',articleDetail);
 
         let articleIds = articleList.tIds.split('&');
@@ -93,42 +109,43 @@ export default class Home extends Component{
                                     <ul className="article-list list-unstyled clearfix">
                                         {articlesByHot.length > 0 &&
                                         articlesByHot.map((t_id,i) =>{
+                                                this.getArticleAbout(t_id);
                                                 return(
                                                     <li className="article-item"
-                                                        key={i}
-                                                        onLoad={e => this.getArticleAbout(t_id)}>
+                                                        key={i}>
                                                         <div className="articleList-item">
                                                             <p className="list-top">
                                                                 <span className="time">
-                                                                    {customTime(articleDetail.articleDateLatest)}
+                                                                    {customTime(localStorage.getItem('t_date_latest'))}
                                                                 </span>
                                                             </p>
-                                                            <h4 className="title">
-                                                                <Link to={'/article/' + articleDetail.articleId}
+                                                            <h2 className="title">
+                                                                <strong>
+                                                                <Link to={'/article/' + localStorage.getItem('t_id')}
                                                                       className="link-title">
-                                                                    <strong>
-                                                                        {articleDetail.articleTitle}
-                                                                    </strong>
+                                                                        {localStorage.getItem('t_title')}
                                                                 </Link>
-                                                            </h4>
+                                                                </strong>
+                                                            </h2>
                                                             <p className="list-footer">
                                                                 <span className="visit-count">
-                                                                    收藏 {articleDetail.articleStar}
+                                                                    收藏 {localStorage.getItem('t_star')}
                                                                 </span>
                                                                 <span className="comment-count">
-                                                                    评论 {articleDetail.articleComments}
+                                                                    评论 {localStorage.getItem('t_comments')}
                                                                 </span>
                                                                 <span className="like-count">
-                                                                    喜欢 {articleDetail.articleLike}
+                                                                    喜欢 {localStorage.getItem('t_like')}
                                                                 </span>
-                                                                <span>  标签{articleDetail.articleTags}&nbsp;
+                                                                <span>  标签{localStorage.getItem('t_tags')}&nbsp;
                                                                 </span><br/>
                                                                 <Link to=""/>
                                                             </p>
                                                         </div><br/><br/>
                                                     </li>
-                                                )}
-                                        )}
+                                                )
+                                        })
+                                        }
                                     </ul>
                                     <br /><br />
                                 </div>

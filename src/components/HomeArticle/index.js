@@ -85,12 +85,6 @@ export default class Home extends Component{
                                       options={options}
                                       isFetching={articleList.isFetching}
                                       changeSort={this.handleChange}/>
-                                <h4>文章
-                                    <span className="list-count">
-                                        共{tagList.length}篇文章
-                                    </span>
-                                </h4>
-                                <Articles changeSort={this.handleChange}/>
                             </div>
                         </div>
                     </div>

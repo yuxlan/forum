@@ -49,5 +49,4 @@ export default function configureStore(history){
  }
 
  return store;
- }
- */
+ }*/

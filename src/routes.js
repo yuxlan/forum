@@ -32,19 +32,19 @@ export default ()=>(
     <Route path='/' component={App}>
         <IndexRoute component={Home}/>
         <Route path='/homearticle' components={HomeArticle}/>
-        <Route path='/login' component={requireNoAuthentication(Login)}/>
-        <Route path='/register' component={requireNoAuthentication(Register)}/>
+        <Route path='/login' component={Login}/>
+        <Route path='/register' component={Register}/>
         <Route path='/hintverifyemail' component={HintVerifyEmail}/>
         <Route path='/verifyemail' component={VerifyEmail}/>
         <Route path='/write' component={WriteArticle} />
         <Article path="/article/:id" component={Article} />
         <PersonalPage path='/personalpage' component={PersonalPage}>
             <IndexRoute component={UserPage} />
-            <Route path='/articles' component={UserArticles} />
-            <Route path='/tags' component={UserTags} />
-            <Route path='/comments' component={UserComments} />
-            <Route path='/users' component={UserSetting} />
-            <Route path='/reputation' component={UserReputation} />
+            <Route path='articles' component={UserArticles} />
+            <Route path='tags' component={UserTags} />
+            <Route path='comments' component={UserComments} />
+            <Route path='users' component={UserSetting} />
+            <Route path='reputation' component={UserReputation} />
         </PersonalPage>
     </Route>
 )

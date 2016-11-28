@@ -1,10 +1,12 @@
-import React,{Component} from 'react'
-import {bindActionCreators} from 'redux'
-import {connect} from 'react-redux'
-import {reduxForm} from 'redux-form'
-import * as Actions from '../../actions'
+import React,{Component} from 'react';
+import {Link,browserHistory } from 'react-router';
+import Alert from 'react-s-alert';
+import $ from 'jquery';
 
-const validate = values => {
+import {API_ROOT} from '../../config';
+
+
+/*const validate = values => {
     const errors ={};
     if(!values.nickname){
         errors.nickname = "Required"
@@ -32,20 +34,125 @@ const mapDispatchToProps = dispatch => {
     form:'setting',
     fields:['nickname'],
     validate
-})
+})*/
 export default class UserSetting extends Component{
     constructor(props){
         super(props);
-        this.handleSubmit = this.handleSubmit.bind(this)
+        this.handleSubmit = this.handleSubmit.bind(this);
+        this.updateUserInfo = this.updateUserInfo.bind(this);
+        this.getUserInfo = this.getUserInfo.bind(this);
+    }
+
+    componentDidMount(){
+
+    }
+
+    getUserInfo(u_id){
+        let url = API_ROOT + 'u/query';
+        $.post(url,{u_id:u_id},
+            function (data) {
+                if(data.code === 1){
+                    sessionStorage.setItem('u_realname',data.u_realname);
+                    sessionStorage.setItem('u_blog',data.u_blog);
+                    sessionStorage.setItem('u_github',data.u_github);
+                    sessionStorage.setItem('u_intro',data.u_intro);
+                    browserHistory.push('/personalpage');
+                }
+            })
+    }
+
+    updateUserInfo(u_id,u_psw,u_realname,u_blog,u_github,u_intro){
+        let url = API_ROOT + 'u/update';
+        $.post(url,
+            {u_id:u_id,u_psw:u_psw,u_realname:u_realname,u_blog:u_blog,u_github:u_github,u_intro:u_intro},
+            function(data){
+                if(data.code === 1){
+                    let content = '更新用户信息成功';
+                    let type = 'success';
+                    const {hideMsg} = this.props;
+                    if(content !== '' && type) {
+                        switch (type) {
+                            case 'error':
+                                Alert.error(content);
+                                break;
+                            case 'success':
+                                Alert.success(content);
+                                break;
+                            case 'info':
+                                Alert.info(content);
+                                break;
+                            case 'warning':
+                                Alert.warning(content);
+                                break;
+                            default:
+                                Alert.error(content)
+                        }
+                        hideMsg();
+                    }
+                    sessionStorage.removeItem('u_realname');
+                    sessionStorage.removeItem('u_blog');
+                    sessionStorage.removeItem('u_github');
+                    sessionStorage.removeItem('u_intro');
+                    this.getUserInfo(sessionStorage.getItem('u_id'));
+                }
+                else{
+                    let content = data.codeState;
+                    let type = 'error';
+                    const {hideMsg} = this.props;
+                    if(content !== '' && type) {
+                        switch (type) {
+                            case 'error':
+                                Alert.error(content);
+                                break;
+                            case 'success':
+                                Alert.success(content);
+                                break;
+                            case 'info':
+                                Alert.info(content);
+                                break;
+                            case 'warning':
+                                Alert.warning(content);
+                                break;
+                            default:
+                                Alert.error(content)
+                        }
+                        hideMsg();
+                    }
+                }
+            });
+        //const {values,actions} = this.props;
+       //console.log(values);
+      //actions.updateUser(values);
+    }
+
+    changeValue(e){
+
     }
 
     handleSubmit(e){
         e.preventDefault();
-        const {values,actions} = this.props;
-        console.log(values);
-        actions.updateUser(values);
+
+        let user_id = sessionStorage.getItem('u_id');
+        let user_psw = sessionStorage.getItem('u_psw');
+        let user_realname = this.state.userrealname;
+        let user_blog = this.state.userblog;
+        let user_github = this.state.usergithub;
+        let user_intro = this.state.userintro;
+
+        console.log('userId:',user_id,'userPsw:',user_psw,'userRealName:',user_realname,'userBlog:',user_blog,'userGithub:',user_github,'userIntro:',user_intro);
+        this.updateUserInfo(user_id,user_psw,user_realname,user_blog,user_github,user_intro);
     }
-    validatorClass(field){
+
+    changeValue(e,type){
+        const value = e.target.value;
+        const next_state = {};
+        next_state[type] = value;
+        this.setState(next_state,() => {
+            this.isDisabled();
+        });
+    }
+
+  /*  validatorClass(field){
         let initClass = 'form-control';
         if(field.invalid){
             initClass += ' ng-invalid'
@@ -54,44 +161,78 @@ export default class UserSetting extends Component{
             initClass += ' ng-dirty'
         }
         return initClass;
-    }
+    }*/
     render(){
-        const {fields:{nickname},dirty,invalid} = this.props;
+        //const {fields:{nickname},dirty,invalid} = this.props;
         // console.log(nickname)
         return (
             <div>
-                <div className="background">
+                <Alert stack={{limit:1}} position='top-right' timeout={3000}/>
+                <br />
+                <br />
+            <div className="panel admin-panel table-1">
+                <div className="panel-head">
+                    <strong><span className="icon-pencil-square-o"> </span> 更改用户信息 </strong>
+                    <Link to='/personalpage'>返回用户页面</Link>
                 </div>
-                <div className="outer-container">
-                    <div className="wrap-container">
-                        <div className="content-outer">
-                            <div className="content-inner">
-                                <div className="settings-box">
-                                    <div className="settings-container">
-                                        <h2 className="title">设置</h2>
-                                        <hr />
-                                        <div className="profile">
-                                            <div className="control-group">
-                                                <form className="settings-form" name="settingForm" onSubmit={this.handleSubmit} noValidate>
-                                                    <div className="form-group">
-                                                        <label className="control-label">昵称</label>
-                                                        <input {...nickname}
-                                                               type="text"
-                                                               className={ this.validatorClass(nickname) }
-                                                               minLength="2" maxLength="15" />
-                                                    </div>
-                                                    <button type="submit" disabled={ dirty && invalid } className="btn btn-block btn-lg btn-primary">保 存</button>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                <br />
+                <br />
+                <div className="body-content">
+                    <form className="form-x">
+                        <div className="form-group">
+                            <div className="label">
+                                <label>真实姓名：</label>
+                            </div>
+                            <div className="field">
+                                <input type="text"
+                                       className="input"
+                                       ref="userrealname"
+                                       onChange={(e) => this.changeValue(e,'userrealname')}/>
+                                <div className="tips"></div>
                             </div>
                         </div>
-                    </div>
+                        <div className="form-group">
+                            <div className="label">
+                                <label>博客地址：</label>
+                            </div>
+                            <div className="field">
+                                <input type="text"
+                                       className="input"
+                                       ref="userblog"/>
+                            </div>
+                        </div>
+                        <div className="form-group">
+                            <div className="label">
+                                <label>GitHub地址：</label>
+                            </div>
+                            <div className="field">
+                                <input type="text" className="input" ref="usergithub"/>
+                                <div className="tips"></div>
+                            </div>
+                        </div>
+                        <div className="form-group">
+                            <div className="label textarea">
+                                <label>自我介绍：</label>
+                            </div>
+                            <div className="field">
+                                <textarea className="input" ref="userintro"> </textarea>
+                                <div className="tips"></div>
+                            </div>
+                        </div>
+                        <div className="form-group">
+                            <div className="label">
+                                <label> </label>
+                            </div>
+                            <div className="field">
+                                <button className="button bg-main icon-check-square-o"
+                                        type="submit"
+                                        onClick={(e) => this.handleSubmit(e)}> 提交</button>
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </div>
-
+            </div>
         )
     }
 }

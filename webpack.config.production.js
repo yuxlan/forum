@@ -15,8 +15,6 @@ module.exports = {
 
     entry: ['./src/index.js'],
 
-
-
     module: {
         loaders: [
             {

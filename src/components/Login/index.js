@@ -2,13 +2,15 @@
 
 import React from 'react';
 import {bindActionCreators} from 'redux';
+import * as Actions from '../../actions';
 import {connect} from 'react-redux';
-import {Link} from 'react-router';
+import {Link,browserHistory } from 'react-router';
+import {showMsg} from '../../actions/other';
+import $ from 'jquery';
+import {API_ROOT} from '../../config';
 
 import * as actionCreators from '../../actions/auth';
-import * as actions from '../../actions';
 // import SNSLogin from './snsLogin'; // 第三方登录，后期可加   <SNSLogin logins={sns.logins}/>
-
 
 function mapStateToProps(state) {
     return{
@@ -18,14 +20,16 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-    return bindActionCreators(actionCreators,dispatch);
+    return {
+        actions:bindActionCreators(Actions,dispatch)
+    }
 }
 
 @connect(mapStateToProps,mapDispatchToProps)
 export default class Login extends React.Component{
     constructor(props){
         super(props);
-        const redirectRoute = '/login';
+        const redirectRoute = '/';
         this.state = {
             u_loginname: '',
             u_psw:'',
@@ -89,94 +93,112 @@ export default class Login extends React.Component{
         }
     }
 
+    loginUser(u_loginname,u_psw) {
+        let url = API_ROOT + 'sign_in';
+        sessionStorage.setItem('u_psw',u_psw);
+        $.post(url,{u_loginname:u_loginname,u_psw:u_psw},
+            function(data){
+                sessionStorage.setItem('u_id',data.u_id);
+                sessionStorage.setItem('u_name',data.u_name);
+                sessionStorage.setItem('u_email',data.u_email);
+                sessionStorage.setItem('u_email_confirm',data.u_email_confirm);
+                sessionStorage.setItem('u_level',data.u_level);
+                sessionStorage.setItem('u_reputation',data.u_reputation);
+                sessionStorage.setItem('u_realname',data.u_realname);
+                sessionStorage.setItem('u_blog',data.u_blog);
+                sessionStorage.setItem('u_github',data.u_github);
+                sessionStorage.setItem('u_articles',data.u_articles);
+                sessionStorage.setItem('u_questions',data.u_questions);
+                sessionStorage.setItem('u_answers',data.u_answers);
+                sessionStorage.setItem('u_watchusers',data.u_watchusers);
+                sessionStorage.setItem('u_tags',data.u_tags);
+                sessionStorage.setItem('u_intro',data.u_intro);
+                console.log('userLogin',data);
+                showMsg('登录成功','success');
+                browserHistory.push('/');
+        })
+    }
+
     login(e) {
         e.preventDefault();
-        localStorage.setItem('u_psw',this.state.u_psw);
-        actions.loginUser(this.state.u_loginname,this.state.u_psw, this.state.redirectTo);
+       // const {actions} = this.props;
+       // actions.loginUser(this.state.u_loginname,this.state.u_psw, this.state.redirectTo);
+        this.loginUser(this.state.u_loginname,this.state.u_psw);
     }
 
     render(){
-        const style={display: 'block',width: '100%',margin:'0px',};
         return (
-            <div className="main">
-                <h1>实验班问答交流平台</h1>
-                <div className="login-form">
-                    <div className="login-left">
-                        <div className="logo">
-                            <h2>欢迎回来</h2>
-                            <p> </p>
-                        </div>
-                        <div className="social-icons">
-                            <ul>
-                            </ul>
-                        </div>
-                    </div>
-                    <div className="login-right">
-                        <div className="sap_tabs">
-                            <div id="horizontalTab" style={style}>
-                                <ul className="resp-tabs-list">
-                                    <li className="resp-tab-item" aria-controls="tab_item-0" role="tab"><span>登录</span></li>
-                                    <div className="clear"> </div>
-                                </ul>
-                                <div className="resp-tabs-container">
-                                    <div className="tab-1 resp-tab-content" aria-labelledby="tab_item-0">
-                                        <div className="login-top">
-                                            {
-                                                this.props.statusText &&
-                                                <div className="alert alert-info">
-                                                    {this.props.statusText}
-                                                </div>
-                                            }
-                                            <form   onKeyPress={(e) => this._handleKeyPress(e)}>
-                                                <input type="text"
-                                                       className="email"
-                                                       ref="u_loginname"
-                                                       placeholder="用户名"
-                                                       required=""
-                                                       onChange={(e) => this.changeValue(e,'u_loginname')}/>
-                                                <span className='help-block'>
+            <div>
+                <div className="container">
+                    <div className='row flipInX'>
+                        <div className='col-sm-8'>
+                            <h3 className="text-center signtitle">
+                                <br/>
+                                <br/>
+                                <br/>
+                                <br/>
+                                <br/>
+                            </h3>
+                            <h4 className="text-center"><strong>欢迎回来</strong></h4>
+                            <br />
+                            {
+                                this.props.statusText &&
+                                <div className="alert alert-info">
+                                    {this.props.statusText}
+                                </div>
+                            }
+                            <div className='panel panel-default'>
+                                <div className='panel-body'>
+                                    <form   onKeyPress={(e) => this._handleKeyPress(e)}>
+                                        <div className='form-group '>
+                                            <label className='control-label label-font'>
+                                            </label>
+                                            <input type="text"
+                                                   className='form-control'
+                                                   ref="u_loginname"
+                                                   placeholder='输入用户名或邮箱'
+                                                   onChange={(e) => this.changeValue(e,'u_loginname')}/>
+                                            <span className='help-block'>
                                                     {this.state.u_loginname_error_text}
-                                                </span>
-                                                <input type="password"
-                                                       className="password"
-                                                       ref="u_psw"
-                                                       placeholder="密码"
-                                                       required=""
-                                                       onChange={(e) => this.changeValue(e,'u_psw')}/>
-                                                <span className='help-block'>
-                                                    {this.state.u_psw_error_text}
-                                                </span>
-                                            </form>
-                                            <div className="login-text">
-                                                <ul>
-                                                    <li><label><input type="checkbox" value="Remember-Me" /> 记住密码？</label></li>
-                                                    <li><Link to="/register">前往注册 >></Link></li>
-                                                </ul>
-                                            </div>
-                                            <div className="login-bottom login-bottom1">
-                                                <div className="submit">
-                                                    <form>
-                                                        <input type="submit"
-                                                               value="登录"
-                                                               disabled={this.state.disabled}
-                                                               onClick={(e) => this.login(e)}/>
-                                                    </form>
-                                                </div>
-                                                <ul>
-                                                    <li><p>通过其它方式登录</p></li>
-                                                    <li><a href="#"><i className="iconfont">&#xe620;</i></a></li>
-                                                    <li><a href="#" className="twt"><i className="iconfont">&#xe63a;</i></a></li>
-                                                    <li><a href="#" className="ggl"><i className="iconfont">&#xe602;</i></a></li>
-                                                </ul>
-                                                <div className="clear"></div>
-                                            </div>
+                                            </span>
                                         </div>
-                                    </div>
+                                        <div className='form-group '>
+                                            <label className='control-label label-font'>
+                                            </label>
+                                            <input type="password"
+                                                   className='form-control'
+                                                   ref="u_psw"
+                                                   placeholder='输入密码'
+                                                   onChange={(e) => this.changeValue(e,'u_psw')}/>
+                                            <span className='help-block'>
+                                                    {this.state.u_psw_error_text}
+                                            </span>
+                                        </div>
+                                        <div className="form-group">
+                                            <button className="btn btn-primary"
+                                                    type="submit"
+                                                    disabled={this.state.disabled}
+                                                    onClick={(e) => this.login(e)}>
+                                                登 录
+                                            </button>
+                                        </div>
+                                        <br/>
+                                        <Link to='/'>
+                                            返回首页
+                                        </Link>
+                                        <br/>
+                                        <br/>
+                                        <Link to='/register' className="link-font">
+                                            新用户吗？请先前往注册 >>
+                                        </Link>
+                                    </form>
+                                    <hr/>
+                                    <p className="text-center">您还可以通过以下方式直接登录</p>
+                                    <hr />
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div className="clear"> </div>
                 </div>
             </div>
         )

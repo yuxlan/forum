@@ -36,6 +36,7 @@ export default class Navbar extends React.Component{
     componentDidMount(){
         window.addEventListener('scroll',this.handleScroll)
     }
+
     handleScroll(){
         if(window.scrollY > 50){
             this.setState({
@@ -47,17 +48,20 @@ export default class Navbar extends React.Component{
             })
         }
     }
+
     dispatchNewRoute(route) {
         browserHistory.push(route);
         this.setState({
             open:false,
         });
     }
+
     handleClickOutside(){
         this.setState({
             open:false,
         });
     }
+
     logout(e){
         e.preventDefault();
         this.props.logoutAndRedirect();
@@ -65,10 +69,17 @@ export default class Navbar extends React.Component{
             open:false,
         });
     }
+
     openNav(){
         this.setState({
             open:true,
         });
+    }
+
+    searchAll(){
+    }
+
+    changeValue(){
     }
 
     render(){
@@ -80,7 +91,11 @@ export default class Navbar extends React.Component{
                             <img src={Logo} height="100" width="300" alt="logo"/>
                         </div>
                         <div className="search-input">
-                            <input type="text" value="" placeholder="搜索文章或者问答" className="search-text" />
+                            <input type="text"
+                                   value=""
+                                   placeholder="搜索文章或者问答"
+                                   className="search-text"
+                                   ref="search"/>
                                 <div className="hot-words">
                                     <a href="#">Android</a>
                                     <a href="#">iOS</a>
@@ -89,19 +104,20 @@ export default class Navbar extends React.Component{
                                 <input type="submit" className="submit-btn" value="" />
                         </div>
                         {
-                            this.props.isAuthenticated
+                            sessionStorage.getItem('u_id') === null
                                 ?
-                            <div className="personal-infor">
-                                    <a href="#">
-                                        yonghum
-                                    </a>
-                            </div>
-                            :
                             <div className="personal-infor">
                                 <Link to="/login">登录</Link>
                                 <span>|</span>
                                 <Link to="/register">注册</Link>
                             </div>
+                                :
+                                <div className="personal-infor">
+                                    欢迎回来，
+                                    <Link to="/personalpage">
+                                        user_{sessionStorage.getItem('u_name')}
+                                    </Link>
+                                </div>
                     }
                     </div>
                 </header>

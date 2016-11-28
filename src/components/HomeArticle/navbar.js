@@ -10,35 +10,6 @@ import AppPic from '../../assets/imgs/headerwm.png';
 
 import * as actionCreators from '../../actions/auth';
 
-/*
-
- {
- this.props.isAuthenticated
- ?
- <li>
- <i className="tools-icon login-icon"> </i>
- <ul className="login-menu">
- <i className="hump login-hump"> </i>
- <li><a href="#">yonghuming</a></li>
- <li><hr /></li>
- <li><a href="#">我的文章</a></li>
- <li><a href="#">我的问答</a></li>
- <li><a href="#">个人设置</a></li>
- <li><hr /></li>
- <li><a href="#">退出</a></li>
- </ul>
- </li>
- :
- <li>
- <i className="tools-icon login-icon"> </i>
- <ul className="login-menu">
- <i className="hump login-hump"> </i>
- <li><a href="#">&nbsp;注册&nbsp;</a>|<a href="#">&nbsp;登录&nbsp;</a></li>
- </ul>
- </li>
- }
- */
-
 function mapStateToProps(state) {
     return{
         userId: state.auth.userId,
@@ -88,7 +59,9 @@ export default class Navbar extends React.Component{
     }
     logout(e){
         e.preventDefault();
-        this.props.logoutAndRedirect();
+        sessionStorage.removeItem('u_id','u_name');
+        browserHistory.push('/');
+     //   this.props.logoutAndRedirect();
         this.setState({
             open:false,
         });
@@ -111,9 +84,9 @@ export default class Navbar extends React.Component{
                                 <li className="nav-li">
                                     <h2><Link to="/homearticle">文章</Link><i className="indicator"> </i></h2>
                                     <dl className="nav-menu nav-menu-1">
-                                        <dt><a href="#">所有文章</a></dt>
-                                        <dd><a href="#"><i className="web-icon"> </i>热门文章</a></dd>
-                                        <dt><a href="#">最新文章</a></dt>
+                                        <dd><a href="#">所有文章</a></dd>
+                                        <dd><a href="#">热门文章</a></dd>
+                                        <dd><a href="#">最新文章</a></dd>
                                         <dd><a href="#">推荐文章</a></dd>
                                     </dl>
                                 </li>
@@ -137,22 +110,8 @@ export default class Navbar extends React.Component{
                                 </div>
                             </li>
                             {
-                            this.props.isAuthenticated
-                                ?
-                                <li>
-                                    <i className="tools-icon login-icon"> </i>
-                                    <ul className="login-menu">
-                                        <i className="hump login-hump"> </i>
-                                        <li><a href="#">yonghuming</a></li>
-                                        <li><hr /></li>
-                                        <li><a href="#">我的文章</a></li>
-                                        <li><a href="#">我的问答</a></li>
-                                        <li><a href="#">个人设置</a></li>
-                                        <li><hr /></li>
-                                        <li><a href="#">退出</a></li>
-                                    </ul>
-                                </li>
-                                :
+                                sessionStorage.getItem('u_id') === null
+                                    ?
                                 <li>
                                     <i className="tools-icon login-icon"> </i>
                                     <ul className="login-menu">
@@ -160,6 +119,20 @@ export default class Navbar extends React.Component{
                                         <li><a href="#">&nbsp;注册&nbsp;</a>|<a href="#">&nbsp;登录&nbsp;</a></li>
                                     </ul>
                                 </li>
+                                    :
+                                    <li>
+                                        <i className="tools-icon login-icon"> </i>
+                                        <ul className="login-menu">
+                                            <i className="hump login-hump"> </i>
+                                            <li><Link to="/personalpage">user_{sessionStorage.getItem('u_name')}</Link></li>
+                                            <li><hr /></li>
+                                            <li><Link to="/personalpage/articles">我的文章</Link></li>
+                                            <li><Link to="/personalpage/articles">我的问答</Link></li>
+                                            <li><Link to="/personalpage/users">个人设置</Link></li>
+                                            <li><hr /></li>
+                                            <li><a href="#" onClick={e => this.logout(e)}>退出</a></li>
+                                        </ul>
+                                    </li>
                         }
                         </ul>
                         <form action="#" method="get" id="search-bar" className="search-bar">

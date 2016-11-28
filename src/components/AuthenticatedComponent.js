@@ -37,7 +37,7 @@ export function requireAuthentication(Component) {
                 if (!u_id) {
                     browserHistory.push('/');
                 } else {
-                    this.props.loginUserSuccess(u_id);
+                    //this.props.loginUserSuccess(u_id);
                     this.setState({
                         loaded_if_needed: true,
                     });

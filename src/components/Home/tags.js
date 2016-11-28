@@ -1,9 +1,13 @@
 // 显示所有的标签
 
-import React from 'react'
+import React from 'react';
 import {Link,browserHistory} from 'react-router';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
+
+import $ from 'jquery';
+
+import {API_ROOT} from '../../config';
 import * as actionCreators from '../../actions/auth';
 import * as actions from '../../actions';
 
@@ -21,45 +25,6 @@ import WrapperItem3 from '../../assets/images/wrapper-item3.jpg';
 import WrapperItem4 from '../../assets/images/wrapper-item4.png';
 import WrapperItem5 from '../../assets/images/wrapper-item5.png';
 import RLoginIcon from '../../assets/images/r-login-icon.gif';
-
-/*
-
- <ul className="sort-tags list-unstyled clearfix">
- <li>
- <a href="javasciript:"
- className={(options.sortName == 'created')&&'active'}
- onClick={this.handleClick(changeSort,{'currentPage':1,'sortName':'created','tagId':''})}>
- 最新
- </a>
- </li>
- <li>
- <a href="javasciript:"
- className={(options.sortName == 'visit_count')&&'active'}
- onClick={this.handleClick(changeSort,{'currentPage':1,'sortName':'visit_count','tagId':''})}>
- 最热
- </a>
- </li>
- {
- tagList.map((tag,i) => {
- return (
- <li key={i}>
- <a className={(options.tagId == tag)&&'active'}
- href="#"
- onClick={this.handleClick(changeSort,{'currentPage':1,'sortName':'','tagId':tag})}>
- {tag}
- </a>
- </li>
- )
- })
- }
- {isFetching&&
- <li>
- <img src={tiny} alt="" className="loader-tiny"/>
- </li>
- }
- </ul>
-
- */
 
 function mapStateToProps(state) {
     return{
@@ -80,8 +45,31 @@ export default class Tags extends React.Component{
         this.handleClick = this.handleClick.bind(this);
     }
 
+    componentDidMount(){
+        let url = API_ROOT + 'public/tags';
+        $.get(
+            url,
+            function (data) {
+                console.log('allTags:',data);
+                return(
+                    localStorage.setItem('tagList',data)
+                )
+            }
+        )
+    }
+
     handleClick(t_tags,show_count){
         actions.getArticleList(t_tags,show_count);
+    }
+
+    logout(e){
+        e.preventDefault();
+        sessionStorage.removeItem('u_id','u_name');
+        browserHistory.push('/');
+        //   this.props.logoutAndRedirect();
+        this.setState({
+            open:false,
+        });
     }
 
     render(){
@@ -98,7 +86,8 @@ export default class Tags extends React.Component{
                                 <div className="lesson-list-detail">
                                     <div className="lesson-list-con">
                                         <dl>
-                                            <dt><a href="">
+                                            <dt><a href=""
+                                                   onClick={e => this.handleClick()}>
                                                 所有标签
                                             </a></dt>
                                             {
@@ -212,17 +201,18 @@ export default class Tags extends React.Component{
                                 <img src={RLoginIcon} alt=""/>
                             </div>
                             {
-                                this.props.isAuthenticated
+                                sessionStorage.getItem('u_id') === null
                                     ?
-                                    <div className="r-user-login">
-                                        <div className="hello-word">
-                                            <span>Hi!你好</span>
-                                            <p>这是实验班问答交流平台</p>
-                                        </div>
-                                        <div className="login-btn-con">
-                                            <Link to="/login" className="login-btn">退出</Link>
-                                        </div>
+                                <div className="r-user-login">
+                                    <div className="hello-word">
+                                        <span>Hi!你好</span>
+                                        <p>这是实验班问答交流平台</p>
                                     </div>
+                                    <div className="login-btn-con">
+                                        <Link to="/login" className="login-btn">登录</Link>
+                                        <Link to="/register" className="register">注册</Link>
+                                    </div>
+                                </div>
                                     :
                                     <div className="r-user-login">
                                         <div className="hello-word">
@@ -230,8 +220,7 @@ export default class Tags extends React.Component{
                                             <p>这是实验班问答交流平台</p>
                                         </div>
                                         <div className="login-btn-con">
-                                            <Link to="/login" className="login-btn">登录</Link>
-                                            <Link to="/register" className="register">注册</Link>
+                                            <a href="" className="login-btn" onClick={e => this.logout(e)}>退出</a>
                                         </div>
                                     </div>
                             }

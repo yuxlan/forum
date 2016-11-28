@@ -40,7 +40,7 @@ export default {
 
     // 查询用户信息
     queryUser: function (u_id) {
-        return QueryUserResource('post', {u_id});
+        return QueryUserResource('get', {u_id});
     },
 
     // 更新用户信息
@@ -86,21 +86,21 @@ export default {
 
     // 获取文章展示列表
     getArticleList: function (t_tags,show_count) {
-        let res = GetArticleResource('post', {t_tags,show_count});
+        let res = GetArticleResource('get', {t_tags,show_count});
         console.log('ArticleIds:',res);
         return res;
     },
 
     // 查询文章信息
     queryArticle: function (t_id) {
-        let res = QueryArticleResource('post', {t_id});
+        let res = QueryArticleResource('get', {t_id});
         console.log('queryArticle:',res);
         return res;
     },
 
     // 获取评论
     getComment: function (c_id) {
-        return QueryCommentResource('post',{c_id});
+        return QueryCommentResource('get',{c_id});
     },
 
     // 添加评论
