@@ -44,7 +44,7 @@ export function requireNoAuthentication(Component) {
             } else {
                 const u_id = localStorage.getItem('u_id');
                 if (u_id) {
-                    this.props.loginUserSuccess(u_id);
+                  //  this.props.loginUserSuccess(u_id);
                     browserHistory.push('/');
                 } else {
                     this.setState({

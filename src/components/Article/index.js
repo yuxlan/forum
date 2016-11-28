@@ -1,26 +1,22 @@
 // 文章详情页
 
-import React from 'react'
-import {bindActionCreators} from 'redux'
-import {connect} from 'react-redux'
-import * as Actions from '../../actions'
-import Content from './content'
-import Like from './like'
-import Comment from './comment'
-import LoginModal from '../Login/modal'
+import React from 'react';
+import {connect} from 'react-redux';
+
+import {API_ROOT} from '../../config';
 
 const mapStateToProps = state =>{
     return {
-        auth:state.auth.u_id,
+      /*  auth:state.auth.u_id,
         articleDetail:state.articleDetail.toJS(),
-        //prenextArticle:state.prenextArticle.toJS(),
-        commentList:state.commentList.toJS(),
+        prenextArticle:state.prenextArticle.toJS(),
+        commentList:state.commentList.toJS(),*/
     }
 };
 
 const mapDispatchToProps = dispatch => {
       return {
-          actions:bindActionCreators(Actions,dispatch)
+       //   actions:bindActionCreators(Actions,dispatch)
       }
 };
 
@@ -29,31 +25,39 @@ export default class Article extends React.Component{
     constructor(props){
         super(props);
         this.fetchArticleData = this.fetchArticleData.bind(this);
-        this.toggleLike = this.toggleLike.bind(this);
+       // this.toggleLike = this.toggleLike.bind(this);
         this.handleSubmitComment = this.handleSubmitComment.bind(this);
         this.handleSubmitReply = this.handleSubmitReply.bind(this);
-        this.state = {
-            showModal:false
-        }
+     //   this.state = {
+      //      showModal:false
+      //  }
     }
 
     componentDidMount(){
-        const {params:{t_id},actions} = this.props;
-        this.fetchArticleData(t_id);
+        this.fetchArticleData(localStorage.getItem('t_id'));
     }
 
     componentWillReceiveProps(nextProps){
-        if(nextProps.params.id !== this.props.params.id){
-            this.fetchArticleData(nextProps.params.id);
-        }
+        //if(nextProps.params.id !== this.props.params.id){
+       //     this.fetchArticleData(nextProps.params.id);
+       // }
     }
 
     fetchArticleData(t_id){
-        const {actions} = this.props;
-        if(t_id){
-            actions.getArticleDetail(t_id);
-            actions.getCommentList(t_id);
-        }
+        let url = API_ROOT + 't/query';
+        $.post(url,{t_id:t_id},
+            function(data){
+                localStorage.setItem('t_id',data.t_id);
+                localStorage.setItem('t_title',data.t_title);
+                localStorage.setItem('t_text',data.t_text);
+                localStorage.setItem('t_date',data.t_date);
+                localStorage.setItem('t_like',data.t_like);
+                localStorage.setItem('t_comments',data.t_comments);
+                localStorage.setItem('t_tags',data.t_tags);
+                localStorage.setItem('t_date_latest',data.t_date_latest);
+                localStorage.setItem('t_star',data.t_star);
+                console.log('queryArticle:',data);
+            })
     }
 
     handleSubmitComment(e,content){
@@ -72,19 +76,19 @@ export default class Article extends React.Component{
     }
 
     closeLoginModal(){
-        this.setState({
-            showModal:false
-        })
+       // this.setState({
+       //     showModal:false
+       // })
     }
 
     openLoginModal(){
-        this.setState({
-            showModal:true
-        })
+     //   this.setState({
+     //       showModal:true
+     //   })
     }
 
     render(){
-        const {articleDetail,commentList,auth} = this.props;
+       // const {articleDetail,commentList,auth} = this.props;
 
         return (
         <div>
@@ -95,16 +99,23 @@ export default class Article extends React.Component{
                     <div className="content-outer">
                         <div className="content-inner">
                             <div className="article-box">
-                                <Content articleDetail={articleDetail}/>
-                                <Like likeCount={articleDetail.t_like}
-                                      isLike={articleDetail.isLike}/>
-                                <Comment commentList={commentList}
-                                         auth={auth}
-                                         submitComment={this.handleSubmitComment}
-                                         submitReply={this.handleSubmitReply} o
-                                         penLoginModal={this.openLoginModal.bind(this)}/>
-                                <LoginModal isShowModal={this.state.showModal}
-                                            closeModal={this.closeLoginModal.bind(this)}/>
+                                <div className="article-container">
+                                    <h1 className="title">{localStorage.getItem('t_title')}</h1>
+                                    <div className="counts">
+                                        <span className="views-count">
+                                            收藏{localStorage.getItem('t_star')}
+                                        </span>
+                                        <span className="comments-count">
+                                            评论{localStorage.getItem('t_comments')}
+                                        </span>
+                                        <span className="likes-count">
+                                             喜欢{localStorage.getItem('articleDetail.t_like')}
+                                        </span>
+                                    </div>
+                                    <div className="markdown-content">
+                                         {localStorage.getItem('t_text')}
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

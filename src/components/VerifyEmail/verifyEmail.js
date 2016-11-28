@@ -2,11 +2,22 @@
 import React from 'react';
 import {Link} from 'react-router';
 
-
 import Footer from '../Home/footer';
 
 class VerifyEmail extends React.Component{
-    
+    constructor(props){
+        super(props);
+        this.handleChange = this.handleChange.bind(this);
+    }
+
+    handleChange(e){
+
+    }
+
+    handleSubmit(e){
+
+    }
+
     render(){
         return(
             <div>

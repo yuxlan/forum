@@ -79,18 +79,17 @@ export default class Tags extends React.Component{
                         <div className="exhibit-photoFrame">
                         </div>
                         <div className="exhibit-describe">
-                            <h4> </h4>
-                            <p> </p>
+                            <h4>1</h4>
+                            <p>1</p>
                             <div className="exhibit-tags">
-                                <span className="tag-time"><i> </i></span>
-                                <span className="tag-level"><i> </i></span>
-                                <span className="tag-numberOf"> </span>
+                                <span className="tag-time"><i> </i>1</span>
+                                <span className="tag-level"><i> </i>1</span>
+                                <span className="tag-numberOf">1</span>
                                 <i className="exhibit-type"> </i>
                             </div>
                         </div>
                     </div>
                 </div>
-
             </div>
         )
     }

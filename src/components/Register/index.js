@@ -4,12 +4,9 @@ import React from 'react';
 import {Link} from 'react-router';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-
-import * as actionCreators from '../../actions/auth';
-import * as actions from '../../actions';
+import * as Actions from '../../actions';
 import { validateEmail, validateUsername } from '../../utiles/misc';
-
-
+import {API_ROOT} from '../../config';
 
 function mapStateToProps(state) {
     return{
@@ -19,7 +16,9 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-    return bindActionCreators(actionCreators,dispatch);
+    return {
+        actions:bindActionCreators(Actions,dispatch)
+    }
 }
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -139,109 +138,130 @@ export default class Register extends React.Component {
         }
     }
 
+    registerUser(u_email,u_name,u_psw){
+        sessionStorage.setItem('u_psw',u_psw);
+        let url = API_ROOT + 'sign_up';
+        $.post(url,{u_email:u_email,u_name:u_name,u_psw:u_psw},
+            function(data){
+                sessionStorage.setItem('u_id',data.u_id);
+                console.log('userRegister',data);
+                this.getUserInfo(sessionStorage.getItem('u_id'));
+            })
+    };
+
+    getUerInfo(u_id){
+        let url = API_ROOT + 'u/query';
+        $.get(url,{u_id:u_id},
+            function (data) {
+                sessionStorage.setItem('u_name',data.u_name);
+                browserHistory.push('/');
+            })
+    }
+
     login(e) {
         e.preventDefault();
-        localStorage.setItem('u_psw',this.state.u_psw);
-        actions.registerUser(this.state.u_email, this.state.u_name, this.state.u_psw);
+      //  const {actions} = this.props;
+       // actions.registerUser(this.state.u_email, this.state.u_name, this.state.u_psw, this.state.redirectTo);
+        this.registerUser(this.state.u_email, this.state.u_name, this.state.u_psw);
     }
 
     render(){
-        const style={display: 'block',width: '100%',margin:'0px',};
         return(
-            <div className="main">
-                <h1>实验班问答交流平台</h1>
-                <div className="login-form">
-                    <div className="login-left">
-                        <div className="logo">
-                            <h2>您好</h2>
-                            <p>欢迎成为本平台用户</p>
-                        </div>
-                        <div className="social-icons">
-                            <ul>
-                            </ul>
-                        </div>
-                    </div>
-                    <div className="login-right">
-                        <div className="sap_tabs">
-                            <div id="horizontalTab" style={style}>
-                                <ul className="resp-tabs-list">
-                                    <li className="resp-tab-item" aria-controls="tab_item-1" role="tab"><span>注册</span></li>
-                                    <div className="clear"> </div>
-                                </ul>
-                                    <div className="tab-1 resp-tab-content" aria-labelledby="tab_item-1">
-                                        <div className="login-top sign-top">
-                                            {
-                                                this.props.statusText &&
-                                                <div className="alert alert-info">
-                                                    {this.props.statusText}
-                                                </div>
-                                            }
-                                            <form onKeyPress={(e) => this._handleKeyPress(e)}>
-                                                <input type="text"
-                                                       className="name active"
-                                                       ref='u_name'
-                                                       autoFocus
-                                                       placeholder="用户名"
-                                                       required=""
-                                                       onChange={(e) => this.changeValue(e,'u_name')}/>
-                                                <span className='help-block'>
-                                                    {this.state.u_name_error_text}
-                                                </span>
-                                                <input type="e-mail"
-                                                       className="email"
-                                                       ref='email'
-                                                       autoFocus
-                                                       placeholder="邮箱"
-                                                       required=""
-                                                       onChange={(e) => this.changeValue(e,'u_email')}/>
-                                                <span className='help-block'>
-                                                    {this.state.u_email_error_text}
-                                                </span>
-                                                <input type="password"
-                                                       className="password"
-                                                       ref='psw'
-                                                       autoFocus
-                                                       placeholder="密码"
-                                                       required=""
-                                                       onChange={(e) => this.changeValue(e,'u_psw')}/>
-                                                <span className='help-block'>
-                                                    {this.state.u_psw_error_text}
-                                                </span>
-                                                <input type="password"
-                                                       className="password"
-                                                       ref='pswagain'
-                                                       autoFocus
-                                                       placeholder="确认密码"
-                                                       required=""
-                                                       onChange={(e) => this.changeValue(e,'psw_again')}/>
-                                                <span className='help-block'>
-                                                    {this.state.psw_again_error_text}
-                                                </span>
-                                            </form>
-                                            <div className="login-text">
-                                                <ul>
-                                                    <li><Link to="/">返回首页 >> </Link></li>
-                                                </ul>
-                                            </div>
-                                            <div className="login-bottom">
-                                                <div className="submit">
-                                                    <form>
-                                                        <input type="submit"
-                                                               value="注册"
-                                                               disabled={this.state.disabled}
-                                                               onClick={(e) => this.login(e)}/>
-                                                    </form>
-                                                </div>
-                                                <div className="clear"></div>
-                                            </div>
-                                        </div>
+        <div>
+            <div className="container">
+                <div className='row flipInX'>
+                    <div className='col-sm-8'>
+                        <h3 className="text-center signtitle">
+                            <br/>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <br/>
+                        </h3>
+                        <h4 className="text-center"><strong>欢迎回来</strong></h4>
+                        <br />
+                        {
+                            this.props.registerStatusText &&
+                            <div className="alert alert-info">
+                                {
+                                    this.props.registerStatusText
+                                }
+                            </div>
+                        }
+                        <div className='panel panel-default'>
+                            <div className='panel-body'>
+                                <form onKeyPress={(e) => this._handleKeyPress(e)}>
+                                    <div className='form-group '>
+                                        <label className='control-label'>
+                                        </label>
+                                        <input type='text'
+                                               className='form-control'
+                                               ref='u_name'
+                                               autoFocus
+                                               placeholder='输入用户名'
+                                               onChange={(e) => this.changeValue(e,'u_name')}/>
+                                        <span className='help-block'>
+                                                {this.state.u_name_error_text}
+                                            </span>
                                     </div>
-                                </div>
+                                    <div className='form-group '>
+                                        <label className='control-label'>
+                                        </label>
+                                        <input  type='e-mail'
+                                                className='form-control'
+                                                ref='email'
+                                                autoFocus
+                                                placeholder='输入邮箱'
+                                                onChange={(e) => this.changeValue(e,'u_email')}/>
+                                        <span className='help-block'>
+                                                {this.state.u_email_error_text}
+                                            </span>
+                                    </div>
+                                    <div className='form-group '>
+                                        <label className='control-label'>
+                                        </label>
+                                        <input  type='password'
+                                                className='form-control'
+                                                ref='psw'
+                                                autoFocus
+                                                placeholder='输入密码'
+                                                onChange={(e) => this.changeValue(e,'u_psw')}/>
+                                        <span className='help-block'>
+                                                {this.state.u_psw_error_text}
+                                            </span>
+                                    </div>
+                                    <div className='form-group '>
+                                        <label className='control-label'>
+                                        </label>
+                                        <input  type='password'
+                                                className='form-control'
+                                                ref='pswagain'
+                                                autoFocus
+                                                placeholder='确认密码'
+                                                onChange={(e) => this.changeValue(e,'psw_again')}/>
+                                        <span className='help-block'>
+                                                {this.state.psw_again_error_text}
+                                            </span>
+                                    </div>
+                                    <br/>
+                                    <button type='submit'
+                                            className='btn btn-primary'
+                                            disabled={this.state.disabled}
+                                            onClick={(e) => this.login(e)}>
+                                        注册
+                                    </button>
+                                    <br/>
+                                    <br/>
+                                    <Link to='/'>
+                                        返回首页
+                                    </Link>
+                                </form>
                             </div>
                         </div>
                     </div>
-                    <div className="clear"> </div>
                 </div>
+            </div>
+        </div>
         )
     }
 }
@@ -250,3 +270,134 @@ Register.propTypes = {
     registerUser: React.PropTypes.func,
     registerStatusText: React.PropTypes.string,
 };
+/*
+ import React,{Component} from 'react'
+ import {bindActionCreators} from 'redux'
+ import {connect} from 'react-redux'
+ import {reduxForm} from 'redux-form'
+ import * as Actions from '../../actions'
+ import SNSLogin from './snsLogin'
+
+ const mapStateToProps = (state) => {
+ return {
+ sns:state.sns.toJS()
+ }
+ };
+
+ const mapDispatchToProps = (dispatch) => {
+ return {
+ actions:bindActionCreators(Actions,dispatch)
+ }
+ };
+
+ const validate = values => {
+ const errors = {};
+ if(!values.email){
+ errors.email = 'Required';
+ }else if((!/^(\w)+(\.\w+)*@(\w)+((\.\w+)+)$/.test(values.email))){
+ errors.email = '地址无效'
+ }
+
+ if(!values.password){
+ errors.password = 'Required';
+ }
+
+ return errors;
+ };
+
+ @connect(mapStateToProps,mapDispatchToProps)
+ @reduxForm({
+ form:'signin',
+ fields:['email','password'],
+ validate
+ })
+ export default class Login extends Component{
+ constructor(props){
+ super(props);
+ this.handleSubmit = this.handleSubmit.bind(this);
+ }
+
+ handleSubmit(e){
+ e.preventDefault();
+ console.log('login');
+ const {values} = this.props;
+ console.log(values);
+ const {actions} = this.props;
+ actions.localLogin(values);
+ }
+ componentDidMount(){
+ const {actions,sns} = this.props;
+ if(sns.logins.length <1){
+ actions.getSnsLogins();
+ }
+
+ }
+
+ validatorCalss(field){
+ let initClass = 'form-control'
+ if(field.invalid){
+ initClass += ' ng-invalid'
+ }
+ if(field.dirty){
+ initClass += ' ng-dirty'
+ }
+ return initClass
+ }
+
+ render(){
+ const {sns,fields:{email,password},dirty,invalid} = this.props;
+
+ return (
+ <div>
+ <div className="background">
+ </div>
+ <div className="outer-container">
+ <div className="wrap-container">
+ <div className="content-outer">
+ <div className="content-inner">
+ <div className="signin-box">
+ <div className="signin-container">
+ <h4 className="title">登 录</h4>
+ <form className="signin-form form-horizontal" id="signin" name="signin" onSubmit={this.handleSubmit} noValidate>
+ <div className="form-group">
+ <div className="input-group">
+ <div className="input-group-addon">
+ <i className="fa fa-envelope-o"></i>
+ </div>
+ <input type="email"
+ className={ this.validatorCalss(email) }
+ placeholder="邮箱"
+ {...email} />
+ </div>
+ </div>
+ <div className="form-group">
+ <div className="input-group">
+ <div className="input-group-addon"><i className="fa fa-unlock-alt"></i></div>
+ <input type="password"
+ className={ this.validatorCalss(password) }
+ placeholder="密码"
+ {...password} />
+ </div>
+ </div>
+ <div className="form-group">
+ <button disabled={ invalid } className="btn btn-primary btn-lg btn-block" type="submit">登 录</button>
+ </div>
+
+ </form>
+
+ <p className="text-center">您还可以通过以下方式直接登录</p>
+ <SNSLogin logins={sns.logins}/>
+ </div>
+ </div>
+ </div>
+ </div>
+ </div>
+ </div>
+ </div>
+
+
+ )
+ }
+ }
+
+ */

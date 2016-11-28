@@ -5,12 +5,12 @@ require('es6-promise').polyfill();
 import axios from 'axios';// 请求http
 
 import {API_ROOT} from '../config';
-import {getCookie,signOut} from '../utiles/authService'
+//import {getCookie,signOut} from '../utiles/authService'
 
 axios.defaults.baseURL = API_ROOT;   // 基本url
 console.log('API_ROOT:',API_ROOT);
 
-axios.defaults.withCredentials = true;
+/*axios.defaults.withCredentials = true;
 
 axios.interceptors.request.use(function(config){  // 请求头信息
     config.headers = config.headers || {};
@@ -30,7 +30,7 @@ axios.interceptors.response.use(function(response){  // 处理401
      return response;
 },function(err){
     return Promise.reject(err);
-});
+});*/
 
 export const TagResource = (method, data, api='public/tags') => { // 标签,返回array
     return axios[method](api, data);

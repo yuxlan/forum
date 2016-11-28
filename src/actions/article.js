@@ -35,7 +35,7 @@ export const getArticleList = (t_tags,show_count) => {
                 status:response.statusText}))
             .then(({json,status}) => {
                 console.log('get_t_ids:',json);
-               // localStorage.setItem('t_id', json.t_ids);
+                // localStorage.setItem('t_id', json.t_ids);
                 return dispatch({
                     type:types.ARTICLE_LIST_SUCCESS,
                     json:json,
@@ -52,32 +52,32 @@ export const getArticleList = (t_tags,show_count) => {
 
 // 根据所选的标签获取文章id
 /*export const getArticleList = (isAdd) => {
-    return (dispatch,getState) => {
-        const options = getState().options.toJS();
-        return api.getArticleList(options)
-            .then(response => ({
-                json:response.t_ids,
-                status:response.code,
-            }))
-            .then(({json,status}) => {
-                localStorage.setItem('t_id', json);
-                if(status != 1){
-                    return;
-                }
-                console.log(json);
-                return dispatch({
-                    type:types.ARTICLE_LIST_SUCCESS,
-                    isAdd:isAdd,
-                    itemsPerPage:options.itemsPerPage,
-                })
-            })
-            .catch(error => {
-                return dispatch({
-                    type:types.ARTICLE_LIST_FAILURE,
-                })
-            })
-    }
-};*/
+ return (dispatch,getState) => {
+ const options = getState().options.toJS();
+ return api.getArticleList(options)
+ .then(response => ({
+ json:response.t_ids,
+ status:response.code,
+ }))
+ .then(({json,status}) => {
+ localStorage.setItem('t_id', json);
+ if(status != 1){
+ return;
+ }
+ console.log(json);
+ return dispatch({
+ type:types.ARTICLE_LIST_SUCCESS,
+ isAdd:isAdd,
+ itemsPerPage:options.itemsPerPage,
+ })
+ })
+ .catch(error => {
+ return dispatch({
+ type:types.ARTICLE_LIST_FAILURE,
+ })
+ })
+ }
+ };*/
 
 // 获取文章详情
 export const getArticleDetail = (t_id) => {

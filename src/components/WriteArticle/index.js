@@ -152,11 +152,11 @@ export default class WriteArticle extends React.Component{
 
     uploadFile(){
         const {actions} = this.props;
-        var formData = new FormData($("#uploadForm")[0]);
+        let formData = new FormData($("#uploadForm")[0]);
+        let url = API_ROOT + 't/add';
 
-        let url = API_ROOT + 'article/upload';
         
-        $.ajax({
+      /*  $.ajax({
             url: url,
             type: 'POST',
             data: formData,
@@ -175,7 +175,7 @@ export default class WriteArticle extends React.Component{
             error: function(){
                 actions.showMsg("与服务器通信发生错误");
             }
-        });
+        });*/
     }
 
     render(){
@@ -213,7 +213,7 @@ export default class WriteArticle extends React.Component{
                                 <div className="page editor">
                                     <p className="title">编辑栏</p>
                                     <hr/>
-                                    <textarea ref="input" id="marking" value={this.state.text} onChange={this.changeValue}></textarea>
+                                    <textarea ref="input" id="marking" value={this.state.text} onChange={this.changeValue}> </textarea>
                                 </div>
                             </div>
                             <div className={class2}>

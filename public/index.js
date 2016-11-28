@@ -24,9 +24,9 @@ $(function() {
         t = this;
         if(1 == $('.main--menu li').index(t)){
             $('#expandMenu').get(0).innerHTML = 
-            '<dt><a href="#">前端基础</a></dt><dd><a href="#">HTML</a></dd><dd><a href="#">CSS</a></dd><dd><a href="#">JavaScript</a></dd><dd><a href="#">HTML5</a></dd><dd><a href="#">CSS3</a></dd><dd><a href="#">技术前瞻</a></dd><dt><a href="#">前端进阶</a></dt><dd><a href="#">Typescript</a></dd><dd><a href="#">前端安全</a></dd><dd><a href="#">项目实战</a></dd><dt><a href="#">前端框架</a></dt><dd><a href="#">jQuery</a></dd><dd><a href="#">jQuery&nbsp;UI</a></dd><dd><a href="#">jQuery&nbsp;Mobile</a></dd><dd><a href="#">Ext&nbsp;JS</a></dd><dd><a href="#">AngularJS</a></dd><dd><a href="#">ReactJS</a></dd><dd><a href="#">Bootstrap</a></dd><dd><a href="#">React&nbsp;Native</a></dd><dd><a href="#">Backbone</a></dd><dd><a href="#">Three.js</a></dd><dd><a href="#">MooTools</a></dd><dd><a href="#">Compass</a></dd><dt><a href="#">HTML5游戏</a></dt><dd><a href="#">Canvas</a></dd><dd><a href="#">SVG</a></dd><dd><a href="#">WebGL</a></dd><dd><a href="#">Cocos2d-js</a></dd><dd><a href="#">CreateJS</a></dd><dd><a href="#">Flash</a></dd><dd><a href="#">Unreal</a></dd><dd><a href="#">Egret</a></dd><dd><a href="#">Phaser</a></dd>'
+            ''
         }else {
-            $('#expandMenu').get(0).innerHTML = '<dt><a href="#">应用开发</a></dt><dd><a href="#">Android</a></dd><dd><a href="#">IOS</a></dd><dt><a href="#">游戏开发</a></dt><dd><a href="#">Cocos</a></dd><dd><a href="#">Unity3D</a></dd><dd><a href="#">SpriteKit</a></dd><dd><a href="#">2DUnreal</a></dd><dt><a href="#">常用框架</a></dt><dd><a href="#">Cordova</a></dd><dd><a href="#">React&nbsp;Native</a></dd>'
+            $('#expandMenu').get(0).innerHTML = ''
         }
         $(this).css({
             // 'borderRightColor':'#fff',
@@ -41,7 +41,7 @@ $(function() {
         $('#expandMenu').show();
     },function () {
         // alert('hello');
-        $('.main-menu>li').css('borderRightColor','#35b558');
+        $('.main-menu>li').css('borderRightColor','#9fe6f2');
         $(this).css({
             // 'borderRightColor':'#35b558',
             'background':'#fff',
@@ -69,7 +69,7 @@ $(function() {
         });
         $('#expandMenu').show();
     },function () {
-        $('.main-menu>li').css('borderRightColor','#35b558');
+        $('.main-menu>li').css('borderRightColor','#9fe6f2');
         $(t).css({
             // 'borderRightColor':'#35b558',
             'background':'#fff',

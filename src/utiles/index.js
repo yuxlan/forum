@@ -9,9 +9,15 @@ export function customTime(item){
     let monthTime = 30*dayTime;
     let yearTime = monthTime*12;
 
-    let created = new Date(item).getTime();
+    console.log('articleTime:',item);
+    let  item1= formatDate(item);
+    console.log('articleTime1:',item1);
+
+    let created = new Date(item1).getTime();
     let delta = parseInt(nowTime) - parseInt(created);
+    console.log('articleTime2:',delta);
     let descTime;
+
     if(delta >= yearTime){
         descTime = parseInt(delta/yearTime) + '年前';
     }else if(delta >= monthTime){
@@ -28,6 +34,16 @@ export function customTime(item){
     return descTime
 }
 
+/*export function formatDate(now)   {
+    let   year=now.getYear();
+    let   month=now.getMonth()+1;
+    let   date=now.getDate();
+    let   hour=now.getHours();
+    let   minute=now.getMinutes();
+    let   second=now.getSeconds();
+    return   year+"-"+month+"-"+date+"   "+hour+":"+minute+":"+second;
+}*/
+
 export function formatDate(time){
     let tmp = new Date(time);
     let year = tmp.getFullYear();
@@ -35,7 +51,8 @@ export function formatDate(time){
     let day = tmp.getDate();
     let hours = tmp.getHours();
     let minutes = tmp.getMinutes();
-    return month + '月' + day + '日';
+    let second=tmp.getSeconds();
+    return year+"-"+month+"-"+day+"   "+hours+":"+minutes+":"+second+"   ";
 }
 
 //分离title和content
