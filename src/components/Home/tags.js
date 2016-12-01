@@ -203,16 +203,16 @@ export default class Tags extends React.Component{
                             {
                                 sessionStorage.getItem('u_id') === null
                                     ?
-                                <div className="r-user-login">
-                                    <div className="hello-word">
-                                        <span>Hi!你好</span>
-                                        <p>这是实验班问答交流平台</p>
+                                    <div className="r-user-login">
+                                        <div className="hello-word">
+                                            <span>Hi!你好</span>
+                                            <p>这是实验班问答交流平台</p>
+                                        </div>
+                                        <div className="login-btn-con">
+                                            <Link to="/login" className="login-btn">登录</Link>
+                                            <Link to="/register" className="register">注册</Link>
+                                        </div>
                                     </div>
-                                    <div className="login-btn-con">
-                                        <Link to="/login" className="login-btn">登录</Link>
-                                        <Link to="/register" className="register">注册</Link>
-                                    </div>
-                                </div>
                                     :
                                     <div className="r-user-login">
                                         <div className="hello-word">

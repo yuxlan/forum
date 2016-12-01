@@ -18,17 +18,17 @@ export default class Articles extends React.Component{
     render(){
         const {articleList,changeSort} = this.props;
         console.log('article_ids:',articleList);
-       // let articleIds=articleList.split(',');
-       // console.log('articleIds:',articleIds);
+        // let articleIds=articleList.split(',');
+        // console.log('articleIds:',articleIds);
         let articleIds = articleList.tIds.split(',');
         return (
             <div className="live-lesson">
                 <ul className="article-list list-unstyled clearfix">
                     {articleIds.length > 0 &&
                     articleIds.map((t_id,i) =>{
-                            actions.getArticleDetail(t_id);
-                            const {articleDetail} = this.props;
-                            console.log('articleDetails:',articleDetail);
+                        actions.getArticleDetail(t_id);
+                        const {articleDetail} = this.props;
+                        console.log('articleDetails:',articleDetail);
                         return(
                             <li className="article-item"
                                 key={i}>
@@ -42,7 +42,7 @@ export default class Articles extends React.Component{
                                         <Link to={'/article/' + articleDetail.t_id}
                                               className="link-title">
                                             <strong>
-                                            {articleDetail.t_title}
+                                                {articleDetail.t_title}
                                             </strong>
                                         </Link>
                                     </h4>
@@ -62,8 +62,8 @@ export default class Articles extends React.Component{
                                     </p>
                                 </div><br/><br/>
                             </li>
-                            )}
                         )}
+                    )}
                 </ul>
                 <br /><br />
             </div>

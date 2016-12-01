@@ -8,7 +8,7 @@ import {API_ROOT} from '../config';
 //import {getCookie,signOut} from '../utiles/authService'
 
 axios.defaults.baseURL = API_ROOT;   // 基本url
-console.log('API_ROOT:',API_ROOT);
+//console.log('API_ROOT:',API_ROOT);
 
 /*axios.defaults.withCredentials = true;
 

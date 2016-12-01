@@ -2,27 +2,11 @@
 
 import React from 'react';
 import {Link,browserHistory} from 'react-router';
-import {connect} from 'react-redux';
-import {bindActionCreators} from 'redux';
+
 import Logo from '../../assets/images/logo.png';
 import StarIcon from '../../assets/images/star-icon.png';
 import DownLoad from '../../assets/images/download.png';
 
-import * as actionCreators from '../../actions/auth';
-
-
-function mapStateToProps(state) {
-    return{
-        userId: state.auth.userId,
-        isAuthenticated: state.auth.isAuthenticated,
-    };
-}
-
-function mapDispatchToProps(dispatch) {
-    return bindActionCreators(actionCreators,dispatch);
-}
-
-@connect(mapStateToProps,mapDispatchToProps)
 export default class Navbar extends React.Component{
     constructor(props){
         super(props);
@@ -30,9 +14,9 @@ export default class Navbar extends React.Component{
             open: false,
             isDown:true
         };
-
         this.handleScroll = this.handleScroll.bind(this);
     }
+
     componentDidMount(){
         window.addEventListener('scroll',this.handleScroll)
     }
@@ -47,39 +31,6 @@ export default class Navbar extends React.Component{
                 isDown:true
             })
         }
-    }
-
-    dispatchNewRoute(route) {
-        browserHistory.push(route);
-        this.setState({
-            open:false,
-        });
-    }
-
-    handleClickOutside(){
-        this.setState({
-            open:false,
-        });
-    }
-
-    logout(e){
-        e.preventDefault();
-        this.props.logoutAndRedirect();
-        this.setState({
-            open:false,
-        });
-    }
-
-    openNav(){
-        this.setState({
-            open:true,
-        });
-    }
-
-    searchAll(){
-    }
-
-    changeValue(){
     }
 
     render(){
@@ -176,8 +127,3 @@ export default class Navbar extends React.Component{
         )
     }
 }
-
-Navbar.propTypes = {
-    logoutAndRedirect: React.PropTypes.func,
-    isAuthenticated: React.PropTypes.bool,
-};

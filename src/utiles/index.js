@@ -3,21 +3,18 @@ import {API_ROOT} from '../config.js';
 // 计算文章或者问答的发布时间
 export function customTime(item){
     let nowTime = new Date().getTime();
+    let tmp = nowTime/1000;
     let minuteTime = 60*1000;
     let hourTime = 60*minuteTime;
     let dayTime = 24*hourTime;
     let monthTime = 30*dayTime;
     let yearTime = monthTime*12;
 
-    console.log('articleTime:',item);
-    let  item1= formatDate(item);
-    console.log('articleTime1:',item1);
-
-    let created = new Date(item1).getTime();
-    let delta = parseInt(nowTime) - parseInt(created);
-    console.log('articleTime2:',delta);
+    console.log(minuteTime,hourTime,dayTime,monthTime,yearTime);
+    console.log("time1：",item,'time2:',tmp);
+    let delta = parseInt(tmp) - parseInt(item);
+    console.log('time3：',delta);
     let descTime;
-
     if(delta >= yearTime){
         descTime = parseInt(delta/yearTime) + '年前';
     }else if(delta >= monthTime){
@@ -34,17 +31,19 @@ export function customTime(item){
     return descTime
 }
 
-/*export function formatDate(now)   {
-    let   year=now.getYear();
-    let   month=now.getMonth()+1;
-    let   date=now.getDate();
-    let   hour=now.getHours();
-    let   minute=now.getMinutes();
-    let   second=now.getSeconds();
-    return   year+"-"+month+"-"+date+"   "+hour+":"+minute+":"+second;
-}*/
-
 export function formatDate(time){
+    let tmp = new Date(time);
+    let year = tmp.getFullYear();
+    let month = tmp.getMonth() + 1;
+    let day = tmp.getDate();
+    let hours = tmp.getHours();
+    let minutes = tmp.getMinutes();
+    let second = tmp.getSeconds();
+    return   year+"-"+month+"-"+day+"   "+hours+":"+minutes+":"+second;
+}
+
+
+/*export function formatDate(time){
     let tmp = new Date(time);
     let year = tmp.getFullYear();
     let month = tmp.getMonth() + 1;
@@ -53,7 +52,7 @@ export function formatDate(time){
     let minutes = tmp.getMinutes();
     let second=tmp.getSeconds();
     return year+"-"+month+"-"+day+"   "+hours+":"+minutes+":"+second+"   ";
-}
+}*/
 
 //分离title和content
 export function parseArticle(text){
