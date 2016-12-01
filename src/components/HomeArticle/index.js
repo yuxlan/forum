@@ -177,7 +177,7 @@ export default class Home extends Component{
                                 <i className="topBar--pointer lookWay-list lookWay-TL content-t_NL_ATL"> </i>
                             </div>
                         </div>
-                    </div>
+                    </div><br/>
 
                     {this.state.articleDetail.map((article,i) => {
                         return(
