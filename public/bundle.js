@@ -28769,7 +28769,7 @@
 
 	var _Home2 = _interopRequireDefault(_Home);
 
-	var _HomeArticle = __webpack_require__(449);
+	var _HomeArticle = __webpack_require__(450);
 
 	var _HomeArticle2 = _interopRequireDefault(_HomeArticle);
 
@@ -39643,7 +39643,7 @@
 	//import {getCookie,signOut} from '../utiles/authService'
 
 	_axios2.default.defaults.baseURL = _config.API_ROOT; // 基本url
-	console.log('API_ROOT:', _config.API_ROOT);
+	//console.log('API_ROOT:',API_ROOT);
 
 	/*axios.defaults.withCredentials = true;
 
@@ -44086,6 +44086,66 @@
 
 	var _ScrollTop2 = _interopRequireDefault(_ScrollTop);
 
+	var _indexLoading = __webpack_require__(449);
+
+	var _indexLoading2 = _interopRequireDefault(_indexLoading);
+
+	var _focusImg = __webpack_require__(428);
+
+	var _focusImg2 = _interopRequireDefault(_focusImg);
+
+	var _focusImg3 = __webpack_require__(429);
+
+	var _focusImg4 = _interopRequireDefault(_focusImg3);
+
+	var _focusImg5 = __webpack_require__(430);
+
+	var _focusImg6 = _interopRequireDefault(_focusImg5);
+
+	var _focusImg7 = __webpack_require__(431);
+
+	var _focusImg8 = _interopRequireDefault(_focusImg7);
+
+	var _focusImg9 = __webpack_require__(432);
+
+	var _focusImg10 = _interopRequireDefault(_focusImg9);
+
+	var _focusImg11 = __webpack_require__(433);
+
+	var _focusImg12 = _interopRequireDefault(_focusImg11);
+
+	var _focusImg13 = __webpack_require__(434);
+
+	var _focusImg14 = _interopRequireDefault(_focusImg13);
+
+	var _focusImg15 = __webpack_require__(435);
+
+	var _focusImg16 = _interopRequireDefault(_focusImg15);
+
+	var _wrapperItem = __webpack_require__(436);
+
+	var _wrapperItem2 = _interopRequireDefault(_wrapperItem);
+
+	var _wrapperItem3 = __webpack_require__(437);
+
+	var _wrapperItem4 = _interopRequireDefault(_wrapperItem3);
+
+	var _wrapperItem5 = __webpack_require__(438);
+
+	var _wrapperItem6 = _interopRequireDefault(_wrapperItem5);
+
+	var _wrapperItem7 = __webpack_require__(439);
+
+	var _wrapperItem8 = _interopRequireDefault(_wrapperItem7);
+
+	var _wrapperItem9 = __webpack_require__(440);
+
+	var _wrapperItem10 = _interopRequireDefault(_wrapperItem9);
+
+	var _rLoginIcon = __webpack_require__(441);
+
+	var _rLoginIcon2 = _interopRequireDefault(_rLoginIcon);
+
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -44120,27 +44180,71 @@
 
 	        var _this = _possibleConstructorReturn(this, (Home.__proto__ || Object.getPrototypeOf(Home)).call(this, props));
 
-	        _this.handleChange = _this.handleChange.bind(_this);
-	        _this.getArticleAbout = _this.getArticleAbout.bind(_this);
+	        _this.state = {
+	            tagList: [],
+	            articleIds: '',
+	            articleDetail: []
+	        };
 	        return _this;
 	    }
 
 	    _createClass(Home, [{
 	        key: 'componentDidMount',
 	        value: function componentDidMount() {
-	            console.log('didmount');
+	            console.log('component will mount,get the data first.');
 
-	            var _props = this.props,
-	                actions = _props.actions,
-	                tagList = _props.tagList,
-	                articleList = _props.articleList;
+	            // 取到所有的tags
+	            var tagUrl = _config.API_ROOT + 'public/tags';
+	            _jquery2.default.get(tagUrl, function (data) {
+	                console.log('is already get all tags:', data);
+	                this.setState({ tagList: data });
+	                console.log('is already get all tags and set its tate:', this.state.tagList);
+	            }.bind(this));
 
+	            this.handleClick();
+	        }
 
-	            if (tagList.length < 1) {
-	                actions.getTagList();
+	        // 取到所有的文章id
+
+	    }, {
+	        key: 'handleClick',
+	        value: function handleClick(event, t_tags) {
+	            var articleIdUrl = _config.API_ROOT + 't/display';
+	            _jquery2.default.get(articleIdUrl, { t_tags: t_tags }, function (data) {
+	                console.log('get all article ids by all tags:', data);
+	                this.setState({ articleIds: data.t_ids });
+	                console.log('articleIds:', this.state.articleIds);
+	                var articleIds = this.state.articleIds.split('&');
+	                var articleIdsByHot = articleIds[0];
+	                var articlesByHot = articleIdsByHot.toString().split(',');
+	                console.log('articlesByHot:', articlesByHot);
+	                return this.getArticleDetails(articlesByHot);
+	            }.bind(this));
+	        }
+
+	        // 取文章的详情
+
+	    }, {
+	        key: 'getArticleDetails',
+	        value: function getArticleDetails(articlesByHot) {
+	            var _this2 = this;
+
+	            var articleDetailUrl = _config.API_ROOT + 't/query';
+	            var articleDetail = new Array();
+
+	            var _loop = function _loop(i) {
+	                _jquery2.default.get(articleDetailUrl, { t_id: articlesByHot[i] }, function (data) {
+	                    console.log('get all article details by their ids:', data);
+	                    articleDetail[i] = data;
+	                    console.log('get all article details and put them into the array:', articleDetail);
+	                    this.setState({ articleDetail: articleDetail });
+	                    console.log('articleDetails:', this.state.articleDetail);
+	                }.bind(_this2));
+	            };
+
+	            for (var i = 0; i < articlesByHot.length; i++) {
+	                _loop(i);
 	            }
-
-	            actions.getArticleList();
 	        }
 	    }, {
 	        key: 'handleChange',
@@ -44153,164 +44257,624 @@
 	            actions.changeOptions(option);
 	        }
 	    }, {
-	        key: 'getArticleAbout',
-	        value: function getArticleAbout(t_id) {
-	            // const {actions} = this.props;
-	            // actions.getArticleDetail(t_id);
-	            var url = _config.API_ROOT + 't/query';
-	            _jquery2.default.get(url, { t_id: t_id }, function (data) {
-	                localStorage.setItem('t_id', data.t_id);
-	                localStorage.setItem('t_title', data.t_title);
-	                localStorage.setItem('t_text', data.t_text);
-	                localStorage.setItem('t_date', data.t_date);
-	                localStorage.setItem('t_like', data.t_like);
-	                localStorage.setItem('t_comments', data.t_comments);
-	                localStorage.setItem('t_tags', data.t_tags);
-	                localStorage.setItem('t_date_latest', data.t_date_latest);
-	                localStorage.setItem('t_star', data.t_star);
-	                console.log('queryArticle:', data);
-	            });
+	        key: 'logout',
+	        value: function logout(e) {
+	            e.preventDefault();
+	            sessionStorage.removeItem('u_id', 'u_name');
+	            browserHistory.push('/');
 	        }
 	    }, {
 	        key: 'render',
 	        value: function render() {
-	            var _this2 = this;
+	            var _this3 = this;
 
-	            var _props2 = this.props,
-	                tagList = _props2.tagList,
-	                articleList = _props2.articleList,
-	                options = _props2.options,
-	                actions = _props2.actions,
-	                auth = _props2.auth,
-	                location = _props2.location,
-	                showmsg = _props2.showmsg,
-	                children = _props2.children,
-	                articleDetail = _props2.articleDetail;
-
-	            console.log('tagList:', tagList, 'articleList:', articleList, 'articleDetail:', articleDetail);
-
-	            var articleIds = articleList.tIds.split('&');
-
-	            var articleIdsByHot = articleIds[0];
-	            var articlesByHot = articleIdsByHot.toString().split(',');
-	            console.log('articleByHot:', articlesByHot);
-
-	            var articleIdsByTime = articleIds[1];
-	            console.log('articleIdsByTime:', articleIdsByTime);
-	            //let articlesByTime = articleIdsByTime.toString().split(',');
-	            // console.log('articleByTime:',articlesByTime);
-	            return _react2.default.createElement(
-	                'div',
-	                { className: 'home-container' },
-	                _react2.default.createElement(_navbar2.default, { changeStyleMode: actions.changeStyleMode,
-	                    location: location,
-	                    auth: auth,
-	                    logout: actions.logout }),
-	                _react2.default.createElement('br', null),
-	                _react2.default.createElement('br', null),
-	                _react2.default.createElement('br', null),
-	                _react2.default.createElement('br', null),
-	                _react2.default.createElement('div', { className: 'background' }),
-	                _react2.default.createElement(
+	            if (this.state.articleDetail === []) {
+	                return _react2.default.createElement(
 	                    'div',
-	                    { className: 'outer-container' },
+	                    { className: 'text-center home-container' },
+	                    _react2.default.createElement('img', { src: _indexLoading2.default })
+	                );
+	            } else {
+	                return _react2.default.createElement(
+	                    'div',
+	                    { className: 'home-container' },
+	                    _react2.default.createElement(_navbar2.default, null),
+	                    _react2.default.createElement('br', null),
+	                    _react2.default.createElement('br', null),
+	                    _react2.default.createElement('br', null),
+	                    _react2.default.createElement('br', null),
+	                    _react2.default.createElement('div', { className: 'background' }),
 	                    _react2.default.createElement(
 	                        'div',
-	                        { className: 'wrap-container' },
+	                        { className: 'outer-container' },
 	                        _react2.default.createElement(
 	                            'div',
-	                            { className: 'content-outer' },
+	                            { className: 'wrap-container' },
 	                            _react2.default.createElement(
 	                                'div',
-	                                { className: 'content-inner' },
-	                                _react2.default.createElement(_tags2.default, { tagList: tagList }),
-	                                _react2.default.createElement('br', null),
-	                                _react2.default.createElement('br', null),
+	                                { className: 'content-outer' },
 	                                _react2.default.createElement(
 	                                    'div',
-	                                    { className: 'live-lesson' },
+	                                    { className: 'content-inner' },
 	                                    _react2.default.createElement(
-	                                        'ul',
-	                                        { className: 'article-list list-unstyled clearfix' },
-	                                        articlesByHot.length > 0 && articlesByHot.map(function (t_id, i) {
-	                                            _this2.getArticleAbout(t_id);
-	                                            return _react2.default.createElement(
-	                                                'li',
-	                                                { className: 'article-item',
-	                                                    key: i },
+	                                        'div',
+	                                        { className: 'content' },
+	                                        _react2.default.createElement(
+	                                            'div',
+	                                            { className: 'focus-page' },
+	                                            _react2.default.createElement(
+	                                                'div',
+	                                                { className: 'con-left' },
 	                                                _react2.default.createElement(
-	                                                    'div',
-	                                                    { className: 'articleList-item' },
+	                                                    'ul',
+	                                                    { className: 'con-left-ul' },
 	                                                    _react2.default.createElement(
-	                                                        'p',
-	                                                        { className: 'list-top' },
+	                                                        'li',
+	                                                        { className: 'con-left-li' },
 	                                                        _react2.default.createElement(
-	                                                            'span',
-	                                                            { className: 'time' },
-	                                                            (0, _utiles.customTime)(localStorage.getItem('t_date_latest'))
-	                                                        )
-	                                                    ),
-	                                                    _react2.default.createElement(
-	                                                        'h2',
-	                                                        { className: 'title' },
+	                                                            'a',
+	                                                            { href: '' },
+	                                                            '\u6240\u6709\u6807\u7B7E'
+	                                                        ),
 	                                                        _react2.default.createElement(
-	                                                            'strong',
-	                                                            null,
+	                                                            'div',
+	                                                            { className: 'lesson-list-detail' },
 	                                                            _react2.default.createElement(
-	                                                                _reactRouter.Link,
-	                                                                { to: '/article/' + localStorage.getItem('t_id'),
-	                                                                    className: 'link-title' },
-	                                                                localStorage.getItem('t_title')
+	                                                                'div',
+	                                                                { className: 'lesson-list-con' },
+	                                                                _react2.default.createElement(
+	                                                                    'dl',
+	                                                                    null,
+	                                                                    _react2.default.createElement(
+	                                                                        'dt',
+	                                                                        null,
+	                                                                        _react2.default.createElement(
+	                                                                            'a',
+	                                                                            {
+	                                                                                onClick: function onClick(event) {
+	                                                                                    return _this3.handleClick(event);
+	                                                                                } },
+	                                                                            '\u6240\u6709\u6807\u7B7E'
+	                                                                        )
+	                                                                    ),
+	                                                                    this.state.tagList.map(function (tag, i) {
+	                                                                        return _react2.default.createElement(
+	                                                                            'dd',
+	                                                                            { key: i },
+	                                                                            _react2.default.createElement(
+	                                                                                'a',
+	                                                                                { onClick: function onClick(event) {
+	                                                                                        return _this3.handleClick(event, tag.toString());
+	                                                                                    } },
+	                                                                                tag
+	                                                                            )
+	                                                                        );
+	                                                                    })
+	                                                                )
 	                                                            )
 	                                                        )
 	                                                    ),
 	                                                    _react2.default.createElement(
-	                                                        'p',
-	                                                        { className: 'list-footer' },
+	                                                        'li',
+	                                                        { className: 'con-left-li' },
+	                                                        _react2.default.createElement(
+	                                                            'a',
+	                                                            { onClick: function onClick(event) {
+	                                                                    return _this3.handleClick(event, 'ios');
+	                                                                } },
+	                                                            'ios'
+	                                                        )
+	                                                    ),
+	                                                    _react2.default.createElement(
+	                                                        'li',
+	                                                        { className: 'con-left-li' },
+	                                                        _react2.default.createElement(
+	                                                            'a',
+	                                                            { onClick: function onClick(event) {
+	                                                                    return _this3.handleClick(event, 'android');
+	                                                                } },
+	                                                            'android'
+	                                                        )
+	                                                    ),
+	                                                    _react2.default.createElement(
+	                                                        'li',
+	                                                        { className: 'con-left-li' },
+	                                                        _react2.default.createElement(
+	                                                            'a',
+	                                                            { onClick: function onClick(event) {
+	                                                                    return _this3.handleClick(event, 'linux');
+	                                                                } },
+	                                                            'linux'
+	                                                        )
+	                                                    ),
+	                                                    _react2.default.createElement(
+	                                                        'li',
+	                                                        { className: 'con-left-li' },
+	                                                        _react2.default.createElement(
+	                                                            'a',
+	                                                            { onClick: function onClick(event) {
+	                                                                    return _this3.handleClick(event, 'windows');
+	                                                                } },
+	                                                            'windows'
+	                                                        )
+	                                                    ),
+	                                                    _react2.default.createElement(
+	                                                        'li',
+	                                                        { className: 'con-left-li' },
+	                                                        _react2.default.createElement(
+	                                                            'a',
+	                                                            { onClick: function onClick(event) {
+	                                                                    return _this3.handleClick(event, '后端开发');
+	                                                                } },
+	                                                            '\u540E\u7AEF\u5F00\u53D1'
+	                                                        )
+	                                                    ),
+	                                                    _react2.default.createElement(
+	                                                        'li',
+	                                                        { className: 'con-left-li' },
+	                                                        _react2.default.createElement(
+	                                                            'a',
+	                                                            { onClick: function onClick(event) {
+	                                                                    return _this3.handleClick(event, '前端开发');
+	                                                                } },
+	                                                            '\u524D\u7AEF\u5F00\u53D1'
+	                                                        )
+	                                                    ),
+	                                                    _react2.default.createElement(
+	                                                        'li',
+	                                                        { className: 'con-left-li' },
+	                                                        _react2.default.createElement(
+	                                                            'a',
+	                                                            { onClick: function onClick(event) {
+	                                                                    return _this3.handleClick(event, '数据库');
+	                                                                } },
+	                                                            '\u6570\u636E\u5E93'
+	                                                        )
+	                                                    ),
+	                                                    _react2.default.createElement(
+	                                                        'li',
+	                                                        { className: 'con-left-li' },
+	                                                        _react2.default.createElement(
+	                                                            'a',
+	                                                            { onClick: function onClick(event) {
+	                                                                    return _this3.handleClick(event, '云计算');
+	                                                                } },
+	                                                            '\u4E91\u8BA1\u7B97'
+	                                                        )
+	                                                    ),
+	                                                    _react2.default.createElement(
+	                                                        'li',
+	                                                        { className: 'con-left-li' },
+	                                                        _react2.default.createElement(
+	                                                            'a',
+	                                                            { onClick: function onClick(event) {
+	                                                                    return _this3.handleClick(event, '服务器');
+	                                                                } },
+	                                                            '\u670D\u52A1\u5668'
+	                                                        )
+	                                                    )
+	                                                )
+	                                            ),
+	                                            _react2.default.createElement(
+	                                                'div',
+	                                                { className: 'con-mid' },
+	                                                _react2.default.createElement(
+	                                                    'div',
+	                                                    { className: 'focus-con' },
+	                                                    _react2.default.createElement(
+	                                                        'span',
+	                                                        { className: 'left-btn' },
+	                                                        ' '
+	                                                    ),
+	                                                    _react2.default.createElement(
+	                                                        'span',
+	                                                        { className: 'right-btn' },
+	                                                        ' '
+	                                                    ),
+	                                                    _react2.default.createElement(
+	                                                        'div',
+	                                                        { className: 'focus-img' },
+	                                                        _react2.default.createElement(
+	                                                            'a',
+	                                                            { href: '' },
+	                                                            _react2.default.createElement('img', { src: _focusImg2.default, alt: '' })
+	                                                        ),
+	                                                        _react2.default.createElement(
+	                                                            'a',
+	                                                            { href: '' },
+	                                                            _react2.default.createElement('img', { src: _focusImg4.default, alt: '' })
+	                                                        ),
+	                                                        _react2.default.createElement(
+	                                                            'a',
+	                                                            { href: '' },
+	                                                            _react2.default.createElement('img', { src: _focusImg6.default, alt: '' })
+	                                                        ),
+	                                                        _react2.default.createElement(
+	                                                            'a',
+	                                                            { href: '' },
+	                                                            _react2.default.createElement('img', { src: _focusImg8.default, alt: '' })
+	                                                        ),
+	                                                        _react2.default.createElement(
+	                                                            'a',
+	                                                            { href: '' },
+	                                                            _react2.default.createElement('img', { src: _focusImg10.default, alt: '' })
+	                                                        ),
+	                                                        _react2.default.createElement(
+	                                                            'a',
+	                                                            { href: '' },
+	                                                            _react2.default.createElement('img', { src: _focusImg12.default, alt: '' })
+	                                                        ),
+	                                                        _react2.default.createElement(
+	                                                            'a',
+	                                                            { href: '' },
+	                                                            _react2.default.createElement('img', { src: _focusImg14.default, alt: '' })
+	                                                        ),
+	                                                        _react2.default.createElement(
+	                                                            'a',
+	                                                            { href: '' },
+	                                                            _react2.default.createElement('img', { src: _focusImg16.default, alt: '' })
+	                                                        )
+	                                                    ),
+	                                                    _react2.default.createElement('div', { className: 'focus-num' })
+	                                                ),
+	                                                _react2.default.createElement(
+	                                                    'div',
+	                                                    { className: 'focus-wrapper' },
+	                                                    _react2.default.createElement(
+	                                                        'div',
+	                                                        { className: 'focus-item' },
 	                                                        _react2.default.createElement(
 	                                                            'span',
-	                                                            { className: 'visit-count' },
-	                                                            '\u6536\u85CF ',
-	                                                            localStorage.getItem('t_star')
+	                                                            { className: 's-focus-left-btn' },
+	                                                            ' '
 	                                                        ),
 	                                                        _react2.default.createElement(
 	                                                            'span',
-	                                                            { className: 'comment-count' },
-	                                                            '\u8BC4\u8BBA ',
-	                                                            localStorage.getItem('t_comments')
+	                                                            { className: 's-focus-right-btn' },
+	                                                            ' '
 	                                                        ),
 	                                                        _react2.default.createElement(
-	                                                            'span',
-	                                                            { className: 'like-count' },
-	                                                            '\u559C\u6B22 ',
-	                                                            localStorage.getItem('t_like')
-	                                                        ),
+	                                                            'ul',
+	                                                            { className: 'items-ul' },
+	                                                            _react2.default.createElement(
+	                                                                'li',
+	                                                                null,
+	                                                                _react2.default.createElement(
+	                                                                    'a',
+	                                                                    { href: '' },
+	                                                                    _react2.default.createElement('img', { src: _wrapperItem2.default, alt: '' }),
+	                                                                    _react2.default.createElement(
+	                                                                        'p',
+	                                                                        null,
+	                                                                        'iOS\u76F8\u5173\u8BDD\u9898'
+	                                                                    )
+	                                                                )
+	                                                            ),
+	                                                            _react2.default.createElement(
+	                                                                'li',
+	                                                                null,
+	                                                                _react2.default.createElement(
+	                                                                    'a',
+	                                                                    { href: '' },
+	                                                                    _react2.default.createElement('img', { src: _wrapperItem4.default, alt: '' }),
+	                                                                    _react2.default.createElement(
+	                                                                        'p',
+	                                                                        null,
+	                                                                        'JavaWeb\u76F8\u5173\u8BDD\u9898'
+	                                                                    )
+	                                                                )
+	                                                            ),
+	                                                            _react2.default.createElement(
+	                                                                'li',
+	                                                                null,
+	                                                                _react2.default.createElement(
+	                                                                    'a',
+	                                                                    { href: '' },
+	                                                                    _react2.default.createElement('img', { src: _wrapperItem6.default, alt: '' }),
+	                                                                    _react2.default.createElement(
+	                                                                        'p',
+	                                                                        null,
+	                                                                        '\u540E\u7AEF\u76F8\u5173\u8BDD\u9898'
+	                                                                    )
+	                                                                )
+	                                                            ),
+	                                                            _react2.default.createElement(
+	                                                                'li',
+	                                                                null,
+	                                                                _react2.default.createElement(
+	                                                                    'a',
+	                                                                    { href: '' },
+	                                                                    _react2.default.createElement('img', { src: _wrapperItem8.default, alt: '' }),
+	                                                                    _react2.default.createElement(
+	                                                                        'p',
+	                                                                        null,
+	                                                                        'HTML5/Web\u76F8\u5173\u8BDD\u9898'
+	                                                                    )
+	                                                                )
+	                                                            ),
+	                                                            _react2.default.createElement(
+	                                                                'li',
+	                                                                null,
+	                                                                _react2.default.createElement(
+	                                                                    'a',
+	                                                                    { href: '' },
+	                                                                    _react2.default.createElement('img', { src: _wrapperItem10.default, alt: '' }),
+	                                                                    _react2.default.createElement(
+	                                                                        'p',
+	                                                                        null,
+	                                                                        'Android\u76F8\u5173\u8BDD\u9898'
+	                                                                    )
+	                                                                )
+	                                                            )
+	                                                        )
+	                                                    )
+	                                                )
+	                                            ),
+	                                            _react2.default.createElement(
+	                                                'div',
+	                                                { className: 'con-right' },
+	                                                _react2.default.createElement(
+	                                                    'div',
+	                                                    { className: 'right-news' },
+	                                                    _react2.default.createElement(
+	                                                        'h3',
+	                                                        null,
+	                                                        '\u8BBA\u575B\u516C\u544A'
+	                                                    ),
+	                                                    _react2.default.createElement(
+	                                                        'ul',
+	                                                        { className: 'news-ul' },
 	                                                        _react2.default.createElement(
-	                                                            'span',
+	                                                            'li',
 	                                                            null,
-	                                                            '  \u6807\u7B7E',
-	                                                            localStorage.getItem('t_tags'),
-	                                                            '\xA0'
+	                                                            _react2.default.createElement(
+	                                                                'a',
+	                                                                { href: '' },
+	                                                                '\u5B9E\u9A8C\u73ED\u95EE\u7B54\u4EA4\u6D41\u5E73\u53F0\u5F00\u653E\u901A\u77E5'
+	                                                            )
 	                                                        ),
-	                                                        _react2.default.createElement('br', null),
-	                                                        _react2.default.createElement(_reactRouter.Link, { to: '' })
+	                                                        _react2.default.createElement(
+	                                                            'li',
+	                                                            { className: 'items' },
+	                                                            _react2.default.createElement(
+	                                                                'a',
+	                                                                { href: '' },
+	                                                                '\u672C\u5E73\u53F0\u7684\u4F7F\u7528\u6307\u5357\uFF0C\u53EF\u4EE5\u4E0D\u770B'
+	                                                            )
+	                                                        ),
+	                                                        _react2.default.createElement(
+	                                                            'li',
+	                                                            { className: 'bolder-item' },
+	                                                            _react2.default.createElement(
+	                                                                'a',
+	                                                                { href: '' },
+	                                                                '\u7ED9\u70B9\u5EFA\u8BAE\uFF0C\u8BA9\u672C\u5E73\u53F0\u53D8\u5F97\u66F4\u597D'
+	                                                            )
+	                                                        ),
+	                                                        _react2.default.createElement(
+	                                                            'li',
+	                                                            { className: 'items' },
+	                                                            _react2.default.createElement(
+	                                                                'a',
+	                                                                { href: '' },
+	                                                                '\u4F7F\u7528\u7684\u6280\u672F\uFF0C\u6709\u5174\u8DA3\u53EF\u4EE5\u4E86\u89E3\u4E00\u4E0B'
+	                                                            )
+	                                                        )
+	                                                    )
+	                                                ),
+	                                                _react2.default.createElement(
+	                                                    'div',
+	                                                    { className: 'right-login' },
+	                                                    _react2.default.createElement(
+	                                                        'div',
+	                                                        { className: 'r-user-con' },
+	                                                        _react2.default.createElement('img', { src: _rLoginIcon2.default, alt: '' })
+	                                                    ),
+	                                                    sessionStorage.getItem('u_id') === null ? _react2.default.createElement(
+	                                                        'div',
+	                                                        { className: 'r-user-login' },
+	                                                        _react2.default.createElement(
+	                                                            'div',
+	                                                            { className: 'hello-word' },
+	                                                            _react2.default.createElement(
+	                                                                'span',
+	                                                                null,
+	                                                                'Hi!\u4F60\u597D'
+	                                                            ),
+	                                                            _react2.default.createElement(
+	                                                                'p',
+	                                                                null,
+	                                                                '\u8FD9\u662F\u5B9E\u9A8C\u73ED\u95EE\u7B54\u4EA4\u6D41\u5E73\u53F0'
+	                                                            )
+	                                                        ),
+	                                                        _react2.default.createElement(
+	                                                            'div',
+	                                                            { className: 'login-btn-con' },
+	                                                            _react2.default.createElement(
+	                                                                _reactRouter.Link,
+	                                                                { to: '/login', className: 'login-btn' },
+	                                                                '\u767B\u5F55'
+	                                                            ),
+	                                                            _react2.default.createElement(
+	                                                                _reactRouter.Link,
+	                                                                { to: '/register', className: 'register' },
+	                                                                '\u6CE8\u518C'
+	                                                            )
+	                                                        )
+	                                                    ) : _react2.default.createElement(
+	                                                        'div',
+	                                                        { className: 'r-user-login' },
+	                                                        _react2.default.createElement(
+	                                                            'div',
+	                                                            { className: 'hello-word' },
+	                                                            _react2.default.createElement(
+	                                                                'span',
+	                                                                null,
+	                                                                'Hi!\u4F60\u597D'
+	                                                            ),
+	                                                            _react2.default.createElement(
+	                                                                'p',
+	                                                                null,
+	                                                                '\u8FD9\u662F\u5B9E\u9A8C\u73ED\u95EE\u7B54\u4EA4\u6D41\u5E73\u53F0'
+	                                                            )
+	                                                        ),
+	                                                        _react2.default.createElement(
+	                                                            'div',
+	                                                            { className: 'login-btn-con' },
+	                                                            _react2.default.createElement(
+	                                                                'a',
+	                                                                { href: '', className: 'login-btn',
+	                                                                    onClick: function onClick(e) {
+	                                                                        return _this3.logout(e);
+	                                                                    } },
+	                                                                '\u9000\u51FA'
+	                                                            )
+	                                                        )
 	                                                    )
 	                                                ),
 	                                                _react2.default.createElement('br', null),
-	                                                _react2.default.createElement('br', null)
-	                                            );
-	                                        })
+	                                                _react2.default.createElement(
+	                                                    'ul',
+	                                                    { className: 'news-ul text-center' },
+	                                                    _react2.default.createElement(
+	                                                        'li',
+	                                                        { className: '' },
+	                                                        _react2.default.createElement(
+	                                                            'a',
+	                                                            { href: '' },
+	                                                            '(1)\u53EF\u4EE5\u663E\u793A\u4E00\u4E9B\u56FA\u5B9A\u7684\u901A\u77E5'
+	                                                        )
+	                                                    ),
+	                                                    _react2.default.createElement(
+	                                                        'li',
+	                                                        { className: 'items' },
+	                                                        _react2.default.createElement(
+	                                                            'a',
+	                                                            { href: '' },
+	                                                            '(2)\u6216\u8005\u663E\u793A\u6D3B\u8DC3\u7684\u7528\u6237\u6392\u884C'
+	                                                        )
+	                                                    ),
+	                                                    _react2.default.createElement(
+	                                                        'li',
+	                                                        { className: '' },
+	                                                        _react2.default.createElement(
+	                                                            'a',
+	                                                            { href: '' },
+	                                                            '(3)\u4E5F\u53EF\u4EE5\u662F\u8FD8\u80FD\u6DFB\u52A0\u7684\u529F\u80FD'
+	                                                        )
+	                                                    ),
+	                                                    _react2.default.createElement(
+	                                                        'li',
+	                                                        { className: 'items' },
+	                                                        _react2.default.createElement(
+	                                                            'a',
+	                                                            { href: '' },
+	                                                            '(4)\u8FD8\u53EF\u4EE5\u662F\u6B63\u5728\u6316\u6398\u7684\u6280\u672F'
+	                                                        )
+	                                                    ),
+	                                                    _react2.default.createElement(
+	                                                        'li',
+	                                                        { className: '' },
+	                                                        _react2.default.createElement(
+	                                                            'a',
+	                                                            { href: '' },
+	                                                            '(5)\u53EF\u4EE5\u52A0\u4E9B\u6709\u6240\u5E2E\u52A9\u7684\u5185\u5BB9'
+	                                                        )
+	                                                    )
+	                                                )
+	                                            )
+	                                        )
 	                                    ),
 	                                    _react2.default.createElement('br', null),
-	                                    _react2.default.createElement('br', null)
+	                                    _react2.default.createElement('br', null),
+	                                    _react2.default.createElement(
+	                                        'div',
+	                                        { className: 'live-lesson' },
+	                                        _react2.default.createElement(
+	                                            'ul',
+	                                            { className: 'article-list list-unstyled clearfix' },
+	                                            this.state.articleDetail.map(function (article, i) {
+	                                                return _react2.default.createElement(
+	                                                    'li',
+	                                                    { className: 'article-item',
+	                                                        key: i },
+	                                                    _react2.default.createElement(
+	                                                        'div',
+	                                                        { className: 'articleList-item' },
+	                                                        _react2.default.createElement(
+	                                                            'p',
+	                                                            { className: 'list-top' },
+	                                                            _react2.default.createElement(
+	                                                                'span',
+	                                                                { className: 'time' },
+	                                                                (0, _utiles.customTime)(article.t_date_latest)
+	                                                            )
+	                                                        ),
+	                                                        _react2.default.createElement(
+	                                                            'h2',
+	                                                            { className: 'title' },
+	                                                            _react2.default.createElement(
+	                                                                'strong',
+	                                                                null,
+	                                                                _react2.default.createElement(
+	                                                                    _reactRouter.Link,
+	                                                                    { to: '/article/' + article.t_id,
+	                                                                        className: 'link-title' },
+	                                                                    article.t_title
+	                                                                )
+	                                                            )
+	                                                        ),
+	                                                        _react2.default.createElement(
+	                                                            'p',
+	                                                            { className: 'list-footer' },
+	                                                            _react2.default.createElement(
+	                                                                'span',
+	                                                                { className: 'visit-count' },
+	                                                                '\u6536\u85CF ',
+	                                                                article.t_star
+	                                                            ),
+	                                                            '\xA0\xA0',
+	                                                            _react2.default.createElement(
+	                                                                'span',
+	                                                                { className: 'comment-count' },
+	                                                                '\u8BC4\u8BBA ',
+	                                                                article.t_comments
+	                                                            ),
+	                                                            '\xA0\xA0',
+	                                                            _react2.default.createElement(
+	                                                                'span',
+	                                                                { className: 'like-count' },
+	                                                                '\u559C\u6B22 ',
+	                                                                article.t_like
+	                                                            ),
+	                                                            '\xA0\xA0',
+	                                                            _react2.default.createElement(
+	                                                                'span',
+	                                                                null,
+	                                                                '\u6807\u7B7E',
+	                                                                article.t_tags,
+	                                                                '\xA0'
+	                                                            ),
+	                                                            _react2.default.createElement('br', null),
+	                                                            _react2.default.createElement(_reactRouter.Link, { to: '' })
+	                                                        )
+	                                                    ),
+	                                                    _react2.default.createElement('br', null),
+	                                                    _react2.default.createElement('br', null)
+	                                                );
+	                                            })
+	                                        ),
+	                                        _react2.default.createElement('br', null),
+	                                        _react2.default.createElement('br', null)
+	                                    )
 	                                )
 	                            )
 	                        )
-	                    )
-	                ),
-	                _react2.default.createElement(_ScrollTop2.default, null),
-	                _react2.default.createElement(_footer2.default, null)
-	            );
+	                    ),
+	                    _react2.default.createElement(_ScrollTop2.default, null),
+	                    _react2.default.createElement(_footer2.default, null)
+	                );
+	            }
 	        }
 	    }]);
 
@@ -44336,21 +44900,18 @@
 	// 计算文章或者问答的发布时间
 	function customTime(item) {
 	    var nowTime = new Date().getTime();
+	    var tmp = nowTime / 1000;
 	    var minuteTime = 60 * 1000;
 	    var hourTime = 60 * minuteTime;
 	    var dayTime = 24 * hourTime;
 	    var monthTime = 30 * dayTime;
 	    var yearTime = monthTime * 12;
 
-	    console.log('articleTime:', item);
-	    var item1 = formatDate(item);
-	    console.log('articleTime1:', item1);
-
-	    var created = new Date(item1).getTime();
-	    var delta = parseInt(nowTime) - parseInt(created);
-	    console.log('articleTime2:', delta);
+	    console.log(minuteTime, hourTime, dayTime, monthTime, yearTime);
+	    console.log("time1：", item, 'time2:', tmp);
+	    var delta = parseInt(tmp) - parseInt(item);
+	    console.log('time3：', delta);
 	    var descTime = void 0;
-
 	    if (delta >= yearTime) {
 	        descTime = parseInt(delta / yearTime) + '年前';
 	    } else if (delta >= monthTime) {
@@ -44367,16 +44928,6 @@
 	    return descTime;
 	}
 
-	/*export function formatDate(now)   {
-	    let   year=now.getYear();
-	    let   month=now.getMonth()+1;
-	    let   date=now.getDate();
-	    let   hour=now.getHours();
-	    let   minute=now.getMinutes();
-	    let   second=now.getSeconds();
-	    return   year+"-"+month+"-"+date+"   "+hour+":"+minute+":"+second;
-	}*/
-
 	function formatDate(time) {
 	    var tmp = new Date(time);
 	    var year = tmp.getFullYear();
@@ -44385,8 +44936,19 @@
 	    var hours = tmp.getHours();
 	    var minutes = tmp.getMinutes();
 	    var second = tmp.getSeconds();
-	    return year + "-" + month + "-" + day + "   " + hours + ":" + minutes + ":" + second + "   ";
+	    return year + "-" + month + "-" + day + "   " + hours + ":" + minutes + ":" + second;
 	}
+
+	/*export function formatDate(time){
+	    let tmp = new Date(time);
+	    let year = tmp.getFullYear();
+	    let month = tmp.getMonth() + 1;
+	    let day = tmp.getDate();
+	    let hours = tmp.getHours();
+	    let minutes = tmp.getMinutes();
+	    let second=tmp.getSeconds();
+	    return year+"-"+month+"-"+day+"   "+hours+":"+minutes+":"+second+"   ";
+	}*/
 
 	//分离title和content
 	function parseArticle(text) {
@@ -45154,17 +45716,11 @@
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-	var _dec, _class; // 页头导航
-
 	var _react = __webpack_require__(72);
 
 	var _react2 = _interopRequireDefault(_react);
 
 	var _reactRouter = __webpack_require__(234);
-
-	var _reactRedux = __webpack_require__(302);
-
-	var _redux = __webpack_require__(309);
 
 	var _logo = __webpack_require__(443);
 
@@ -45178,32 +45734,15 @@
 
 	var _download2 = _interopRequireDefault(_download);
 
-	var _auth = __webpack_require__(412);
-
-	var actionCreators = _interopRequireWildcard(_auth);
-
-	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } // 页头导航
 
-	function mapStateToProps(state) {
-	    return {
-	        userId: state.auth.userId,
-	        isAuthenticated: state.auth.isAuthenticated
-	    };
-	}
-
-	function mapDispatchToProps(dispatch) {
-	    return (0, _redux.bindActionCreators)(actionCreators, dispatch);
-	}
-
-	var Navbar = (_dec = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps), _dec(_class = function (_React$Component) {
+	var Navbar = function (_React$Component) {
 	    _inherits(Navbar, _React$Component);
 
 	    function Navbar(props) {
@@ -45215,7 +45754,6 @@
 	            open: false,
 	            isDown: true
 	        };
-
 	        _this.handleScroll = _this.handleScroll.bind(_this);
 	        return _this;
 	    }
@@ -45238,43 +45776,6 @@
 	                });
 	            }
 	        }
-	    }, {
-	        key: 'dispatchNewRoute',
-	        value: function dispatchNewRoute(route) {
-	            _reactRouter.browserHistory.push(route);
-	            this.setState({
-	                open: false
-	            });
-	        }
-	    }, {
-	        key: 'handleClickOutside',
-	        value: function handleClickOutside() {
-	            this.setState({
-	                open: false
-	            });
-	        }
-	    }, {
-	        key: 'logout',
-	        value: function logout(e) {
-	            e.preventDefault();
-	            this.props.logoutAndRedirect();
-	            this.setState({
-	                open: false
-	            });
-	        }
-	    }, {
-	        key: 'openNav',
-	        value: function openNav() {
-	            this.setState({
-	                open: true
-	            });
-	        }
-	    }, {
-	        key: 'searchAll',
-	        value: function searchAll() {}
-	    }, {
-	        key: 'changeValue',
-	        value: function changeValue() {}
 	    }, {
 	        key: 'render',
 	        value: function render() {
@@ -45512,14 +46013,9 @@
 	    }]);
 
 	    return Navbar;
-	}(_react2.default.Component)) || _class);
+	}(_react2.default.Component);
+
 	exports.default = Navbar;
-
-
-	Navbar.propTypes = {
-	    logoutAndRedirect: _react2.default.PropTypes.func,
-	    isAuthenticated: _react2.default.PropTypes.bool
-	};
 
 /***/ },
 /* 443 */
@@ -45927,6 +46423,12 @@
 /* 449 */
 /***/ function(module, exports, __webpack_require__) {
 
+	module.exports = __webpack_require__.p + "3f1a2495d026f7ae6bd2e2b85e997b4a.gif";
+
+/***/ },
+/* 450 */
+/***/ function(module, exports, __webpack_require__) {
+
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
@@ -45950,7 +46452,7 @@
 
 	var Actions = _interopRequireWildcard(_actions);
 
-	var _tags = __webpack_require__(450);
+	var _tags = __webpack_require__(451);
 
 	var _tags2 = _interopRequireDefault(_tags);
 
@@ -45975,6 +46477,12 @@
 	var _ScrollTop2 = _interopRequireDefault(_ScrollTop);
 
 	var _reactRouter = __webpack_require__(234);
+
+	var _jquery = __webpack_require__(381);
+
+	var _jquery2 = _interopRequireDefault(_jquery);
+
+	var _config = __webpack_require__(409);
 
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
@@ -46011,38 +46519,71 @@
 	        var _this = _possibleConstructorReturn(this, (Home.__proto__ || Object.getPrototypeOf(Home)).call(this, props));
 
 	        _this.handleChange = _this.handleChange.bind(_this);
+	        _this.state = {
+	            tagList: [],
+	            articleIds: '',
+	            articleDetail: []
+	        };
 	        return _this;
 	    }
 
 	    _createClass(Home, [{
 	        key: 'componentDidMount',
 	        value: function componentDidMount() {
+	            console.log('component will mount,get the data first.');
 
-	            console.log('didmount');
-	            var _props = this.props,
-	                actions = _props.actions,
-	                tagList = _props.tagList,
-	                articleList = _props.articleList;
+	            // 取到所有的tags
+	            var tagUrl = _config.API_ROOT + 'public/tags';
+	            _jquery2.default.get(tagUrl, function (data) {
+	                console.log('is already get all tags:', data);
+	                this.setState({ tagList: data });
+	                console.log('is already get all tags and set its tate:', this.state.tagList);
+	            }.bind(this));
 
-	            if (tagList.length < 1) {
-	                actions.getTagList();
+	            this.handleClick();
+	        }
+
+	        // 取到所有的文章id
+
+	    }, {
+	        key: 'handleClick',
+	        value: function handleClick(event, t_tags) {
+	            var articleIdUrl = _config.API_ROOT + 't/display';
+	            _jquery2.default.get(articleIdUrl, { t_tags: t_tags }, function (data) {
+	                console.log('get all article ids by all tags:', data);
+	                this.setState({ articleIds: data.t_ids });
+	                console.log('articleIds:', this.state.articleIds);
+	                var articleIds = this.state.articleIds.split('&');
+	                var articleIdsByHot = articleIds[0];
+	                var articlesByHot = articleIdsByHot.toString().split(',');
+	                console.log('articlesByHot:', articlesByHot);
+	                return this.getArticleDetails(articlesByHot);
+	            }.bind(this));
+	        }
+
+	        // 取文章的详情
+
+	    }, {
+	        key: 'getArticleDetails',
+	        value: function getArticleDetails(articlesByHot) {
+	            var _this2 = this;
+
+	            var articleDetailUrl = _config.API_ROOT + 't/query';
+	            var articleDetail = new Array();
+
+	            var _loop = function _loop(i) {
+	                _jquery2.default.get(articleDetailUrl, { t_id: articlesByHot[i] }, function (data) {
+	                    console.log('get all article details by their ids:', data);
+	                    articleDetail[i] = data;
+	                    console.log('get all article details and put them into the array:', articleDetail);
+	                    this.setState({ articleDetail: articleDetail });
+	                    console.log('articleDetails:', this.state.articleDetail);
+	                }.bind(_this2));
+	            };
+
+	            for (var i = 0; i < articlesByHot.length; i++) {
+	                _loop(i);
 	            }
-	            // if(articleList.items.length < 1){
-	            actions.getArticleList();
-	            // }
-	            //bug!
-
-	            // let token = getCookie('token');
-	            // if(token){
-	            //     actions.loginSuccess(token);
-	            //     actions.getUserInfo(token);
-	            // }
-	            // actions.loginSuccess(token);
-	            // debugger;
-	            // let {auth} = this.props;
-	            // if(auth.token&&!auth.user){
-	            //     actions.getUserInfo();
-	            // }
 	        }
 	    }, {
 	        key: 'handleChange',
@@ -46058,24 +46599,12 @@
 	    }, {
 	        key: 'render',
 	        value: function render() {
-	            var _props2 = this.props,
-	                tagList = _props2.tagList,
-	                articleList = _props2.articleList,
-	                options = _props2.options,
-	                actions = _props2.actions,
-	                auth = _props2.auth,
-	                location = _props2.location,
-	                showmsg = _props2.showmsg,
-	                children = _props2.children;
-
+	            var _this3 = this;
 
 	            return _react2.default.createElement(
 	                'div',
 	                { className: 'home-container' },
-	                _react2.default.createElement(_navbar2.default, { changeStyleMode: actions.changeStyleMode,
-	                    location: location,
-	                    auth: auth,
-	                    logout: actions.logout }),
+	                _react2.default.createElement(_navbar2.default, null),
 	                _react2.default.createElement('div', { className: 'background' }),
 	                _react2.default.createElement(
 	                    'div',
@@ -46089,10 +46618,293 @@
 	                            _react2.default.createElement(
 	                                'div',
 	                                { className: 'content-inner' },
-	                                _react2.default.createElement(_tags2.default, { tagList: tagList,
-	                                    options: options,
-	                                    isFetching: articleList.isFetching,
-	                                    changeSort: this.handleChange })
+	                                _react2.default.createElement(
+	                                    'div',
+	                                    { className: 'body-main' },
+	                                    _react2.default.createElement(
+	                                        'div',
+	                                        { className: 'con-left' },
+	                                        _react2.default.createElement(
+	                                            'ul',
+	                                            { className: 'con-left-ul' },
+	                                            _react2.default.createElement(
+	                                                'li',
+	                                                { className: 'con-left-li' },
+	                                                _react2.default.createElement(
+	                                                    'a',
+	                                                    { href: '' },
+	                                                    '\u6240\u6709\u6807\u7B7E'
+	                                                ),
+	                                                _react2.default.createElement(
+	                                                    'div',
+	                                                    { className: 'lesson-list-detail' },
+	                                                    _react2.default.createElement(
+	                                                        'div',
+	                                                        { className: 'lesson-list-con' },
+	                                                        _react2.default.createElement(
+	                                                            'dl',
+	                                                            null,
+	                                                            _react2.default.createElement(
+	                                                                'dt',
+	                                                                null,
+	                                                                _react2.default.createElement(
+	                                                                    'a',
+	                                                                    { href: '', onClick: function onClick(event) {
+	                                                                            return _this3.handleClick(event);
+	                                                                        } },
+	                                                                    '\u6240\u6709\u6807\u7B7E'
+	                                                                )
+	                                                            ),
+	                                                            this.state.tagList.map(function (tag, i) {
+	                                                                return _react2.default.createElement(
+	                                                                    'dd',
+	                                                                    { key: i },
+	                                                                    _react2.default.createElement(
+	                                                                        'a',
+	                                                                        { onClick: function onClick(event) {
+	                                                                                return _this3.handleClick(event, tag.toString());
+	                                                                            } },
+	                                                                        tag
+	                                                                    )
+	                                                                );
+	                                                            })
+	                                                        )
+	                                                    )
+	                                                )
+	                                            ),
+	                                            _react2.default.createElement(
+	                                                'li',
+	                                                { className: 'con-left-li' },
+	                                                _react2.default.createElement(
+	                                                    'a',
+	                                                    { onClick: function onClick(event) {
+	                                                            return _this3.handleClick(event, 'ios');
+	                                                        } },
+	                                                    'ios'
+	                                                )
+	                                            ),
+	                                            _react2.default.createElement(
+	                                                'li',
+	                                                { className: 'con-left-li' },
+	                                                _react2.default.createElement(
+	                                                    'a',
+	                                                    { onClick: function onClick(event) {
+	                                                            return _this3.handleClick(event, 'android');
+	                                                        } },
+	                                                    'android'
+	                                                )
+	                                            ),
+	                                            _react2.default.createElement(
+	                                                'li',
+	                                                { className: 'con-left-li' },
+	                                                _react2.default.createElement(
+	                                                    'a',
+	                                                    { onClick: function onClick(event) {
+	                                                            return _this3.handleClick(event, 'linux');
+	                                                        } },
+	                                                    'linux'
+	                                                )
+	                                            ),
+	                                            _react2.default.createElement(
+	                                                'li',
+	                                                { className: 'con-left-li' },
+	                                                _react2.default.createElement(
+	                                                    'a',
+	                                                    { onClick: function onClick(event) {
+	                                                            return _this3.handleClick(event, 'windows');
+	                                                        } },
+	                                                    'windows'
+	                                                )
+	                                            ),
+	                                            _react2.default.createElement(
+	                                                'li',
+	                                                { className: 'con-left-li' },
+	                                                _react2.default.createElement(
+	                                                    'a',
+	                                                    { onClick: function onClick(event) {
+	                                                            return _this3.handleClick(event, '后端开发');
+	                                                        } },
+	                                                    '\u540E\u7AEF\u5F00\u53D1'
+	                                                )
+	                                            ),
+	                                            _react2.default.createElement(
+	                                                'li',
+	                                                { className: 'con-left-li' },
+	                                                _react2.default.createElement(
+	                                                    'a',
+	                                                    { onClick: function onClick(event) {
+	                                                            return _this3.handleClick(event, '前端开发');
+	                                                        } },
+	                                                    '\u524D\u7AEF\u5F00\u53D1'
+	                                                )
+	                                            ),
+	                                            _react2.default.createElement(
+	                                                'li',
+	                                                { className: 'con-left-li' },
+	                                                _react2.default.createElement(
+	                                                    'a',
+	                                                    { onClick: function onClick(event) {
+	                                                            return _this3.handleClick(event, '数据库');
+	                                                        } },
+	                                                    '\u6570\u636E\u5E93'
+	                                                )
+	                                            ),
+	                                            _react2.default.createElement(
+	                                                'li',
+	                                                { className: 'con-left-li' },
+	                                                _react2.default.createElement(
+	                                                    'a',
+	                                                    { onClick: function onClick(event) {
+	                                                            return _this3.handleClick(event, '云计算');
+	                                                        } },
+	                                                    '\u4E91\u8BA1\u7B97'
+	                                                )
+	                                            ),
+	                                            _react2.default.createElement(
+	                                                'li',
+	                                                { className: 'con-left-li' },
+	                                                _react2.default.createElement(
+	                                                    'a',
+	                                                    { onClick: function onClick(event) {
+	                                                            return _this3.handleClick(event, '服务器');
+	                                                        } },
+	                                                    '\u670D\u52A1\u5668'
+	                                                )
+	                                            )
+	                                        )
+	                                    ),
+	                                    _react2.default.createElement(
+	                                        'div',
+	                                        { className: 'main-content main-MC main-c_T' },
+	                                        _react2.default.createElement(
+	                                            'div',
+	                                            { className: 'content-topBar content-t_NL_ATL main-c_T' },
+	                                            _react2.default.createElement(
+	                                                'dl',
+	                                                { className: 'topBar-nav topBar-NL content-t_NL_ATL' },
+	                                                _react2.default.createElement(
+	                                                    'dt',
+	                                                    { className: 'topBar--pointer content-t_NL_ATL' },
+	                                                    '\u5168\u90E8\u6587\u7AE0'
+	                                                ),
+	                                                _react2.default.createElement(
+	                                                    'dd',
+	                                                    { className: 'topBar--pointer content-t_NL_ATL' },
+	                                                    _react2.default.createElement(
+	                                                        'span',
+	                                                        null,
+	                                                        '\u6700\u65B0',
+	                                                        _react2.default.createElement(
+	                                                            'i',
+	                                                            { className: 'indicator' },
+	                                                            ' '
+	                                                        )
+	                                                    ),
+	                                                    _react2.default.createElement(
+	                                                        'ul',
+	                                                        { className: 'hot-menu pointer-menu' },
+	                                                        _react2.default.createElement(
+	                                                            'li',
+	                                                            null,
+	                                                            _react2.default.createElement(
+	                                                                'a',
+	                                                                { href: '' },
+	                                                                '\u6700\u65B0'
+	                                                            )
+	                                                        ),
+	                                                        _react2.default.createElement(
+	                                                            'li',
+	                                                            null,
+	                                                            _react2.default.createElement(
+	                                                                'a',
+	                                                                { href: '' },
+	                                                                '\u6700\u70ED'
+	                                                            )
+	                                                        )
+	                                                    )
+	                                                )
+	                                            ),
+	                                            _react2.default.createElement(
+	                                                'div',
+	                                                { className: 'topBar-lookWay topBar-NL content-t_NL_ATL' },
+	                                                _react2.default.createElement(
+	                                                    'i',
+	                                                    { className: 'topBar--pointer lookWay-tile lookWay-TL content-t_NL_ATL' },
+	                                                    ' '
+	                                                ),
+	                                                _react2.default.createElement(
+	                                                    'i',
+	                                                    { className: 'topBar--pointer lookWay-list lookWay-TL content-t_NL_ATL' },
+	                                                    ' '
+	                                                )
+	                                            )
+	                                        )
+	                                    ),
+	                                    this.state.articleDetail.map(function (article, i) {
+	                                        return _react2.default.createElement(
+	                                            'div',
+	                                            { className: 'content-shelf',
+	                                                key: i },
+	                                            _react2.default.createElement(
+	                                                'div',
+	                                                { className: 'shelf-exhibit' },
+	                                                _react2.default.createElement('div', { className: 'exhibit-photoFrame' }),
+	                                                _react2.default.createElement(
+	                                                    'div',
+	                                                    { className: 'exhibit-describe' },
+	                                                    _react2.default.createElement(
+	                                                        'h4',
+	                                                        null,
+	                                                        _react2.default.createElement(
+	                                                            _reactRouter.Link,
+	                                                            { to: '/article/' + article.t_id,
+	                                                                className: 'link-title' },
+	                                                            article.t_title
+	                                                        )
+	                                                    ),
+	                                                    _react2.default.createElement(
+	                                                        'p',
+	                                                        null,
+	                                                        ' '
+	                                                    ),
+	                                                    _react2.default.createElement(
+	                                                        'div',
+	                                                        { className: 'exhibit-tags' },
+	                                                        _react2.default.createElement(
+	                                                            'span',
+	                                                            { className: 'tag-time' },
+	                                                            _react2.default.createElement(
+	                                                                'i',
+	                                                                null,
+	                                                                ' '
+	                                                            )
+	                                                        ),
+	                                                        _react2.default.createElement(
+	                                                            'span',
+	                                                            { className: 'tag-level' },
+	                                                            _react2.default.createElement(
+	                                                                'i',
+	                                                                null,
+	                                                                ' '
+	                                                            )
+	                                                        ),
+	                                                        _react2.default.createElement(
+	                                                            'span',
+	                                                            { className: 'tag-numberOf' },
+	                                                            ' '
+	                                                        ),
+	                                                        _react2.default.createElement(
+	                                                            'i',
+	                                                            { className: 'exhibit-type' },
+	                                                            ' '
+	                                                        )
+	                                                    )
+	                                                )
+	                                            )
+	                                        );
+	                                    })
+	                                ),
+	                                ')'
 	                            )
 	                        )
 	                    )
@@ -46108,7 +46920,7 @@
 	exports.default = Home;
 
 /***/ },
-/* 450 */
+/* 451 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -46120,13 +46932,29 @@
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+	var _dec, _class; // 显示所有的标签
+
 	var _react = __webpack_require__(72);
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _tiny = __webpack_require__(451);
+	var _reactRouter = __webpack_require__(234);
 
-	var _tiny2 = _interopRequireDefault(_tiny);
+	var _redux = __webpack_require__(309);
+
+	var _reactRedux = __webpack_require__(302);
+
+	var _config = __webpack_require__(409);
+
+	var _jquery = __webpack_require__(381);
+
+	var _jquery2 = _interopRequireDefault(_jquery);
+
+	var _actions = __webpack_require__(382);
+
+	var Actions = _interopRequireWildcard(_actions);
+
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -46134,9 +46962,23 @@
 
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } // 显示所有的标签
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	var Tags = function (_React$Component) {
+	function mapStateToProps(state) {
+	    return {
+	        tagList: state.tagList.toJS(),
+	        articleList: state.articleList.toJS(),
+	        articleDetail: state.articleDetail.toJS()
+	    };
+	}
+
+	function mapDispatchToProps(dispatch) {
+	    return {
+	        actions: (0, _redux.bindActionCreators)(Actions, dispatch)
+	    };
+	}
+
+	var Tags = (_dec = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps), _dec(_class = function (_React$Component) {
 	    _inherits(Tags, _React$Component);
 
 	    function Tags() {
@@ -46156,151 +46998,183 @@
 	            };
 	        }
 	    }, {
+	        key: 'getArticleAbout',
+	        value: function getArticleAbout(t_id) {
+	            // const {actions} = this.props;
+	            // actions.getArticleDetail(t_id);
+	            var url = _config.API_ROOT + 't/query';
+	            _jquery2.default.get(url, { t_id: t_id }, function (data) {
+	                localStorage.setItem('t_id', data.t_id);
+	                localStorage.setItem('t_title', data.t_title);
+	                localStorage.setItem('t_text', data.t_text);
+	                localStorage.setItem('t_date', data.t_date);
+	                localStorage.setItem('t_like', data.t_like);
+	                localStorage.setItem('t_comments', data.t_comments);
+	                localStorage.setItem('t_tags', data.t_tags);
+	                localStorage.setItem('t_date_latest', data.t_date_latest);
+	                localStorage.setItem('t_star', data.t_star);
+	                console.log('queryArticle:', data);
+	            });
+	        }
+	    }, {
 	        key: 'render',
 	        value: function render() {
 	            var _this2 = this;
 
 	            var _props = this.props,
 	                tagList = _props.tagList,
+	                articleList = _props.articleList,
 	                options = _props.options,
-	                changeSort = _props.changeSort,
-	                isFetching = _props.isFetching;
+	                actions = _props.actions,
+	                auth = _props.auth,
+	                location = _props.location,
+	                showmsg = _props.showmsg,
+	                children = _props.children,
+	                articleDetail = _props.articleDetail;
 
-	            console.log('tagList:', tagList);
+	            console.log('tagList:', tagList, 'articleList:', articleList, 'articleDetail:', articleDetail);
+	            var articleIds = articleList.tIds.split('&');
 
+	            var articleIdsByHot = articleIds[0];
+	            var articlesByHot = articleIdsByHot.toString().split(',');
+	            console.log('articleByHot:', articlesByHot);
 	            return _react2.default.createElement(
 	                'div',
 	                { className: 'body-main' },
 	                _react2.default.createElement(
-	                    'ul',
-	                    { className: 'main-menu main-MC' },
+	                    'div',
+	                    { className: 'con-left' },
 	                    _react2.default.createElement(
-	                        'li',
-	                        null,
+	                        'ul',
+	                        { className: 'con-left-ul' },
 	                        _react2.default.createElement(
-	                            'ul',
-	                            { id: 'main--menu', className: 'main--menu' },
-	                            _react2.default.createElement(
-	                                'li',
-	                                null,
-	                                _react2.default.createElement(
-	                                    'a',
-	                                    { href: '#' },
-	                                    '\u5168\u90E8\u6807\u7B7E'
-	                                )
-	                            ),
-	                            _react2.default.createElement(
-	                                'li',
-	                                { className: 'con-left-li' },
-	                                _react2.default.createElement(
-	                                    'a',
-	                                    { href: '#' },
-	                                    'ios'
-	                                )
-	                            ),
-	                            _react2.default.createElement(
-	                                'li',
-	                                { className: 'con-left-li' },
-	                                _react2.default.createElement(
-	                                    'a',
-	                                    { href: '#' },
-	                                    'android'
-	                                )
-	                            ),
-	                            _react2.default.createElement(
-	                                'li',
-	                                { className: 'con-left-li' },
-	                                _react2.default.createElement(
-	                                    'a',
-	                                    { href: '#' },
-	                                    'linux'
-	                                )
-	                            ),
-	                            _react2.default.createElement(
-	                                'li',
-	                                { className: 'con-left-li' },
-	                                _react2.default.createElement(
-	                                    'a',
-	                                    { href: '#' },
-	                                    'windows'
-	                                )
-	                            ),
-	                            _react2.default.createElement(
-	                                'li',
-	                                { className: 'con-left-li' },
-	                                _react2.default.createElement(
-	                                    'a',
-	                                    { href: '#' },
-	                                    '\u540E\u7AEF\u5F00\u53D1'
-	                                )
-	                            ),
-	                            _react2.default.createElement(
-	                                'li',
-	                                { className: 'con-left-li' },
-	                                _react2.default.createElement(
-	                                    'a',
-	                                    { href: '#' },
-	                                    '\u524D\u7AEF\u5F00\u53D1'
-	                                )
-	                            ),
-	                            _react2.default.createElement(
-	                                'li',
-	                                { className: 'con-left-li' },
-	                                _react2.default.createElement(
-	                                    'a',
-	                                    { href: '#' },
-	                                    '\u6570\u636E\u5E93'
-	                                )
-	                            ),
-	                            _react2.default.createElement(
-	                                'li',
-	                                { className: 'con-left-li' },
-	                                _react2.default.createElement(
-	                                    'a',
-	                                    { href: '#' },
-	                                    '\u4E91\u8BA1\u7B97'
-	                                )
-	                            ),
-	                            _react2.default.createElement(
-	                                'li',
-	                                { className: 'con-left-li' },
-	                                _react2.default.createElement(
-	                                    'a',
-	                                    { href: '#' },
-	                                    '\u670D\u52A1\u5668'
-	                                )
-	                            )
-	                        )
-	                    ),
-	                    _react2.default.createElement(
-	                        'dl',
-	                        { id: 'expandMenu', className: 'expandMenu' },
-	                        _react2.default.createElement(
-	                            'dt',
-	                            null,
+	                            'li',
+	                            { className: 'con-left-li' },
 	                            _react2.default.createElement(
 	                                'a',
-	                                { href: '#',
-	                                    onClick: function onClick(e) {
-	                                        return _this2.handleClick();
-	                                    } },
+	                                { href: '' },
 	                                '\u6240\u6709\u6807\u7B7E'
+	                            ),
+	                            _react2.default.createElement(
+	                                'div',
+	                                { className: 'lesson-list-detail' },
+	                                _react2.default.createElement(
+	                                    'div',
+	                                    { className: 'lesson-list-con' },
+	                                    _react2.default.createElement(
+	                                        'dl',
+	                                        null,
+	                                        _react2.default.createElement(
+	                                            'dt',
+	                                            null,
+	                                            _react2.default.createElement(
+	                                                'a',
+	                                                { href: '',
+	                                                    onClick: function onClick(e) {
+	                                                        return _this2.handleClick();
+	                                                    } },
+	                                                '\u6240\u6709\u6807\u7B7E'
+	                                            )
+	                                        ),
+	                                        tagList.map(function (tag, i) {
+	                                            return _react2.default.createElement(
+	                                                'dd',
+	                                                { key: i },
+	                                                _react2.default.createElement(
+	                                                    'a',
+	                                                    { href: '',
+	                                                        onClick: function onClick(e) {
+	                                                            return _this2.handleClick({ tag: tag });
+	                                                        } },
+	                                                    tag
+	                                                )
+	                                            );
+	                                        })
+	                                    )
+	                                )
 	                            )
 	                        ),
-	                        tagList.map(function (tag, i) {
-	                            return _react2.default.createElement(
-	                                'dd',
-	                                { key: i },
-	                                _react2.default.createElement(
-	                                    'a',
-	                                    { href: '',
-	                                        onClick: function onClick(e) {
-	                                            return _this2.handleClick({ tag: tag });
-	                                        } },
-	                                    tag
-	                                )
-	                            );
-	                        })
+	                        _react2.default.createElement(
+	                            'li',
+	                            { className: 'con-left-li' },
+	                            _react2.default.createElement(
+	                                'a',
+	                                { href: '#' },
+	                                'ios'
+	                            )
+	                        ),
+	                        _react2.default.createElement(
+	                            'li',
+	                            { className: 'con-left-li' },
+	                            _react2.default.createElement(
+	                                'a',
+	                                { href: '#' },
+	                                'android'
+	                            )
+	                        ),
+	                        _react2.default.createElement(
+	                            'li',
+	                            { className: 'con-left-li' },
+	                            _react2.default.createElement(
+	                                'a',
+	                                { href: '#' },
+	                                'linux'
+	                            )
+	                        ),
+	                        _react2.default.createElement(
+	                            'li',
+	                            { className: 'con-left-li' },
+	                            _react2.default.createElement(
+	                                'a',
+	                                { href: '#' },
+	                                'windows'
+	                            )
+	                        ),
+	                        _react2.default.createElement(
+	                            'li',
+	                            { className: 'con-left-li' },
+	                            _react2.default.createElement(
+	                                'a',
+	                                { href: '#' },
+	                                '\u540E\u7AEF\u5F00\u53D1'
+	                            )
+	                        ),
+	                        _react2.default.createElement(
+	                            'li',
+	                            { className: 'con-left-li' },
+	                            _react2.default.createElement(
+	                                'a',
+	                                { href: '#' },
+	                                '\u524D\u7AEF\u5F00\u53D1'
+	                            )
+	                        ),
+	                        _react2.default.createElement(
+	                            'li',
+	                            { className: 'con-left-li' },
+	                            _react2.default.createElement(
+	                                'a',
+	                                { href: '#' },
+	                                '\u6570\u636E\u5E93'
+	                            )
+	                        ),
+	                        _react2.default.createElement(
+	                            'li',
+	                            { className: 'con-left-li' },
+	                            _react2.default.createElement(
+	                                'a',
+	                                { href: '#' },
+	                                '\u4E91\u8BA1\u7B97'
+	                            )
+	                        ),
+	                        _react2.default.createElement(
+	                            'li',
+	                            { className: 'con-left-li' },
+	                            _react2.default.createElement(
+	                                'a',
+	                                { href: '#' },
+	                                '\u670D\u52A1\u5668'
+	                            )
+	                        )
 	                    )
 	                ),
 	                _react2.default.createElement(
@@ -46370,75 +47244,77 @@
 	                        )
 	                    )
 	                ),
-	                _react2.default.createElement(
-	                    'div',
-	                    { className: 'content-shelf' },
-	                    _react2.default.createElement(
+	                articlesByHot.length > 0 && articlesByHot.map(function (t_id, i) {
+	                    _this2.getArticleAbout(t_id);
+	                    return _react2.default.createElement(
 	                        'div',
-	                        { className: 'shelf-exhibit' },
-	                        _react2.default.createElement('div', { className: 'exhibit-photoFrame' }),
+	                        { className: 'content-shelf',
+	                            key: i },
 	                        _react2.default.createElement(
 	                            'div',
-	                            { className: 'exhibit-describe' },
-	                            _react2.default.createElement(
-	                                'h4',
-	                                null,
-	                                ' '
-	                            ),
-	                            _react2.default.createElement(
-	                                'p',
-	                                null,
-	                                ' '
-	                            ),
+	                            { className: 'shelf-exhibit' },
+	                            _react2.default.createElement('div', { className: 'exhibit-photoFrame' }),
 	                            _react2.default.createElement(
 	                                'div',
-	                                { className: 'exhibit-tags' },
+	                                { className: 'exhibit-describe' },
 	                                _react2.default.createElement(
-	                                    'span',
-	                                    { className: 'tag-time' },
+	                                    'h4',
+	                                    null,
 	                                    _react2.default.createElement(
-	                                        'i',
-	                                        null,
-	                                        ' '
+	                                        _reactRouter.Link,
+	                                        { to: '/article/' + localStorage.getItem('t_id'),
+	                                            className: 'link-title' },
+	                                        localStorage.getItem('t_title')
 	                                    )
 	                                ),
 	                                _react2.default.createElement(
-	                                    'span',
-	                                    { className: 'tag-level' },
+	                                    'p',
+	                                    null,
+	                                    ' '
+	                                ),
+	                                _react2.default.createElement(
+	                                    'div',
+	                                    { className: 'exhibit-tags' },
+	                                    _react2.default.createElement(
+	                                        'span',
+	                                        { className: 'tag-time' },
+	                                        _react2.default.createElement(
+	                                            'i',
+	                                            null,
+	                                            ' '
+	                                        )
+	                                    ),
+	                                    _react2.default.createElement(
+	                                        'span',
+	                                        { className: 'tag-level' },
+	                                        _react2.default.createElement(
+	                                            'i',
+	                                            null,
+	                                            ' '
+	                                        )
+	                                    ),
+	                                    _react2.default.createElement(
+	                                        'span',
+	                                        { className: 'tag-numberOf' },
+	                                        ' '
+	                                    ),
 	                                    _react2.default.createElement(
 	                                        'i',
-	                                        null,
+	                                        { className: 'exhibit-type' },
 	                                        ' '
 	                                    )
-	                                ),
-	                                _react2.default.createElement(
-	                                    'span',
-	                                    { className: 'tag-numberOf' },
-	                                    ' '
-	                                ),
-	                                _react2.default.createElement(
-	                                    'i',
-	                                    { className: 'exhibit-type' },
-	                                    ' '
 	                                )
 	                            )
 	                        )
-	                    )
-	                )
+	                    );
+	                })
 	            );
 	        }
 	    }]);
 
 	    return Tags;
-	}(_react2.default.Component);
-
+	}(_react2.default.Component)) || _class);
 	exports.default = Tags;
-
-/***/ },
-/* 451 */
-/***/ function(module, exports) {
-
-	module.exports = "data:image/gif;base64,R0lGODlhIgAWAJEAAGZmZmVlZQAAAAAAACH/C05FVFNDQVBFMi4wAwEAAAAh/wtYTVAgRGF0YVhNUDw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNS1jMDE0IDc5LjE1MTQ4MSwgMjAxMy8wMy8xMy0xMjowOToxNSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczpkYz0iaHR0cDovL3B1cmwub3JnL2RjL2VsZW1lbnRzLzEuMS8iIHhtbG5zOnhtcE1NPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIiB4bWxuczpzdFJlZj0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL3NUeXBlL1Jlc291cmNlUmVmIyIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ0MgKE1hY2ludG9zaCkiIHhtcDpDcmVhdGVEYXRlPSIyMDE0LTA4LTA1VDE1OjAyOjM5KzA4OjAwIiB4bXA6TW9kaWZ5RGF0ZT0iMjAxNC0wOC0wNVQwNzowODoyOSswODowMCIgeG1wOk1ldGFkYXRhRGF0ZT0iMjAxNC0wOC0wNVQwNzowODoyOSswODowMCIgZGM6Zm9ybWF0PSJpbWFnZS9naWYiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6QTUxMDE0NzkxNDkzMTFFNDlCMTFEMDJFMTc3M0M5QzciIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6QTUxMDE0N0ExNDkzMTFFNDlCMTFEMDJFMTc3M0M5QzciPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDpBNTEwMTQ3NzE0OTMxMUU0OUIxMUQwMkUxNzczQzlDNyIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDpBNTEwMTQ3ODE0OTMxMUU0OUIxMUQwMkUxNzczQzlDNyIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PgH//v38+/r5+Pf29fTz8vHw7+7t7Ovq6ejn5uXk4+Lh4N/e3dzb2tnY19bV1NPS0dDPzs3My8rJyMfGxcTDwsHAv769vLu6ubi3trW0s7KxsK+urayrqqmop6alpKOioaCfnp2cm5qZmJeWlZSTkpGQj46NjIuKiYiHhoWEg4KBgH9+fXx7enl4d3Z1dHNycXBvbm1sa2ppaGdmZWRjYmFgX15dXFtaWVhXVlVUU1JRUE9OTUxLSklIR0ZFRENCQUA/Pj08Ozo5ODc2NTQzMjEwLy4tLCsqKSgnJiUkIyIhIB8eHRwbGhkYFxYVFBMSERAPDg0MCwoJCAcGBQQDAgEAACH5BAUDAAIALAAAAAAiABYAAAI4lI+py+0Po5y02ouz3rz7D4QiIo5HGTIoQKJtqbqnbKwxPOM1ndi5udP1eL4gcCgsCpSfpvOpKQAAIfkEBQMAAgAsBAAKAAYAAQAAAgKEXwAh+QQFAwACACwEAAkABgABAAACAwx+BQAh+QQFAwACACwEAAcABgADAAACBISPKVsAIfkEBQMAAgAsBAAGAAYAAQAAAgKEXwAh+QQFAwACACwEAAQAEAAHAAACDYQvqXu4D6OctNraTAEAIfkEBQMAAgAsDgAJAAYAAQAAAgKEXwAh+QQJAwACACwEAAQAEAAFAAACCpSPqcvtB6J0UhYAIfkECQMAAgAsBAAGABAAAwAAAgmELynHrdviiwUAIfkECQMAAgAsBAAEABoABwAAAhaUj6CL7b3YmykCKuw9GndueSJGlloBACH5BAkDAAIALAQABAAaAAcAAAIZlI+gi+292JspAoqFvXluHFhVNG6S8R1bAQAh+QQJAwACACwEAAQAGgAHAAACGZSPoIvtvdibKQKKhb1nY99ZnxhuUXWWSwEAIfkECQMAAgAsDgAGABAABQAAAg2ELynHrdvii1JRZ1sBACH5BAkDAAIALAQABAAaAAcAAAIYlI+ZwK3/moPUSFYvQDpf/lHdoY1WeEoFACH5BAkDAAIALAQABAAaAAcAAAIYlI+ZwK3/moPUSFbrBZnucCGb+EmkeWwFACH5BAkDAAIALAQABAAaAAcAAAIXlI+ZwK3/moPUyDurxVcf3nkCKCGYeRUAIfkECQMAAgAsBAAGABoABQAAAhGEL6m758+iehRIWeFl2W3+FAAh+QQJAwACACwEAAQAGgAHAAACGIQvqct82GJ7RlpFwV05b9w9XxKKoElSBQAh+QQJAwACACwEAAQAGgAHAAACF4Qvqct82GJ7RlpFwb15245RSwYmpZAVACH5BAkDAAIALAQABAAaAAcAAAIYhC+py3zYYntGWkXBypdj2oHfE5IjlGQFACH5BAkDAAIALAQABgAQAAUAAAINhC8px63b4otSUWdbAQAh+QQJAwACACwEAAQAGgAHAAACGZSPoIvtvdibKQIq7D0ad255IRiJJSkZWgEAIfkECQMAAgAsBAAEABoABwAAAhmUj6CL7b3YmykCioW9eW4cWFU0bpLxHVsBACH5BAkDAAIALAQABQAaAAYAAAIXlI+gi+292JspghqpsPdw/XmchUkGVwAAIfkECQMAAgAsDgAGABAABQAAAg2ELynHrdvii1JRZ1sBACH5BAkDAAIALAQABAAaAAcAAAIYlI+ZwK3/moPUSFYvQDpf/lHdoY1WeEoFACH5BAkDAAIALAQABAAaAAcAAAIXlI+ZwK3/moPUSFbrBZnujYDHd4XleBUAIfkECQMAAgAsBAAFABoABgAAAhSUj5nArf+anFDNC+rCUiPeHdc3FQAh+QQJAwACACwEAAYAGgAFAAACEYQvqbvnz6J6FEhZ4WXZbf4UACH5BAkDAAIALAQABQAaAAYAAAIUhC+py3zYYntGToqtw1Qv3imZSBUAIfkECQMAAgAsBAAEABoABwAAAheEL6nLfNhie0ZaRcG9eduOUUsGJqWQFQAh+QQJAwACACwEAAUAGgAGAAACF4Qvqct82GJ7ZlEg07U0i62Akvh1IVUAACH5BAkDAAIALAQABgAQAAUAAAINhC8px63b4otSUWdbAQAh+QQJAwACACwEAAUAEAAGAAACD5SPoIstC2OKdFJor8qqAAAh+QQJAwACACwEAAQAEAAHAAACEpSPoIsty9yBSk5qDd0gcehBBQAh+QQFAwACACwEAAQAEAAHAAACEpSPoIsty9yBSk5qDQX5bXxBBQA7"
 
 /***/ },
 /* 452 */
@@ -46765,7 +47641,7 @@
 	                                        null,
 	                                        _react2.default.createElement(
 	                                            'a',
-	                                            { href: '#' },
+	                                            { href: '' },
 	                                            '\u6240\u6709\u6587\u7AE0'
 	                                        )
 	                                    ),
@@ -46774,7 +47650,7 @@
 	                                        null,
 	                                        _react2.default.createElement(
 	                                            'a',
-	                                            { href: '#' },
+	                                            { href: '' },
 	                                            '\u70ED\u95E8\u6587\u7AE0'
 	                                        )
 	                                    ),
@@ -46783,7 +47659,7 @@
 	                                        null,
 	                                        _react2.default.createElement(
 	                                            'a',
-	                                            { href: '#' },
+	                                            { href: '' },
 	                                            '\u6700\u65B0\u6587\u7AE0'
 	                                        )
 	                                    ),
@@ -46792,7 +47668,7 @@
 	                                        null,
 	                                        _react2.default.createElement(
 	                                            'a',
-	                                            { href: '#' },
+	                                            { href: '' },
 	                                            '\u63A8\u8350\u6587\u7AE0'
 	                                        )
 	                                    )

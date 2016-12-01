@@ -1,4 +1,4 @@
-import * as types from '../actions/types'
+/*import * as types from '../actions/types'
 import {createReducer} from 'redux-immutablejs'
 import {fromJS} from 'immutable'
 
@@ -25,7 +25,7 @@ export const articleDetail = createReducer(fromJS({}),{
         return state.merge(action.articleDetail);
     },
     [types.ARTICLE_DETAIL_FAILURE]:(state,action) => state,
-});
+});*/
 /*
 export const articleList = createReducer(initialState,{
     [types.ARTICLE_LIST_REQUEST]:(state,action) => state.set('isFetching',true),

@@ -84,10 +84,10 @@ export default class Navbar extends React.Component{
                                 <li className="nav-li">
                                     <h2><Link to="/homearticle">文章</Link><i className="indicator"> </i></h2>
                                     <dl className="nav-menu nav-menu-1">
-                                        <dd><a href="#">所有文章</a></dd>
-                                        <dd><a href="#">热门文章</a></dd>
-                                        <dd><a href="#">最新文章</a></dd>
-                                        <dd><a href="#">推荐文章</a></dd>
+                                        <dd><a href="">所有文章</a></dd>
+                                        <dd><a href="">热门文章</a></dd>
+                                        <dd><a href="">最新文章</a></dd>
+                                        <dd><a href="">推荐文章</a></dd>
                                     </dl>
                                 </li>
                                 <li className="nav-li">
