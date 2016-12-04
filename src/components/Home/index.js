@@ -1,4 +1,4 @@
-﻿// 首页，获取全部文章
+// 首页，获取全部文章
 
 import React,{Component} from 'react'
 import {Link,browserHistory} from 'react-router';
