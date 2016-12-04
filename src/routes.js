@@ -6,6 +6,7 @@ import {Route,IndexRoute} from 'react-router';
 import App from './components/App'; // 应用入口
 import Home from './components/Home'; // 主页
 import HomeArticle from './components/HomeArticle';//显示文章的主页
+import HomeQuestion from './components/HomeQuestion';//显示问题主页
 import Login from './components/Login'; // 登录
 import Register from './components/Register'; // 注册
 
@@ -32,6 +33,7 @@ export default ()=>(
     <Route path='/' component={App}>
         <IndexRoute component={Home}/>
         <Route path='/homearticle' components={HomeArticle}/>
+        <Route path='/homequestion' components={HomeQuestion}/>
         <Route path='/login' component={Login}/>
         <Route path='/register' component={Register}/>
         <Route path='/hintverifyemail' component={HintVerifyEmail}/>

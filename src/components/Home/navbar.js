@@ -82,9 +82,9 @@ export default class Navbar extends React.Component{
                             <Link to="/homearticle">
                                 文章
                             </Link>
-                            <a href="#">
+                            <Link to="/homequestion">
                                 问答
-                            </a>
+                            </Link>
                             <ul className="nav-hide-ul">
                                 <li className="nav-hide-li">
                                     <span> </span>

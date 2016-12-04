@@ -99,7 +99,7 @@ $(function() {
     $('.lookWay-list').on('click',function () {
         // alert($('.shelf2').lenght);
         if(has){
-            includeLinkStyle('css/shelf-style2.css','shelf2');
+            includeLinkStyle('../src/stylesheets/index.less','shelf2');
             removeLinkStyle('.shelf');
             $('.body-main').css('height',' 1350px');
             has = false;
@@ -111,7 +111,7 @@ function includeLinkStyle(url,ty) {
     var link = document.createElement('link');
     link.className = ty;
     link.rel = 'stylesheet';
-    link.type = 'text/css';
+    link.type = 'text/less';
     link.href = url;
     document.getElementsByTagName('head')[0].appendChild(link);
 }

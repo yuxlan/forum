@@ -8,7 +8,7 @@ import Nav from './navbar'
 import Footer from './footer'
 import LoadMore from './loadMore'
 import ScrollTop from '../ScrollTop'
-import {Link} from 'react-router';
+import {Link,browserHistory} from 'react-router';
 import $ from 'jquery';
 import {API_ROOT} from '../../config';
 
@@ -172,38 +172,34 @@ export default class Home extends Component{
                                     </ul>
                                 </dd>
                             </dl>
-                            <div className="topBar-lookWay topBar-NL content-t_NL_ATL">
-                                <i className="topBar--pointer lookWay-tile lookWay-TL content-t_NL_ATL"> </i>
-                                <i className="topBar--pointer lookWay-list lookWay-TL content-t_NL_ATL"> </i>
-                            </div>
                         </div>
                     </div><br/>
 
-                    {this.state.articleDetail.map((article,i) => {
+                    <div className="content-shelf-container">
+                    {   this.state.articleIds !== '' &&
+                        this.state.articleDetail.map((article,i) => {
                         return(
-                            <div className="content-shelf"
-                                 key={i}>
-                                <div className="shelf-exhibit">
-                                    <div className="exhibit-photoFrame">
-                                    </div>
-                                    <div className="exhibit-describe">
-                                        <h4>
-                                            <Link to={'/article/' + article.t_id}
-                                                  className="link-title">
-                                                {article.t_title}
-                                            </Link>
-                                        </h4>
-                                        <p> </p>
-                                        <div className="exhibit-tags">
-                                            <span className="tag-time"><i> </i></span>
-                                            <span className="tag-level"><i> </i></span>
-                                            <span className="tag-numberOf"> </span>
-                                            <i className="exhibit-type"> </i>
-                                        </div>
-                                    </div>
+                            <div>
+                                <div className="content-shelf"
+                                     key={i}>
+                                    <a>
+                                        <strong>
+                                        <Link to={'/article/' + article.t_id}
+                                              className="link-title">
+                                            {article.t_title}
+                                        </Link>
+                                        </strong>
+                                    </a>
+                                    <p> </p><br/>
+                                    <span className="span1">收藏 {article.t_star}</span>&nbsp;&nbsp;
+                                    <span className="span3">评论 {article.t_comments}</span>&nbsp;&nbsp;
+                                    <span className="span2">喜欢 {article.t_like}</span>&nbsp;&nbsp;
+                                    <br/><br/>
                                 </div>
+                                <br/>
                             </div>
                         )})}
+                    </div>
                 </div>)</div></div></div></div><ScrollTop/><Footer />
             </div>
         )

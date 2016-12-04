@@ -1,12 +1,13 @@
 // 注册表单
 
 import React from 'react';
-import {Link} from 'react-router';
+import {Link,browserHistory} from 'react-router';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import * as Actions from '../../actions';
 import { validateEmail, validateUsername } from '../../utiles/misc';
 import {API_ROOT} from '../../config';
+import Alert from 'react-s-alert';
 
 function mapStateToProps(state) {
     return{
@@ -143,9 +144,32 @@ export default class Register extends React.Component {
         let url = API_ROOT + 'sign_up';
         $.post(url,{u_email:u_email,u_name:u_name,u_psw:u_psw},
             function(data){
-                sessionStorage.setItem('u_id',data.u_id);
                 console.log('userRegister',data);
-                this.getUserInfo(sessionStorage.getItem('u_id'));
+                if(data.code === 1) {
+                    sessionStorage.setItem('u_id',data.u_id);
+                    this.getUserInfo(sessionStorage.getItem('u_id'));
+                }else {
+                    let content = data.codeState;
+                    let type = 'error';
+                    if(content !== '' && type) {
+                        switch (type) {
+                            case 'error':
+                                Alert.error(content);
+                                break;
+                            case 'success':
+                                Alert.success(content);
+                                break;
+                            case 'info':
+                                Alert.info(content);
+                                break;
+                            case 'warning':
+                                Alert.warning(content);
+                                break;
+                            default:
+                                Alert.error(content)
+                        }
+                    }
+                }
             })
     };
 
@@ -153,9 +177,31 @@ export default class Register extends React.Component {
         let url = API_ROOT + 'u/query';
         $.get(url,{u_id:u_id},
             function (data) {
-                sessionStorage.setItem('u_name',data.u_name);
-                browserHistory.push('/');
-            })
+                if(data.code === 1){
+                    sessionStorage.setItem('u_name',data.u_name);
+                    browserHistory.push('/');
+                }else{
+                    let content = data.codeState;
+                    let type = 'error';
+                    if(content !== '' && type) {
+                        switch (type) {
+                            case 'error':
+                                Alert.error(content);
+                                break;
+                            case 'success':
+                                Alert.success(content);
+                                break;
+                            case 'info':
+                                Alert.info(content);
+                                break;
+                            case 'warning':
+                                Alert.warning(content);
+                                break;
+                            default:
+                                Alert.error(content)
+                        }
+                }
+            }})
     }
 
     login(e) {
@@ -168,6 +214,7 @@ export default class Register extends React.Component {
     render(){
         return(
         <div>
+            <Alert stack={{limit:1}} position='top-right' timeout={3000}/>
             <div className="container">
                 <div className='row flipInX'>
                     <div className='col-sm-8'>

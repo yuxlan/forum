@@ -91,7 +91,7 @@ export default class Navbar extends React.Component{
                                     </dl>
                                 </li>
                                 <li className="nav-li">
-                                    <h2><a href="#">问答</a><i className="indicator"> </i></h2>
+                                    <h2><Link to="/homequestion">问答</Link><i className="indicator"> </i></h2>
                                     <ul className="nav-menu nav-menu-2">
                                         <li><a href="#">所有问答</a></li>
                                         <li><a href="#">未解决问答</a></li>
@@ -116,7 +116,10 @@ export default class Navbar extends React.Component{
                                     <i className="tools-icon login-icon"> </i>
                                     <ul className="login-menu">
                                         <i className="hump login-hump"> </i>
-                                        <li><a href="#">&nbsp;注册&nbsp;</a>|<a href="#">&nbsp;登录&nbsp;</a></li>
+                                        <li>
+                                            <Link to="/login">登录</Link>
+                                            <span>|</span>
+                                            <Link to="/register">注册</Link></li>
                                     </ul>
                                 </li>
                                     :

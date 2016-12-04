@@ -5,42 +5,18 @@ import $ from 'jquery';
 
 import {API_ROOT} from '../../config';
 
-
-/*const validate = values => {
-    const errors ={};
-    if(!values.nickname){
-        errors.nickname = "Required"
-    }else if(!/^$/.test(values.nickname))  {
-        errors.nickname = '昵称不合法';
-    }
-    return errors;
-};
-
-const mapStateToProps = state => {
-    return {
-        auth:state.auth.toJS(),
-        initialValues:state.auth.toJS().user
-    }
-};
-
-const mapDispatchToProps = dispatch => {
-    return {
-        actions: bindActionCreators(Actions, dispatch)
-    }
-};
-
-@connect(mapStateToProps,mapDispatchToProps)
-@reduxForm({
-    form:'setting',
-    fields:['nickname'],
-    validate
-})*/
 export default class UserSetting extends Component{
     constructor(props){
         super(props);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.updateUserInfo = this.updateUserInfo.bind(this);
         this.getUserInfo = this.getUserInfo.bind(this);
+        this.state = {
+            userrealname:'',
+            userblog:'',
+            usergithub:'',
+            userintro:''
+        }
     }
 
     componentDidMount(){
@@ -69,7 +45,6 @@ export default class UserSetting extends Component{
                 if(data.code === 1){
                     let content = '更新用户信息成功';
                     let type = 'success';
-                    const {hideMsg} = this.props;
                     if(content !== '' && type) {
                         switch (type) {
                             case 'error':
@@ -87,7 +62,6 @@ export default class UserSetting extends Component{
                             default:
                                 Alert.error(content)
                         }
-                        hideMsg();
                     }
                     sessionStorage.removeItem('u_realname');
                     sessionStorage.removeItem('u_blog');
@@ -98,7 +72,6 @@ export default class UserSetting extends Component{
                 else{
                     let content = data.codeState;
                     let type = 'error';
-                    const {hideMsg} = this.props;
                     if(content !== '' && type) {
                         switch (type) {
                             case 'error':
@@ -116,17 +89,12 @@ export default class UserSetting extends Component{
                             default:
                                 Alert.error(content)
                         }
-                        hideMsg();
                     }
                 }
             });
         //const {values,actions} = this.props;
        //console.log(values);
       //actions.updateUser(values);
-    }
-
-    changeValue(e){
-
     }
 
     handleSubmit(e){
@@ -147,9 +115,6 @@ export default class UserSetting extends Component{
         const value = e.target.value;
         const next_state = {};
         next_state[type] = value;
-        this.setState(next_state,() => {
-            this.isDisabled();
-        });
     }
 
   /*  validatorClass(field){
@@ -198,7 +163,8 @@ export default class UserSetting extends Component{
                             <div className="field">
                                 <input type="text"
                                        className="input"
-                                       ref="userblog"/>
+                                       ref="userblog"
+                                       onChange={(e) => this.changeValue(e,'userblog')}/>
                             </div>
                         </div>
                         <div className="form-group">
@@ -206,7 +172,8 @@ export default class UserSetting extends Component{
                                 <label>GitHub地址：</label>
                             </div>
                             <div className="field">
-                                <input type="text" className="input" ref="usergithub"/>
+                                <input type="text" className="input" ref="usergithub"
+                                       onChange={(e) => this.changeValue(e,'usergithub')}/>
                                 <div className="tips"></div>
                             </div>
                         </div>
@@ -215,7 +182,8 @@ export default class UserSetting extends Component{
                                 <label>自我介绍：</label>
                             </div>
                             <div className="field">
-                                <textarea className="input" ref="userintro"> </textarea>
+                                <textarea className="input" ref="userintro"
+                                          onChange={(e) => this.changeValue(e,'userintro')}> </textarea>
                                 <div className="tips"></div>
                             </div>
                         </div>

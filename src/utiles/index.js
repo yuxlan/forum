@@ -11,7 +11,7 @@ export function customTime(item){
     let yearTime = monthTime*12;
 
     console.log(minuteTime,hourTime,dayTime,monthTime,yearTime);
-    console.log("time1：",item,'time2:',tmp);
+    console.log("time1：",tmp,'time2:',item);
     let delta = parseInt(tmp) - parseInt(item);
     console.log('time3：',delta);
     let descTime;
@@ -32,14 +32,15 @@ export function customTime(item){
 }
 
 export function formatDate(time){
-    let tmp = new Date(time);
-    let year = tmp.getFullYear();
-    let month = tmp.getMonth() + 1;
-    let day = tmp.getDate();
-    let hours = tmp.getHours();
-    let minutes = tmp.getMinutes();
-    let second = tmp.getSeconds();
-    return   year+"-"+month+"-"+day+"   "+hours+":"+minutes+":"+second;
+        return new Date(parseInt(time) * 1000).toLocaleString().replace(/:\d{1,2}$/,' ');
+   // let tmp = new Date(time);
+   // let year = tmp.getFullYear();
+   // let month = tmp.getMonth() + 1;
+   // let day = tmp.getDate();
+   // let hours = tmp.getHours();
+   // let minutes = tmp.getMinutes();
+   // let second = tmp.getSeconds();
+   // return   year+"-"+month+"-"+day+"   "+hours+":"+minutes+":"+second;
 }
 
 
