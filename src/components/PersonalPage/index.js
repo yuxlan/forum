@@ -29,10 +29,9 @@ export default class Admin extends React.Component{
     }
 
     componentDidMount(){
-        if(sessionStorage.getItem('u_email_confirm') === 0 ) {
+        if(sessionStorage.getItem('u_email_confirm') == 0 ) {
             let content = '您的邮箱还未验证，存在一定风险，请前往验证';
             let type = 'warning';
-            const {hideMsg} = this.props;
             if (content !== '' && type) {
                 switch (type) {
                     case 'error':
@@ -50,7 +49,6 @@ export default class Admin extends React.Component{
                     default:
                         Alert.error(content)
                 }
-                hideMsg();
             }
         }
     }
@@ -98,7 +96,7 @@ export default class Admin extends React.Component{
                                 </li>
                                 <li className="nav-li">
                                     <h2>
-                                        <a href="#">问答</a>
+                                        <Link to="/homequestion">问答</Link>
                                         <i className="indicator"> </i>
                                     </h2>
                                     <ul className="nav-menu nav-menu-2">

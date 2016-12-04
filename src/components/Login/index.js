@@ -5,9 +5,9 @@ import {bindActionCreators} from 'redux';
 import * as Actions from '../../actions';
 import {connect} from 'react-redux';
 import {Link,browserHistory } from 'react-router';
-import {showMsg} from '../../actions/other';
 import $ from 'jquery';
 import {API_ROOT} from '../../config';
+import Alert from 'react-s-alert';
 
 import * as actionCreators from '../../actions/auth';
 // import SNSLogin from './snsLogin'; // 第三方登录，后期可加   <SNSLogin logins={sns.logins}/>
@@ -98,25 +98,46 @@ export default class Login extends React.Component{
         sessionStorage.setItem('u_psw',u_psw);
         $.post(url,{u_loginname:u_loginname,u_psw:u_psw},
             function(data){
-                sessionStorage.setItem('u_id',data.u_id);
-                sessionStorage.setItem('u_name',data.u_name);
-                sessionStorage.setItem('u_email',data.u_email);
-                sessionStorage.setItem('u_email_confirm',data.u_email_confirm);
-                sessionStorage.setItem('u_level',data.u_level);
-                sessionStorage.setItem('u_reputation',data.u_reputation);
-                sessionStorage.setItem('u_realname',data.u_realname);
-                sessionStorage.setItem('u_blog',data.u_blog);
-                sessionStorage.setItem('u_github',data.u_github);
-                sessionStorage.setItem('u_articles',data.u_articles);
-                sessionStorage.setItem('u_questions',data.u_questions);
-                sessionStorage.setItem('u_answers',data.u_answers);
-                sessionStorage.setItem('u_watchusers',data.u_watchusers);
-                sessionStorage.setItem('u_tags',data.u_tags);
-                sessionStorage.setItem('u_intro',data.u_intro);
                 console.log('userLogin',data);
-                showMsg('登录成功','success');
-                browserHistory.push('/');
-        })
+                if(data.code == 1) {
+                     sessionStorage.setItem('u_id',data.u_id);
+                     sessionStorage.setItem('u_name',data.u_name);
+                     sessionStorage.setItem('u_email',data.u_email);
+                     sessionStorage.setItem('u_email_confirm',data.u_email_confirm);
+                     sessionStorage.setItem('u_level',data.u_level);
+                     sessionStorage.setItem('u_reputation',data.u_reputation);
+                     sessionStorage.setItem('u_realname',data.u_realname);
+                     sessionStorage.setItem('u_blog',data.u_blog);
+                     sessionStorage.setItem('u_github',data.u_github);
+                     sessionStorage.setItem('u_articles',data.u_articles);
+                     sessionStorage.setItem('u_questions',data.u_questions);
+                     sessionStorage.setItem('u_answers',data.u_answers);
+                     sessionStorage.setItem('u_watchusers',data.u_watchusers);
+                     sessionStorage.setItem('u_tags',data.u_tags);
+                     sessionStorage.setItem('u_intro',data.u_intro);
+                     browserHistory.push('/');
+                }else {
+                    let content = data.codeState;
+                    let type = 'error';
+                    if(content !== '' && type) {
+                        switch (type) {
+                            case 'error':
+                                Alert.error(content);
+                                break;
+                            case 'success':
+                                Alert.success(content);
+                                break;
+                            case 'info':
+                                Alert.info(content);
+                                break;
+                            case 'warning':
+                                Alert.warning(content);
+                                break;
+                            default:
+                                Alert.error(content)
+                        }
+                    }
+        }})
     }
 
     login(e) {
@@ -129,6 +150,7 @@ export default class Login extends React.Component{
     render(){
         return (
             <div>
+                <Alert stack={{limit:1}} position='top-right' timeout={3000}/>
                 <div className="container">
                     <div className='row flipInX'>
                         <div className='col-sm-8'>

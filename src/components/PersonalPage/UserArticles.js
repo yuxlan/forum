@@ -40,7 +40,7 @@ export default class UserArticles extends React.Component{
 
     getArticle(t_id){
         let url = API_ROOT + 't/query';
-        $.post(url,{t_id:t_id},
+        $.get(url,{t_id:t_id},
             function(data){
                 localStorage.setItem('t_id',data.t_id);
                 localStorage.setItem('t_title',data.t_title);
@@ -72,7 +72,6 @@ export default class UserArticles extends React.Component{
                 if(data.code === 1){
                     let content = '删除成功';
                     let type = 'success';
-                    const {hideMsg} = this.props;
                     if(content !== '' && type) {
                         switch (type) {
                             case 'error':
@@ -90,13 +89,11 @@ export default class UserArticles extends React.Component{
                             default:
                                 Alert.error(content)
                         }
-                        hideMsg();
                     }
                 }
                 else {
                     let content = data.codeState;
                     let type = 'error';
-                    const {hideMsg} = this.props;
                     if (content !== '' && type) {
                         switch (type) {
                             case 'error':
@@ -114,7 +111,6 @@ export default class UserArticles extends React.Component{
                             default:
                                 Alert.error(content)
                         }
-                        hideMsg();
                     }
                 }
             }
@@ -155,7 +151,7 @@ export default class UserArticles extends React.Component{
                         </tr>
                             {
                                 userArticles.map((userArticlesId,i) => {
-                                    this.getArticleAbout(userArticlesId);
+                                    this.getArticle(userArticlesId);
                                     return(
                                         <tr key={i}>
                                             <td>{i}</td>

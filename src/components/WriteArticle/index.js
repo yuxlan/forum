@@ -9,6 +9,8 @@ import * as actions from '../../actions'
 import {parseArticle} from '../../utiles'
 import $ from 'jquery'
 import {API_ROOT} from '../../config'
+import Nav from '../HomeArticle/navbar';
+import Alert from 'react-s-alert';
 
 const mapStateToProps = (state) => {
     return {
@@ -31,7 +33,9 @@ export default class WriteArticle extends React.Component{
             tags:[],
             downloadURL:'',
             startPoint:0,
-            endPoint:0
+            endPoint:0,
+            text_title:'',
+            output:''
         }
         this.changeValue = this.changeValue.bind(this);
         this.tag = this.tag.bind(this);
@@ -49,10 +53,6 @@ export default class WriteArticle extends React.Component{
         }
     }
 
-    changeValue(e){
-
-        this.setState({text:e.target.value});
-    }
     tag(item){
         return function(){
 
@@ -113,7 +113,7 @@ export default class WriteArticle extends React.Component{
             downloadURL:objURL
         })
     }
-    clearAll(){
+    clearAll(e){
         this.setState({
             text:''
         })
@@ -150,77 +150,106 @@ export default class WriteArticle extends React.Component{
         }
     }
 
-    uploadFile(){
+    changeValue(e,type){
+        const value = e.target.value;
+        const next_state = {};
+        next_state[type] = value;
+    }
+
+    uploadFile(e){
         const {actions} = this.props;
-        let formData = new FormData($("#uploadForm")[0]);
+        var formData = new FormData($("#uploadForm")[0]);
+        let user_id = sessionStorage.getItem('u_id');
+        let user_psw = sessionStorage.getItem('u_psw');
         let url = API_ROOT + 't/add';
 
-        
-      /*  $.ajax({
-            url: url,
-            type: 'POST',
-            data: formData,
-            async: false,
-            cache: false,
-            contentType: false,
-            processData: false,
-            success: function(data){
-                if(200 === data.code) {
-                    actions.showMsg('上传成功','success')
+        $.post(
+            url, {u_id:user_id,u_psw:user_psw,u_title:this.state.text_title,u_text:this.state.output},
+            function(data){
+                if(1 === data.code) {
+                    let content = '上传文章成功';
+                    let type = 'success';
+                    if(content !== '' && type) {
+                        switch (type) {
+                            case 'error':
+                                Alert.error(content);
+                                break;
+                            case 'success':
+                                Alert.success(content);
+                                break;
+                            case 'info':
+                                Alert.info(content);
+                                break;
+                            case 'warning':
+                                Alert.warning(content);
+                                break;
+                            default:
+                                Alert.error(content)
+                        }
+                    }
                 } else {
-                    actions.showMsg('上传失败')
+                    let content = '上传文章失败';
+                    let type = 'error';
+                    if(content !== '' && type) {
+                        switch (type) {
+                            case 'error':
+                                Alert.error(content);
+                                break;
+                            case 'success':
+                                Alert.success(content);
+                                break;
+                            case 'info':
+                                Alert.info(content);
+                                break;
+                            case 'warning':
+                                Alert.warning(content);
+                                break;
+                            default:
+                                Alert.error(content)
+                        }
+                    }
                 }
 
-            },
-            error: function(){
-                actions.showMsg("与服务器通信发生错误");
             }
-        });*/
+        )
     }
 
     render(){
-
-        const {adminTagList} = this.props;
-        console.log(this.state.tags)
+        let {insert,changeData,downloadURL,clearAll,save,adminTagList} = this.props;
+        console.log(this.state.tags);
         var class1,class2;
         class1 = "col-xs-6";
         class2 = "col-xs-6";
         return (
-            <div style={{height:'100%'}}>
+            <div style={{height:'100%'}} className="background-color">
+                <Alert stack={{limit:1}} position='top-right' timeout={3000}/>
+                <Nav/>
+                <hr/>
                 <div className="background-admin">
-
+                    <form>
+                    <input className="markdown-input" placeholder="输入文章标题" ref='text_title'
+                           onChange={(e) => this.changeValue(e,'text_title')}/>
+                    <div className="pull-right">
+                        <button className="btn btn-danger controller-item" onClick={(e)=>this.clearAll(e)}><i className="glyphicon glyphicon-trash"> </i>清空文本</button>&nbsp; &nbsp;
+                        <a className="btn btn-default" href={downloadURL} download="README.md" onMouseEnter={changeData}><i className="icon1-markdown"> </i>导出md</a>&nbsp; &nbsp;
+                        <button className="btn btn-success controller-item" onClick={(e)=>this.uploadFile(e)}><i className="fa fa-save"> </i>发布博客</button>
+                        <a>&nbsp; &nbsp; &nbsp;</a>
+                    </div>
+                    </form>
                 </div>
                 <div id="app">
                     <div className="container-fluid">
                         <Controller insert={this.tag} save={this.save} changeData={this.changeData} downloadURL={this.state.downloadURL} clearAll={this.clearAll} />
-                        <div className="tag-container clearfix">
-                            {adminTagList.items.length&&adminTagList.items.map((item,index) =>
-                                <div className="tag-item" key={index} onClick={e => this.selectTag(e,item._id)}>
-                                    {item.name}
-                                </div>
-                            )}
-                            <div className="pull-right">
-                                <form className="form-signin" id="uploadForm" role="form" method="post" enctype='multipart/form-data' action='javascript:;'>
-                                    <input id="fulAvatar" name="files" type="file" className="" style={{display:'inline-block'}}/>
-                                    <button id="btnSub" className="btn btn-primary" onClick={this.uploadFile}>上 传</button>
-                                </form>
-                            </div>
-                        </div>
-                        <br />
-                        <br />
                         <div className="row work-container">
                             <div className={class1}>
                                 <div className="page editor">
-                                    <p className="title">编辑栏</p>
-                                    <hr/>
                                     <textarea ref="input" id="marking" value={this.state.text} onChange={this.changeValue}> </textarea>
                                 </div>
                             </div>
                             <div className={class2}>
                                 <div className="page">
-                                    <p className="title">预览栏</p>
-                                    <hr/>
-                                    <div id="markdown-content" className="markdown-content" ref="output" dangerouslySetInnerHTML={{__html: markIt(this.state.text)}}></div>
+                                    <div id="markdown-content" className="markdown-content" ref="output" dangerouslySetInnerHTML={{__html: markIt(this.state.text)}}
+                                         onChange={(e) => this.changeValue(e,'output')}></div>
                                 </div>
                             </div>
                         </div>

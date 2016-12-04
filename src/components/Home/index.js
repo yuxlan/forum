@@ -1,13 +1,13 @@
 // 首页，获取全部文章
 
 import React,{Component} from 'react'
-import {Link} from 'react-router';
+import {Link,browserHistory} from 'react-router';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import $ from 'jquery';
 
 import * as Actions from '../../actions';
-import {customTime} from '../../utiles';
+import {customTime,formatDate} from '../../utiles';
 import {API_ROOT} from '../../config';
 
 import Tags from './tags';
@@ -15,7 +15,7 @@ import Nav from './navbar';
 import Footer from './footer';
 import ScrollTop from '../ScrollTop';
 
-import Loading from '../../assets/imgs/index-loading.gif';
+import Loading from '../../assets/imgs/tiny.gif';
 import FocusImg1 from '../../assets/images/focus-img1.jpg';
 import FocusImg2 from '../../assets/images/focus-img2.jpg';
 import FocusImg3 from '../../assets/images/focus-img3.jpg';
@@ -127,9 +127,12 @@ export default class Home extends Component{
 
     render(){
 
-        if(this.state.articleDetail === []){
+        if(this.state.articleIds === ''){
             return(
-                <div className="text-center home-container"><img src={Loading}/></div>
+                <div className="text-center home-container">
+                    <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+                    <img src={Loading}/>
+                </div>
             )
         }else {
             return (
@@ -300,8 +303,12 @@ export default class Home extends Component{
                                     </div>
                                     <br /><br />
                                     <div className="live-lesson">
+                                        <div className="live-img">
+                                            <a href=""> article </a>
+                                        </div>
                                         <ul className="article-list list-unstyled clearfix">
                                             {
+                                                this.state.articleDetail!==[] &&
                                                 this.state.articleDetail.map((article, i) => {
                                                     return (
                                                         <li className="article-item"
@@ -309,7 +316,7 @@ export default class Home extends Component{
                                                             <div className="articleList-item">
                                                                 <p className="list-top">
                                                     <span className="time">
-                                                        {customTime(article.t_date_latest)}
+                                                        {formatDate(article.t_date_latest)}
                                                     </span>
                                                                 </p>
                                                                 <h2 className="title">
@@ -343,12 +350,13 @@ export default class Home extends Component{
                                                 })
                                             }
                                         </ul>
-                                        <br /><br /></div>
+                                    </div>
+                                    <br /><br />
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <ScrollTop/><Footer />
+                    <ScrollTop/><Footer/>
                 </div>
             )
         }
