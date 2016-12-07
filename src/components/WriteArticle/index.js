@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import {Link,browserHistory } from 'react-router';
 import '../../stylesheets/writePage.less'
 import markIt from'./marked'
 import Controller from './controller';
@@ -35,7 +35,8 @@ export default class WriteArticle extends React.Component{
             startPoint:0,
             endPoint:0,
             text_title:'',
-            output:''
+            output:'',
+            disabled:true,
         }
         this.changeValue = this.changeValue.bind(this);
         this.tag = this.tag.bind(this);
@@ -47,10 +48,10 @@ export default class WriteArticle extends React.Component{
     }
 
     componentDidMount(){
-        const {adminTagList,actions} = this.props;
-        if(adminTagList.items.length <1){
-            actions.getAdminTagList();
-        }
+    //    const {adminTagList,actions} = this.props;
+    //    if(adminTagList.items.length <1){
+    //        actions.getAdminTagList();
+    //    }
     }
 
     tag(item){
@@ -120,7 +121,6 @@ export default class WriteArticle extends React.Component{
     }
 
     save(){
-
         let article = this.state.text;
         let data = parseArticle(article);
         if(this.state.tags.length){
@@ -150,23 +150,33 @@ export default class WriteArticle extends React.Component{
         }
     }
 
-    changeValue(e,type){
+    changeValue(e){
+        this.setState({text:e.target.value});
+    }
+
+    isDisabled(){
+        this.setState({
+            disabled:false,
+        });
+    }
+
+    changePostValue(e,type){
         const value = e.target.value;
         const next_state = {};
         next_state[type] = value;
+        this.setState(next_state,() => {
+            this.isDisabled();
+        });
     }
 
-    uploadFile(e){
-        const {actions} = this.props;
-        var formData = new FormData($("#uploadForm")[0]);
-        let user_id = sessionStorage.getItem('u_id');
-        let user_psw = sessionStorage.getItem('u_psw');
+    addArticles(u_id,u_psw,u_title,u_text){
         let url = API_ROOT + 't/add';
 
         $.post(
-            url, {u_id:user_id,u_psw:user_psw,u_title:this.state.text_title,u_text:this.state.output},
+            url, {u_id:u_id,u_psw:u_psw,t_title:u_title,t_text:u_text},
             function(data){
-                if(1 === data.code) {
+                console.log('add articles:',data);
+                if(data.code == 1) {
                     let content = '上传文章成功';
                     let type = 'success';
                     if(content !== '' && type) {
@@ -187,6 +197,7 @@ export default class WriteArticle extends React.Component{
                                 Alert.error(content)
                         }
                     }
+                    browserHistory.push('/personalpage/articles');
                 } else {
                     let content = '上传文章失败';
                     let type = 'error';
@@ -214,6 +225,17 @@ export default class WriteArticle extends React.Component{
         )
     }
 
+    uploadFile(e){
+        e.preventDefault();
+
+        let user_id = sessionStorage.getItem('u_id');
+        let user_psw = sessionStorage.getItem('u_psw');
+        let article = this.state.text;
+        console.log('article title:',this.state.text_title,'article content:',article);
+        this.addArticles(user_id,user_psw,this.state.text_title,article);
+
+    }
+
     render(){
         let {insert,changeData,downloadURL,clearAll,save,adminTagList} = this.props;
         console.log(this.state.tags);
@@ -228,7 +250,7 @@ export default class WriteArticle extends React.Component{
                 <div className="background-admin">
                     <form>
                     <input className="markdown-input" placeholder="输入文章标题" ref='text_title'
-                           onChange={(e) => this.changeValue(e,'text_title')}/>
+                           onChange={(e) => this.changePostValue(e,'text_title')}/>
                     <div className="pull-right">
                         <button className="btn btn-danger controller-item" onClick={(e)=>this.clearAll(e)}><i className="glyphicon glyphicon-trash"> </i>清空文本</button>&nbsp; &nbsp;
                         <a className="btn btn-default" href={downloadURL} download="README.md" onMouseEnter={changeData}><i className="icon1-markdown"> </i>导出md</a>&nbsp; &nbsp;
@@ -239,7 +261,7 @@ export default class WriteArticle extends React.Component{
                 </div>
                 <div id="app">
                     <div className="container-fluid">
-                        <Controller insert={this.tag} save={this.save} changeData={this.changeData} downloadURL={this.state.downloadURL} clearAll={this.clearAll} />
+                        <Controller insert={this.tag} save={this.save} changeData={this.changeData} downloadURL={this.state.downloadURL} clearAll={(e)=>this.clearAll(e)} />
                         <div className="row work-container">
                             <div className={class1}>
                                 <div className="page editor">
@@ -248,8 +270,7 @@ export default class WriteArticle extends React.Component{
                             </div>
                             <div className={class2}>
                                 <div className="page">
-                                    <div id="markdown-content" className="markdown-content" ref="output" dangerouslySetInnerHTML={{__html: markIt(this.state.text)}}
-                                         onChange={(e) => this.changeValue(e,'output')}></div>
+                                    <div id="markdown-content" ref="output" dangerouslySetInnerHTML={{__html: markIt(this.state.text)}}></div>
                                 </div>
                             </div>
                         </div>

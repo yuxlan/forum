@@ -80,24 +80,6 @@ export default class UserPage extends React.Component{
                                     </tr>
                                     <tr>
                                         {
-                                            sessionStorage.getItem('u_reputation') === null
-                                                ?
-                                                <td>声望值：</td>
-                                                :
-                                                <td>声望值：{sessionStorage.getItem('u_reputation')}</td>
-                                        }
-                                        <td>&nbsp;</td>
-                                        {
-                                            sessionStorage.getItem('u_level') === null
-                                                ?
-                                                <td>用户等级：</td>
-                                                :
-                                                <td>用户等级：{sessionStorage.getItem('u_level')}</td>
-                                        }
-                                        <td>&nbsp;</td>
-                                    </tr>
-                                    <tr>
-                                        {
                                             sessionStorage.getItem('u_realname') === null
                                                 ?
                                                 <td>真实姓名：</td>
@@ -106,11 +88,11 @@ export default class UserPage extends React.Component{
                                         }
                                         <td>&nbsp;</td>
                                         {
-                                            sessionStorage.getItem('u_blog') === null
+                                            sessionStorage.getItem('u_reputation') === null
                                                 ?
-                                                <td>博&nbsp;&nbsp;&nbsp;&nbsp;客：</td>
+                                                <td>声望值：</td>
                                                 :
-                                                <td>博&nbsp;&nbsp;&nbsp;&nbsp;客：{sessionStorage.getItem('u_blog')}</td>
+                                                <td><a>声望值：{sessionStorage.getItem('u_reputation')}</a></td>
                                         }
                                         <td>&nbsp;</td>
                                     </tr>
@@ -120,8 +102,19 @@ export default class UserPage extends React.Component{
                                                 ?
                                                 <td><p>GitHub：</p></td>
                                                 :
-                                                <td><p>GitHub：{sessionStorage.getItem('u_github')}</p></td>
+                                                <td><a href={sessionStorage.getItem('u_github')}>GitHub：{sessionStorage.getItem('u_github')}</a></td>
                                         }
+                                        <td>&nbsp;</td>
+                                        {
+                                            sessionStorage.getItem('u_blog') === null
+                                                ?
+                                                <td>博&nbsp;&nbsp;&nbsp;&nbsp;客：</td>
+                                                :
+                                                <td><a href={sessionStorage.getItem('u_blog')}>博&nbsp;&nbsp;&nbsp;&nbsp;客：{sessionStorage.getItem('u_blog')}</a></td>
+                                        }
+                                        <td>&nbsp;</td>
+                                    </tr>
+                                    <tr>
                                         <td>&nbsp;</td>
                                         <td>&nbsp;</td>
                                         <td>&nbsp;</td>

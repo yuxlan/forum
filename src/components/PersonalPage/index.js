@@ -124,7 +124,7 @@ export default class Admin extends React.Component{
                                 <ul className="login-menu">
                                     <i className="hump login-hump"> </i>
                                     <li>
-                                        <Link to="/personalpage">user_{sessionStorage.getItem('u_id')}</Link>
+                                        <Link to="/personalpage">user_{sessionStorage.getItem('u_name')}</Link>
                                     </li>
                                     <li>
                                         <hr />

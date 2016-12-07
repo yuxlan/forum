@@ -142,6 +142,11 @@ input.ng-dirty{
   border: none;
   white-space: pre;
 }
+.markdown-content{
+  background-color: rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  width: 100%;
+}
 
 
 
@@ -6051,6 +6056,31 @@ a {
 .register {
   background: #9fe6f2;
 }
+.register-verify-input{
+  width: 50%;
+  display: inline;
+}
+.register-verify-div{
+  width: 100%;
+}
+.register-verify-span{
+  width: 25%;
+  display: inline;
+  font-family: "The Great Escape","You are what you eat","Microsoft YaHei";
+  color: #000cff;
+}
+.register-verify-a{
+  display: inline;
+  color: #000cff;
+  font-size: 13px;
+}
+.register-login-btn{
+  width: 100%;
+}
+.help-block {
+  display: block; // account for any element using help-block
+  color: lighten(@text-color, 25%); // lighten the text some for contrast
+}
 
 
 /*con-right end*/
@@ -6505,6 +6535,7 @@ a {
   background-color:#FFFFFF;
   margin-left: 30%;
   frame: void;
+  font-size: 14px;
 }
 .td-1{
   width:10px;
@@ -6526,6 +6557,7 @@ a {
   border:0;
   cellpadding:0;
   cellspacing:10;
+  font-size: 14px;
 }
 .table-4{
   width:26%;
@@ -6958,3 +6990,6 @@ td,th{padding:0;}
 
 .icon-cuti:before { content: "\e602"; }
 
+.hintemail-bg{
+  background-color: #FFFFFF;
+}
