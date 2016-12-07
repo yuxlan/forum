@@ -72,9 +72,9 @@ export function parseArticle(text){
     let content = text.slice(divide+1);
 
     
-    content = content.replace(/([^\(]*\.(jpe?g|png|gif))(?=\))/g,function(match,$1,$2){
-        return API_ROOT + 'upload/' + match
-    });
+   // content = content.replace(/([^\(]*\.(jpe?g|png|gif))(?=\))/g,function(match,$1,$2){
+   //     return API_ROOT + 'upload/' + match
+   // });
     
     return {
         title,

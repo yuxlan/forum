@@ -3,11 +3,15 @@
 import React from 'react';
 import {connect} from 'react-redux';
 import $ from 'jquery';
+import markIt from'../WriteArticle/marked';
 
 import Alert from 'react-s-alert';
 import Nav from '../HomeArticle/navbar';
+import Footer from '../HomeArticle/footer';
 import {API_ROOT} from '../../config';
 import {defaultAvatar} from '../../assets/imgs/userimg.png';
+import {Link,browserHistory } from 'react-router';
+import ScrollTop from '../ScrollTop'
 
 const mapStateToProps = state =>{
     return {
@@ -32,7 +36,12 @@ export default class Article extends React.Component{
             article:[],
             showModal:false,
             commentContent:'',
-            openedForm:null
+            openedForm:null,
+            u_loginname: '',
+            u_psw:'',
+            u_loginname_error_text:null,
+            u_psw_error_text:null,
+            disabled: true,
         }
     }
 
@@ -106,9 +115,109 @@ export default class Article extends React.Component{
         })
     }
 
+    isDisabled(){
+        let u_loginname_is_valid = false;
+        let u_psw_is_valid = false;
+
+        if(this.state.u_loginname === ''){
+            this.setState({
+                u_loginname_error_text:'请输入用户名或邮箱',
+            });
+        }
+        else {
+            u_loginname_is_valid = true;
+            this.setState({
+                u_loginname_error_text:null,
+            });
+        }
+
+        if (this.state.u_psw === ''){
+            this.setState({
+                u_psw_error_text:'请输入密码',
+            });
+        }
+        else {
+            u_psw_is_valid = true;
+            this.setState({
+                u_psw_error_text:null
+            })
+        }
+
+        if (u_loginname_is_valid && u_psw_is_valid) {
+            this.setState({
+                disabled:false,
+            });
+        }
+
+    }
+
+    changeValue(e,type) {
+        const value = e.target.value;
+        const next_state = {};
+        next_state[type] = value;
+        this.setState(next_state,() => {
+            this.isDisabled();
+        });
+    }
+
+    loginUser(u_loginname,u_psw) {
+        let url = API_ROOT + 'sign_in';
+        sessionStorage.setItem('u_psw',u_psw);
+        $.post(url,{u_loginname:u_loginname,u_psw:u_psw},
+            function(data){
+                console.log('userLogin',data);
+                if(data.code == 1) {
+                    sessionStorage.setItem('u_id',data.u_id);
+                    sessionStorage.setItem('u_name',data.u_name);
+                    sessionStorage.setItem('u_email',data.u_email);
+                    sessionStorage.setItem('u_email_confirm',data.u_email_confirm);
+                    sessionStorage.setItem('u_level',data.u_level);
+                    sessionStorage.setItem('u_reputation',data.u_reputation);
+                    sessionStorage.setItem('u_realname',data.u_realname);
+                    sessionStorage.setItem('u_blog',data.u_blog);
+                    sessionStorage.setItem('u_github',data.u_github);
+                    sessionStorage.setItem('u_articles',data.u_articles);
+                    sessionStorage.setItem('u_questions',data.u_questions);
+                    sessionStorage.setItem('u_answers',data.u_answers);
+                    sessionStorage.setItem('u_watchusers',data.u_watchusers);
+                    sessionStorage.setItem('u_tags',data.u_tags);
+                    sessionStorage.setItem('u_intro',data.u_intro);
+                    browserHistory.push('/');
+                }else {
+                    let content = data.codeState;
+                    let type = 'error';
+                    if(content !== '' && type) {
+                        switch (type) {
+                            case 'error':
+                                Alert.error(content);
+                                break;
+                            case 'success':
+                                Alert.success(content);
+                                break;
+                            case 'info':
+                                Alert.info(content);
+                                break;
+                            case 'warning':
+                                Alert.warning(content);
+                                break;
+                            default:
+                                Alert.error(content)
+                        }
+                    }
+                }})
+    }
+
+    login(e) {
+        e.preventDefault();
+        // const {actions} = this.props;
+        // actions.loginUser(this.state.u_loginname,this.state.u_psw, this.state.redirectTo);
+        this.loginUser(this.state.u_loginname,this.state.u_psw);
+    }
+
     render(){
         return (
         <div className="home-container" >
+            <Alert stack={{limit:1}} position='top-right' timeout={3000}/>
             <Nav/>
             {
             this.state.article.map((article, i) => {
@@ -129,10 +238,21 @@ export default class Article extends React.Component{
                                             喜欢{article.t_like}
                                         </span>
                         </div>
-                        <div className="markdown-content"
-                             dangerouslySetInnerHTML={{__html:article.t_text}}>
+                        <div className="markdown-content">
+                            <br/>
+                            &nbsp; &nbsp; &nbsp; &nbsp;<div dangerouslySetInnerHTML={{__html: markIt(article.t_text)}}></div>
+                            <br/>
                         </div>
                     </div>
+                    <br />
+                    <br />
+
+                    <div className="article-like">
+                        <a href="javascript:;" className='liked-btn'>
+                            <i className="fa fa-thumbs-up"> </i>
+                        </a>
+                    </div>
+                    <br />
                     <br />
 
                     <div className="comment-container clearfix">
@@ -140,8 +260,7 @@ export default class Article extends React.Component{
                             ?
                             <div>
                                 <p className="comment-signin">
-                                    <button className="btn btn-info"
-                                            onClick={this.openLoginModal}>
+                                    <button className="btn btn-info login">
                                         登录后发表评论
                                     </button>
                                 </p>
@@ -151,8 +270,7 @@ export default class Article extends React.Component{
                                 <a className="reply-avatar" href="#">
                                         <img src={ defaultAvatar}/>
                                 </a>
-                                <form className="comment-form"
-                                      onSubmit={this.handleSubmit(submitComment)}>
+                                <form className="comment-form">
                                     <div className="comment-content">
                                     <textarea
                                         maxLength="1000"
@@ -182,6 +300,8 @@ export default class Article extends React.Component{
                     </div>
                 </div></div></div></div></div>)
             })}
+            <ScrollTop/>
+            <Footer/>
         </div>
         )
     }

@@ -8,6 +8,7 @@ import {Link,browserHistory } from 'react-router';
 import $ from 'jquery';
 import {API_ROOT} from '../../config';
 import Alert from 'react-s-alert';
+import Footer from '../HomeArticle/footer';
 
 import * as actionCreators from '../../actions/auth';
 // import SNSLogin from './snsLogin'; // 第三方登录，后期可加   <SNSLogin logins={sns.logins}/>
@@ -142,14 +143,12 @@ export default class Login extends React.Component{
 
     login(e) {
         e.preventDefault();
-       // const {actions} = this.props;
-       // actions.loginUser(this.state.u_loginname,this.state.u_psw, this.state.redirectTo);
         this.loginUser(this.state.u_loginname,this.state.u_psw);
     }
 
     render(){
         return (
-            <div>
+            <div className="hintemail-bg">
                 <Alert stack={{limit:1}} position='top-right' timeout={3000}/>
                 <div className="container">
                     <div className='row flipInX'>
@@ -170,11 +169,12 @@ export default class Login extends React.Component{
                                 </div>
                             }
                             <div className='panel panel-default'>
+                                <div className='panel-heading'>
+                                    用户登录
+                                </div>
                                 <div className='panel-body'>
-                                    <form   onKeyPress={(e) => this._handleKeyPress(e)}>
+                                    <form onKeyPress={(e) => this._handleKeyPress(e)}>
                                         <div className='form-group '>
-                                            <label className='control-label label-font'>
-                                            </label>
                                             <input type="text"
                                                    className='form-control'
                                                    ref="u_loginname"
@@ -185,8 +185,6 @@ export default class Login extends React.Component{
                                             </span>
                                         </div>
                                         <div className='form-group '>
-                                            <label className='control-label label-font'>
-                                            </label>
                                             <input type="password"
                                                    className='form-control'
                                                    ref="u_psw"
@@ -197,7 +195,7 @@ export default class Login extends React.Component{
                                             </span>
                                         </div>
                                         <div className="form-group">
-                                            <button className="btn btn-primary"
+                                            <button className="btn btn-primary register-login-btn"
                                                     type="submit"
                                                     disabled={this.state.disabled}
                                                     onClick={(e) => this.login(e)}>
@@ -222,6 +220,7 @@ export default class Login extends React.Component{
                         </div>
                     </div>
                 </div>
+                <Footer/>
             </div>
         )
     }

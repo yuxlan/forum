@@ -10,12 +10,12 @@ export default class UserSetting extends Component{
         super(props);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.updateUserInfo = this.updateUserInfo.bind(this);
-        this.getUserInfo = this.getUserInfo.bind(this);
         this.state = {
             userrealname:'',
             userblog:'',
             usergithub:'',
-            userintro:''
+            userintro:'',
+            disabled:true,
         }
     }
 
@@ -23,26 +23,14 @@ export default class UserSetting extends Component{
 
     }
 
-    getUserInfo(u_id){
-        let url = API_ROOT + 'u/query';
-        $.post(url,{u_id:u_id},
-            function (data) {
-                if(data.code === 1){
-                    sessionStorage.setItem('u_realname',data.u_realname);
-                    sessionStorage.setItem('u_blog',data.u_blog);
-                    sessionStorage.setItem('u_github',data.u_github);
-                    sessionStorage.setItem('u_intro',data.u_intro);
-                    browserHistory.push('/personalpage');
-                }
-            })
-    }
-
     updateUserInfo(u_id,u_psw,u_realname,u_blog,u_github,u_intro){
         let url = API_ROOT + 'u/update';
+        let userurl = API_ROOT + 'u/query';
         $.post(url,
             {u_id:u_id,u_psw:u_psw,u_realname:u_realname,u_blog:u_blog,u_github:u_github,u_intro:u_intro},
             function(data){
-                if(data.code === 1){
+                console.log('upDateUserInfo:',data);
+                if(data.code == 1){
                     let content = '更新用户信息成功';
                     let type = 'success';
                     if(content !== '' && type) {
@@ -67,7 +55,17 @@ export default class UserSetting extends Component{
                     sessionStorage.removeItem('u_blog');
                     sessionStorage.removeItem('u_github');
                     sessionStorage.removeItem('u_intro');
-                    this.getUserInfo(sessionStorage.getItem('u_id'));
+                    $.get(userurl,{u_id:u_id},
+                        function (data) {
+                            console.log('get new user info:',data);
+                            if(data.code == 1){
+                                sessionStorage.setItem('u_realname',data.u_realname);
+                                sessionStorage.setItem('u_blog',data.u_blog);
+                                sessionStorage.setItem('u_github',data.u_github);
+                                sessionStorage.setItem('u_intro',data.u_intro);
+                                browserHistory.push('/personalpage');
+                            }
+                        })
                 }
                 else{
                     let content = data.codeState;
@@ -111,25 +109,23 @@ export default class UserSetting extends Component{
         this.updateUserInfo(user_id,user_psw,user_realname,user_blog,user_github,user_intro);
     }
 
+    isDisabled(){
+        this.setState({
+            disabled:false,
+        });
+    }
+
     changeValue(e,type){
         const value = e.target.value;
         const next_state = {};
         next_state[type] = value;
+        this.setState(next_state,() => {
+            this.isDisabled();
+        });
     }
 
-  /*  validatorClass(field){
-        let initClass = 'form-control';
-        if(field.invalid){
-            initClass += ' ng-invalid'
-        }
-        if(field.dirty){
-            initClass += ' ng-dirty'
-        }
-        return initClass;
-    }*/
+
     render(){
-        //const {fields:{nickname},dirty,invalid} = this.props;
-        // console.log(nickname)
         return (
             <div>
                 <Alert stack={{limit:1}} position='top-right' timeout={3000}/>
@@ -138,7 +134,6 @@ export default class UserSetting extends Component{
             <div className="panel admin-panel table-1">
                 <div className="panel-head">
                     <strong><span className="icon-pencil-square-o"> </span> 更改用户信息 </strong>
-                    <Link to='/personalpage'>返回用户页面</Link>
                 </div>
                 <br />
                 <br />

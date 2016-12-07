@@ -7,7 +7,9 @@ import { connect } from 'react-redux';
 import * as Actions from '../../actions';
 import { validateEmail, validateUsername } from '../../utiles/misc';
 import {API_ROOT} from '../../config';
+import $ from 'jquery';
 import Alert from 'react-s-alert';
+import Footer from '../HomeArticle/footer';
 
 function mapStateToProps(state) {
     return{
@@ -28,17 +30,42 @@ export default class Register extends React.Component {
         super(props);
         const redirectRoute = '/login';
         this.state = {
+            verifyNum:'',
             u_name:'',
             u_email:'',
             u_psw:'',
             psw_again:'',
+            u_verify:'',
             u_name_error_text: null,
             u_email_error_text: null,
             u_psw_error_text: null,
             psw_again_error_text: null,
+            verify_error_text: null,
             redirectTo: redirectRoute,
             disabled: true,
         };
+    }
+
+    componentDidMount(){
+        console.log('get verify first');
+
+        let url = API_ROOT + 'public/get_verify';
+        $.get(url,
+            function (data) {
+                console.log('get Verify Number:',data);
+                this.setState({verifyNum:data});
+            }.bind(this)
+        )
+    }
+
+    changeVerifyNum(e){
+        let url = API_ROOT + 'public/get_verify';
+        $.get(url,
+            function (data) {
+                console.log('get Verify Number again:',data);
+                this.setState({verifyNum:data});
+            }.bind(this)
+        )
     }
 
     isDisabled() {
@@ -46,6 +73,7 @@ export default class Register extends React.Component {
         let u_email_is_valid = false;
         let u_psw_is_valid = false;
         let psw_again_is_valid = false;
+        let verify_is_valid = false;
 
         if(this.state.u_name === '') {
             this.setState({
@@ -115,7 +143,21 @@ export default class Register extends React.Component {
             });
         }
 
-        if(u_name_is_valid && u_email_is_valid && u_psw_is_valid && psw_again_is_valid) {
+        if(this.state.u_verify === ''){
+            this.setState({
+                verify_error_text:'请输入验证码',
+            });
+        }
+        else if(this.state.u_verify === this.state.verifyNum){
+            sessionStorage.setItem('verify',this.state.u_verify);
+            verify_is_valid = true;
+            this.setState({verify_error_text:null});
+        }
+        else {
+            this.setState({verify_error_text:'验证码错误，请重新输入'})
+        }
+
+        if(u_name_is_valid && u_email_is_valid && u_psw_is_valid && psw_again_is_valid && verify_is_valid) {
             this.setState({
                 disabled: false,
             });
@@ -139,15 +181,76 @@ export default class Register extends React.Component {
         }
     }
 
+    getUserInfo(u_id){
+        let url = API_ROOT + 'u/query';
+        let verifyurl = API_ROOT + 'u/email/verify';
+        $.get(url,{u_id:u_id},
+            function (data) {
+                console.log('getUserInfo:',data);
+                if(data.code == 1){
+                    sessionStorage.setItem('u_name',data.u_name);
+                    sessionStorage.setItem('u_email',data.u_email);
+                    $.post(verifyurl,{u_id:sessionStorage.getItem('u_id'),u_email:sessionStorage.getItem('u_email'),u_verify:sessionStorage.getItem('verify')},
+                        function (data) {
+                            console.log('sendVerifyEmail:',data);
+                            if(data.code == 1){
+                                browserHistory.push('/verifyemail');
+                            }else {
+                                let content = '注册失败';
+                                let type = 'error';
+                                if (content !== '' && type) {
+                                    switch (type) {
+                                        case 'error':
+                                            Alert.error(content);
+                                            break;
+                                        case 'success':
+                                            Alert.success(content);
+                                            break;
+                                        case 'info':
+                                            Alert.info(content);
+                                            break;
+                                        case 'warning':
+                                            Alert.warning(content);
+                                            break;
+                                        default:
+                                            Alert.error(content)
+                                    }
+                                }
+                            }
+                        })
+                }else{
+                    let content = data.codeState;
+                    let type = 'error';
+                    if(content !== '' && type) {
+                        switch (type) {
+                            case 'error':
+                                Alert.error(content);
+                                break;
+                            case 'success':
+                                Alert.success(content);
+                                break;
+                            case 'info':
+                                Alert.info(content);
+                                break;
+                            case 'warning':
+                                Alert.warning(content);
+                                break;
+                            default:
+                                Alert.error(content)
+                        }
+                    }
+                }})
+    };
+
     registerUser(u_email,u_name,u_psw){
         sessionStorage.setItem('u_psw',u_psw);
         let url = API_ROOT + 'sign_up';
         $.post(url,{u_email:u_email,u_name:u_name,u_psw:u_psw},
             function(data){
                 console.log('userRegister',data);
-                if(data.code === 1) {
+                if(data.code == 1) {
                     sessionStorage.setItem('u_id',data.u_id);
-                    this.getUserInfo(sessionStorage.getItem('u_id'));
+                    return this.getUserInfo(sessionStorage.getItem('u_id'));
                 }else {
                     let content = data.codeState;
                     let type = 'error';
@@ -170,39 +273,8 @@ export default class Register extends React.Component {
                         }
                     }
                 }
-            })
+            }.bind(this))
     };
-
-    getUerInfo(u_id){
-        let url = API_ROOT + 'u/query';
-        $.get(url,{u_id:u_id},
-            function (data) {
-                if(data.code === 1){
-                    sessionStorage.setItem('u_name',data.u_name);
-                    browserHistory.push('/');
-                }else{
-                    let content = data.codeState;
-                    let type = 'error';
-                    if(content !== '' && type) {
-                        switch (type) {
-                            case 'error':
-                                Alert.error(content);
-                                break;
-                            case 'success':
-                                Alert.success(content);
-                                break;
-                            case 'info':
-                                Alert.info(content);
-                                break;
-                            case 'warning':
-                                Alert.warning(content);
-                                break;
-                            default:
-                                Alert.error(content)
-                        }
-                }
-            }})
-    }
 
     login(e) {
         e.preventDefault();
@@ -213,7 +285,7 @@ export default class Register extends React.Component {
 
     render(){
         return(
-        <div>
+        <div className="hintemail-bg">
             <Alert stack={{limit:1}} position='top-right' timeout={3000}/>
             <div className="container">
                 <div className='row flipInX'>
@@ -225,7 +297,7 @@ export default class Register extends React.Component {
                             <br/>
                             <br/>
                         </h3>
-                        <h4 className="text-center"><strong>欢迎回来</strong></h4>
+                        <h4 className="text-center"><strong>欢迎成为本站用户</strong></h4>
                         <br />
                         {
                             this.props.registerStatusText &&
@@ -236,11 +308,12 @@ export default class Register extends React.Component {
                             </div>
                         }
                         <div className='panel panel-default'>
+                            <div className='panel-heading'>
+                                用户注册
+                            </div>
                             <div className='panel-body'>
                                 <form onKeyPress={(e) => this._handleKeyPress(e)}>
                                     <div className='form-group '>
-                                        <label className='control-label'>
-                                        </label>
                                         <input type='text'
                                                className='form-control'
                                                ref='u_name'
@@ -252,8 +325,6 @@ export default class Register extends React.Component {
                                             </span>
                                     </div>
                                     <div className='form-group '>
-                                        <label className='control-label'>
-                                        </label>
                                         <input  type='e-mail'
                                                 className='form-control'
                                                 ref='email'
@@ -265,8 +336,6 @@ export default class Register extends React.Component {
                                             </span>
                                     </div>
                                     <div className='form-group '>
-                                        <label className='control-label'>
-                                        </label>
                                         <input  type='password'
                                                 className='form-control'
                                                 ref='psw'
@@ -275,11 +344,9 @@ export default class Register extends React.Component {
                                                 onChange={(e) => this.changeValue(e,'u_psw')}/>
                                         <span className='help-block'>
                                                 {this.state.u_psw_error_text}
-                                            </span>
+                                        </span>
                                     </div>
                                     <div className='form-group '>
-                                        <label className='control-label'>
-                                        </label>
                                         <input  type='password'
                                                 className='form-control'
                                                 ref='pswagain'
@@ -288,11 +355,29 @@ export default class Register extends React.Component {
                                                 onChange={(e) => this.changeValue(e,'psw_again')}/>
                                         <span className='help-block'>
                                                 {this.state.psw_again_error_text}
-                                            </span>
+                                        </span>
+                                    </div>
+                                    <div className='form-group '>
+                                        <div className="register-verify-div">
+                                            <input  type='text'
+                                                    className='form-control register-verify-input'
+                                                    ref='u_verify'
+                                                    autoFocus
+                                                    placeholder='输入验证码'
+                                                    onChange={(e) => this.changeValue(e,'u_verify')}/>&nbsp; &nbsp;
+                                            <button className="form-control register-verify-span text-center">
+                                                <strong>{this.state.verifyNum}</strong>
+                                            </button>&nbsp; &nbsp;
+                                            <a className="register-verify-a"
+                                               onClick={(e) => this.changeVerifyNum(e)}>换一张~</a>
+                                        </div>
+                                        <span className='help-block'>
+                                                {this.state.verify_error_text}
+                                        </span>
                                     </div>
                                     <br/>
                                     <button type='submit'
-                                            className='btn btn-primary'
+                                            className='btn btn-primary register-login-btn'
                                             disabled={this.state.disabled}
                                             onClick={(e) => this.login(e)}>
                                         注册
@@ -308,6 +393,7 @@ export default class Register extends React.Component {
                     </div>
                 </div>
             </div>
+            <Footer/>
         </div>
         )
     }
@@ -317,134 +403,3 @@ Register.propTypes = {
     registerUser: React.PropTypes.func,
     registerStatusText: React.PropTypes.string,
 };
-/*
- import React,{Component} from 'react'
- import {bindActionCreators} from 'redux'
- import {connect} from 'react-redux'
- import {reduxForm} from 'redux-form'
- import * as Actions from '../../actions'
- import SNSLogin from './snsLogin'
-
- const mapStateToProps = (state) => {
- return {
- sns:state.sns.toJS()
- }
- };
-
- const mapDispatchToProps = (dispatch) => {
- return {
- actions:bindActionCreators(Actions,dispatch)
- }
- };
-
- const validate = values => {
- const errors = {};
- if(!values.email){
- errors.email = 'Required';
- }else if((!/^(\w)+(\.\w+)*@(\w)+((\.\w+)+)$/.test(values.email))){
- errors.email = '地址无效'
- }
-
- if(!values.password){
- errors.password = 'Required';
- }
-
- return errors;
- };
-
- @connect(mapStateToProps,mapDispatchToProps)
- @reduxForm({
- form:'signin',
- fields:['email','password'],
- validate
- })
- export default class Login extends Component{
- constructor(props){
- super(props);
- this.handleSubmit = this.handleSubmit.bind(this);
- }
-
- handleSubmit(e){
- e.preventDefault();
- console.log('login');
- const {values} = this.props;
- console.log(values);
- const {actions} = this.props;
- actions.localLogin(values);
- }
- componentDidMount(){
- const {actions,sns} = this.props;
- if(sns.logins.length <1){
- actions.getSnsLogins();
- }
-
- }
-
- validatorCalss(field){
- let initClass = 'form-control'
- if(field.invalid){
- initClass += ' ng-invalid'
- }
- if(field.dirty){
- initClass += ' ng-dirty'
- }
- return initClass
- }
-
- render(){
- const {sns,fields:{email,password},dirty,invalid} = this.props;
-
- return (
- <div>
- <div className="background">
- </div>
- <div className="outer-container">
- <div className="wrap-container">
- <div className="content-outer">
- <div className="content-inner">
- <div className="signin-box">
- <div className="signin-container">
- <h4 className="title">登 录</h4>
- <form className="signin-form form-horizontal" id="signin" name="signin" onSubmit={this.handleSubmit} noValidate>
- <div className="form-group">
- <div className="input-group">
- <div className="input-group-addon">
- <i className="fa fa-envelope-o"></i>
- </div>
- <input type="email"
- className={ this.validatorCalss(email) }
- placeholder="邮箱"
- {...email} />
- </div>
- </div>
- <div className="form-group">
- <div className="input-group">
- <div className="input-group-addon"><i className="fa fa-unlock-alt"></i></div>
- <input type="password"
- className={ this.validatorCalss(password) }
- placeholder="密码"
- {...password} />
- </div>
- </div>
- <div className="form-group">
- <button disabled={ invalid } className="btn btn-primary btn-lg btn-block" type="submit">登 录</button>
- </div>
-
- </form>
-
- <p className="text-center">您还可以通过以下方式直接登录</p>
- <SNSLogin logins={sns.logins}/>
- </div>
- </div>
- </div>
- </div>
- </div>
- </div>
- </div>
-
-
- )
- }
- }
-
- */
