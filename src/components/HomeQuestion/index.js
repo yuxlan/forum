@@ -56,9 +56,9 @@ export default class Home extends Component{
         this.handleClick()
     }
 
-    // 取到所有的文章id
+    // 取到所有问题的id
     handleClick(event,t_tags){
-        let articleIdUrl = API_ROOT + 't/display';
+        let articleIdUrl = API_ROOT + 'q/display';
         $.get(
             articleIdUrl,
             {t_tags:t_tags},
@@ -75,9 +75,9 @@ export default class Home extends Component{
         );
     }
 
-    // 取文章的详情
+    // 取问题的详情
     getArticleDetails(articlesByHot){
-        let articleDetailUrl = API_ROOT + 't/query';
+        let articleDetailUrl = API_ROOT + 'q/query';
         let articleDetail = new Array();
         for(let i=0; i<articlesByHot.length; i++){
             $.get(
@@ -162,7 +162,7 @@ export default class Home extends Component{
                     <div className="main-content main-MC main-c_T">
                         <div className="content-topBar content-t_NL_ATL main-c_T">
                             <dl className="topBar-nav topBar-NL content-t_NL_ATL">
-                                <dt className="topBar--pointer content-t_NL_ATL">全部文章</dt>
+                                <dt className="topBar--pointer content-t_NL_ATL">全部问题</dt>
                                 <dd className="topBar--pointer content-t_NL_ATL">
                                     <span>最新<i className="indicator"> </i></span>
                                     <ul className="hot-menu pointer-menu">
@@ -176,23 +176,23 @@ export default class Home extends Component{
 
                     <div className="content-shelf-container">
                         {   this.state.articleIds !== ''  &&
-                        this.state.articleDetail.map((article,i) => {
+                        this.state.articleDetail.map((question,i) => {
                             return(
                                 <div>
                                     <div className="content-shelf"
                                          key={i}>
                                         <a>
                                             <strong>
-                                                <Link to={'/article/' + article.t_id}
+                                                <Link to={'/question/' + question.q_id}
                                                       className="link-title">
-                                                    {article.t_title}
+                                                    {question.q_title}
                                                 </Link>
                                             </strong>
                                         </a>
                                         <p> </p><br/>
-                                        <span className="span1">收藏 {article.t_star}</span>&nbsp;&nbsp;
-                                        <span className="span3">评论 {article.t_comments}</span>&nbsp;&nbsp;
-                                        <span className="span2">喜欢 {article.t_like}</span>&nbsp;&nbsp;
+                                        <span className="span1">收藏 {question.q_star}</span>&nbsp;&nbsp;
+                                        <span className="span2">喜欢 {question.q_like}</span>&nbsp;&nbsp;
+                                        <span className="span4">已有回答 {question.q_answers}</span>&nbsp;&nbsp;
                                         <br/><br/>
                                     </div>
                                     <br/>

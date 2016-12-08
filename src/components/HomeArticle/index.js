@@ -192,8 +192,8 @@ export default class Home extends Component{
                                     </a>
                                     <p> </p><br/>
                                     <span className="span1">收藏 {article.t_star}</span>&nbsp;&nbsp;
-                                    <span className="span3">评论 {article.t_comments}</span>&nbsp;&nbsp;
-                                    <span className="span2">喜欢 {article.t_like}</span>&nbsp;&nbsp;
+                                    <span className="span3">喜欢 {article.t_like}</span>&nbsp;&nbsp;
+                                    <span className="span2">标签{article.t_tags}&nbsp;&nbsp;</span>&nbsp;&nbsp;
                                     <br/><br/>
                                 </div>
                                 <br/>

@@ -37,14 +37,16 @@ export default class UserArticles extends React.Component{
     }
 
     componentDidMount(){
-        let userArticles = sessionStorage.getItem('u_articles').split(',');
+        let userArticlesIds = sessionStorage.getItem('u_articles').split('&');
+        let userArticles = userArticlesIds.toString().split(',');
         let articleDetailUrl = API_ROOT + 't/query';
         let articleDetail = new Array();
-        for(let i=0; i<userArticles.length; i++){
+        for(let i=0; i<(userArticles.length-1); i++){
             $.get(
                 articleDetailUrl,
                 {t_id:userArticles[i]},
                 function (data) {
+                    this.setState({articleIds:sessionStorage.getItem('u_articles')});
                     console.log('get all article details by their ids:',data);
                     articleDetail[i] = data;
                     console.log('get all article details and put them into the array:',articleDetail);
@@ -64,11 +66,12 @@ export default class UserArticles extends React.Component{
     }
 
     deleteArticle(t_id){
-      //  const {actions} = this.props;
-      //  actions.deleteArticle(u_id,u_psw,t_id);
         let url = API_ROOT + 't/del';
-        $.post(url,{u_id:sessionStorage.getItem('u_id'),u_psw:sessionStorage.getItem('u_psw'),t_id:t_id},
+        let userUrl = API_ROOT + 'u/query';
+        let user_id = sessionStorage.getItem('u_id');
+        $.post(url,{u_id:user_id,u_psw:sessionStorage.getItem('u_psw'),t_id:t_id},
             function (data) {
+                console.log('delete article:',data);
                 if(data.code == 1){
                     let content = '删除成功';
                     let type = 'success';
@@ -90,6 +93,33 @@ export default class UserArticles extends React.Component{
                                 Alert.error(content)
                         }
                     }
+                    $.get(userUrl, {u_id: user_id},
+                        function (data) {
+                            console.log('getUserInfo:', data);
+                            if (data.code == 1) {
+                                sessionStorage.removeItem('u_articles');
+                                sessionStorage.setItem('u_articles', data.u_articles);
+                                this.setState({articleIds:sessionStorage.getItem('u_articles')});
+                                let userArticlesIds = sessionStorage.getItem('u_articles').split('&');
+                                let userArticles = userArticlesIds.toString().split(',');
+                                let articleDetailUrl = API_ROOT + 't/query';
+                                let articleDetail = new Array();
+                                for(let i=0; i<(userArticles.length-1); i++){
+                                    $.get(
+                                        articleDetailUrl,
+                                        {t_id:userArticles[i]},
+                                        function (data) {
+                                            console.log('get all article details by their ids:',data);
+                                            articleDetail[i] = data;
+                                            console.log('get all article details and put them into the array:',articleDetail);
+                                            this.setState({articleDetail:articleDetail});
+                                            console.log('articleDetails:',this.state.articleDetail);
+                                        }
+                                    )
+                                }
+                            }
+                        }
+                    )
                 }
                 else {
                     let content = data.codeState;
@@ -137,32 +167,32 @@ export default class UserArticles extends React.Component{
                     </div>
                     <br />
                     <table className="table table-hover text-center">
-                        <tr>
-                            <th width="5%">&nbsp;&nbsp; 序号</th>
-                            <th width="10%">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;标题</th>
-                            <th width="15%">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;概述</th>
-                            <th width="10%">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;时间</th>
-                            <th width="30%">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;操作</th>
+                        <tr className="text-center">
+                            <th width="5%" className="text-center">&nbsp;序号</th>
+                            <th width="9%" className="text-center">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;标题</th>
+                            <th width="13%" className="text-center">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;创作时间</th>
+                            <th width="13%" className="text-center">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;最近更新时间</th>
+                            <th width="30%" className="text-center">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;操作</th>
                         </tr>
                             {
-                                this.state.articleDetail!==[] &&
+                                this.state.articleIds !== '&' &&
                                 this.state.articleDetail.map((article, i) => {
                                     return(
                                         <tr key={i}>
                                             <td>{i + 1}</td>
                                             <td><Link to={'/article/' + article.t_id}>{article.t_title}</Link></td>
-                                            <td><Link to={'/article/' + article.t_id}><div dangerouslySetInnerHTML={{__html: markIt(article.t_text)}}></div></Link></td>
+                                            <td>{formatDate(article.t_date)}</td>
                                             <td>{formatDate(article.t_date_latest)}</td>
                                             <td>
                                                 <div className="button-group">
-                                                    <a className="button border-main" href="" onClick={(e) => this.updateArticle(userArticlesId)}>
+                                                    <button className="button border-main" onClick={(e) => this.updateArticle(userArticlesId)}>
                                                         <span className="icon-edit"> </span>
                                                         修改
-                                                    </a>
-                                                    <a className="button border-red" href="" onClick={(e) => this.deleteArticle(userArticlesId)}>
+                                                    </button>
+                                                    <button className="button border-red" onClick={(e)=>this.deleteArticle(article.t_id)}>
                                                         <span className="icon-trash-o"> </span>
                                                         删除
-                                                    </a>
+                                                    </button>
                                                 </div>
                                             </td>
                                         </tr>

@@ -171,33 +171,63 @@ export default class WriteArticle extends React.Component{
 
     addArticles(u_id,u_psw,u_title,u_text){
         let url = API_ROOT + 't/add';
-
+        let userUrl = API_ROOT + 'u/query';
+        let user_id = sessionStorage.getItem('u_id');
         $.post(
             url, {u_id:u_id,u_psw:u_psw,t_title:u_title,t_text:u_text},
             function(data){
                 console.log('add articles:',data);
                 if(data.code == 1) {
-                    let content = '上传文章成功';
-                    let type = 'success';
-                    if(content !== '' && type) {
-                        switch (type) {
-                            case 'error':
-                                Alert.error(content);
-                                break;
-                            case 'success':
-                                Alert.success(content);
-                                break;
-                            case 'info':
-                                Alert.info(content);
-                                break;
-                            case 'warning':
-                                Alert.warning(content);
-                                break;
-                            default:
-                                Alert.error(content)
-                        }
-                    }
-                    browserHistory.push('/personalpage/articles');
+                    $.get(userUrl, {u_id: u_id},
+                        function (data) {
+                            console.log('getUserInfo:', data);
+                            if (data.code == 1) {
+                                sessionStorage.removeItem('u_articles');
+                                sessionStorage.setItem('u_articles', data.u_articles);
+                                let content = '上传文章成功';
+                                let type = 'success';
+                                if (content !== '' && type) {
+                                    switch (type) {
+                                        case 'error':
+                                            Alert.error(content);
+                                            break;
+                                        case 'success':
+                                            Alert.success(content);
+                                            break;
+                                        case 'info':
+                                            Alert.info(content);
+                                            break;
+                                        case 'warning':
+                                            Alert.warning(content);
+                                            break;
+                                        default:
+                                            Alert.error(content)
+                                    }
+                                }
+                                browserHistory.push('/personalpage/articles');
+                            } else {
+                                let content = '上传文章失败';
+                                let type = 'error';
+                                if (content !== '' && type) {
+                                    switch (type) {
+                                        case 'error':
+                                            Alert.error(content);
+                                            break;
+                                        case 'success':
+                                            Alert.success(content);
+                                            break;
+                                        case 'info':
+                                            Alert.info(content);
+                                            break;
+                                        case 'warning':
+                                            Alert.warning(content);
+                                            break;
+                                        default:
+                                            Alert.error(content)
+                                    }
+                                }
+                            }
+                        })
                 } else {
                     let content = '上传文章失败';
                     let type = 'error';
