@@ -40,7 +40,7 @@ class VerifyEmail extends React.Component{
 
         if(this.state.u_verify === ''){
             this.setState({
-                verify_error_text:'请输入验证码',
+                verify_error_text:'请输入您收到的验证码',
             });
         }
         else {
@@ -72,9 +72,13 @@ class VerifyEmail extends React.Component{
         }
     }
 
+    verifyEmail(){
+
+    }
+
     handleSubmit(e){
         e.preventDefault();
-      //  this.loginUser(this.state.u_email,this.state.u_verify);
+        this.verifyEmail();
     }
 
     render(){

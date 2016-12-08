@@ -323,15 +323,12 @@ export default class Home extends Component{
                                                                     <p className="list-footer">
                                                         <span className="visit-count">
                                                             收藏 {article.t_star}
-                                                        </span>&nbsp;&nbsp;
-                                                                        <span className="comment-count">
-                                                            评论 {article.t_comments}
-                                                        </span>&nbsp;&nbsp;
+                                                        </span>&nbsp;&nbsp;&nbsp;&nbsp;
                                                                         <span className="like-count">
                                                             喜欢 {article.t_like}
-                                                        </span>&nbsp;&nbsp;
+                                                        </span>&nbsp;&nbsp;&nbsp;&nbsp;
                                                                         <span>
-                                                            标签{article.t_tags}&nbsp;
+                                                            标签{article.t_tags}&nbsp;&nbsp;
                                                         </span>
                                                                         <br/>
                                                                         <Link to=""/>
@@ -349,9 +346,9 @@ export default class Home extends Component{
                                 </div>
                             </div>
                         </div>
+                        <ScrollTop/><Footer/>
                         </div>
                     }
-                    <ScrollTop/><Footer/>
                 </div>
             )
     }

@@ -13,6 +13,7 @@ import Register from './components/Register'; // 注册
 import WriteArticle from './components/WriteArticle';// 写文章
 
 import Article from './components/Article';//文章详情页
+import Question from './components/Question';//问答详情页
 
 import PersonalPage from './components/PersonalPage';// 个人中心
 import UserPage from './components/PersonalPage/userPage';//个人页面
@@ -40,6 +41,7 @@ export default ()=>(
         <Route path='/verifyemail' component={VerifyEmail}/>
         <Route path='/write' component={WriteArticle} />
         <Article path="/article/:id" component={Article} />
+        <Question path="/question/:id" component={Question}/>
         <PersonalPage path='/personalpage' component={PersonalPage}>
             <IndexRoute component={UserPage} />
             <Route path='articles' component={UserArticles} />
