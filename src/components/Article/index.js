@@ -6,8 +6,8 @@ import $ from 'jquery';
 import markIt from'../WriteArticle/marked';
 
 import Alert from 'react-s-alert';
-import Nav from '../HomeArticle/navbar';
-import Footer from '../HomeArticle/footer';
+import Nav from '../HomeArticleHot/navbar';
+import Footer from '../HomeArticleHot/footer';
 import {API_ROOT} from '../../config';
 import {defaultAvatar} from '../../assets/imgs/userimg.png';
 import {Link,browserHistory } from 'react-router';
@@ -45,6 +45,7 @@ export default class Article extends React.Component{
             u_loginname_error_text:null,
             u_psw_error_text:null,
             disabled: true,
+            isLike:false,
         }
     }
 
@@ -57,6 +58,9 @@ export default class Article extends React.Component{
     fetchArticleData(t_id){
         let article = new Array();
         let url = API_ROOT + 't/query';
+        let likeUrl = API_ROOT + 't/query_pro';
+        let u_id = sessionStorage.getItem('u_id');
+        let u_psw = sessionStorage.getItem('u_psw');
         $.get(
             url,
             {t_id:t_id},
@@ -67,7 +71,19 @@ export default class Article extends React.Component{
                 console.log('get this article detail message:',this.state.article);
                 this.fetchArticleComments();
             }.bind(this)
-            )
+            );
+        $.get(
+            likeUrl,
+            {t_id:t_id,u_id:u_id,u_psw:u_psw},
+            function (data) {
+                console.log('get article and user relationshape:',data);
+                if(data.t_recommend_bool == 1){
+                    this.setState({isLike:true})
+                }else {
+                    this.setState({isLike:false})
+                }
+            }.bind(this)
+        )
     }
 
     fetchArticleComments(){
@@ -78,7 +94,9 @@ export default class Article extends React.Component{
 
     fetchArticleCommentsDetail(commentIds){
         let url = API_ROOT + 'c/query';
+        let userUrl = API_ROOT + 'u/query';
         let articleComment = new Array();
+        let commentUser = new Array();
         for(let i=0; i<commentIds.length; i++){
             $.get(
                 url,
@@ -88,7 +106,15 @@ export default class Article extends React.Component{
                     articleComment[i] = data;
                     let u_id = data.u_id;
                     console.log('get all article details and put them into the array:',articleComment,);
-                    this.fecthCommentUser(u_id,i);
+                    $.get(
+                        userUrl,
+                        {u_id:u_id},
+                        function (data) {
+                            commentUser[i] = data.u_name;
+                            this.setState({commentUser:commentUser});
+                            console.log('commentUser:',this.state.commentUser);
+                        }.bind(this)
+                    );
                     this.setState({articleComment:articleComment});
                     console.log('articleDetails:',this.state.articleComment,'commentUser:',this.state.commentUser);
                 }.bind(this)
@@ -96,7 +122,7 @@ export default class Article extends React.Component{
         }
     }
 
-    fecthCommentUser(u_id,i){
+ /*   fecthCommentUser(u_id,i){
         let url = API_ROOT + 'u/query';
         let commentUser = new Array();
         $.get(
@@ -108,7 +134,7 @@ export default class Article extends React.Component{
                 console.log('commentUser:',this.state.commentUser);
             }.bind(this)
         );
-    }
+    }*/
 
     addComment(u_id,u_psw,ec_type,ec_id,c_text){
         let url = API_ROOT + 'c/add';
@@ -177,6 +203,44 @@ export default class Article extends React.Component{
         this.addComment(u_id,u_psw,ec_type,ec_id,c_text);
     }
 
+    likeArticle(e){
+        const {params:{id}} = this.props;
+        let url = API_ROOT + 't/recommend';
+        let u_id = sessionStorage.getItem('u_id');
+        let u_psw = sessionStorage.getItem('u_psw');
+        let t_id = id;
+        let u_act = '1';
+        $.post(
+            url,
+            {u_id:u_id,u_psw:u_psw,t_id:t_id,u_act:u_act},
+            function (data) {
+                console.log('like article:',data);
+                if(data.code == 1){
+                    this.setState({isLike:true})
+                }
+            }.bind(this)
+        )
+    }
+
+    unLikeArticle(e){
+        const {params:{id}} = this.props;
+        let url = API_ROOT + 't/recommend';
+        let u_id = sessionStorage.getItem('u_id');
+        let u_psw = sessionStorage.getItem('u_psw');
+        let t_id = id;
+        let u_act = '0';
+        $.post(
+            url,
+            {u_id:u_id,u_psw:u_psw,t_id:t_id,u_act:u_act},
+            function (data) {
+                console.log('unlike article:',data);
+                if(data.code == 1){
+                    this.setState({isLike:false})
+                }
+            }.bind(this)
+        )
+    }
+
     handleSubmitReply(e,c_id,content){
         e.preventDefault();
         const {actions} = this.props;
@@ -218,13 +282,21 @@ export default class Article extends React.Component{
         })
     }
 
+    popDiv(showId,backId) {
+        document.getElementById(showId).style.display = 'block';
+        document.getElementById(backId).style.display = 'block';
+
+        var backdiv = document.getElementById(backId);
+        backId.style.width = document.body.scrollwidth;
+        $("#"+backId).height($(document).height());
+    }
+    hideDiv(showId,backId) {
+        document.getElementById(showId).style.display = 'none';
+        document.getElementById(backId).style.display = 'none';
+    }
+
     isDisabled(){
-        if(this.state.commentContent !== ''){
-            this.setState({
-                disabled:false,
-            });
-        }
-       /* let u_loginname_is_valid = false;
+        let u_loginname_is_valid = false;
         let u_psw_is_valid = false;
 
         if(this.state.u_loginname === ''){
@@ -255,7 +327,7 @@ export default class Article extends React.Component{
             this.setState({
                 disabled:false,
             });
-        }*/
+        }
 
     }
 
@@ -356,9 +428,16 @@ export default class Article extends React.Component{
                     <br />
 
                     <div className="article-like">
-                        <a className='liked-btn'>
-                            <i className="fa fa-thumbs-up"> </i>
-                        </a>
+                        {
+                            this.state.isLike ?
+                                <a className='liked-btn' onClick={(e)=>this.unLikeArticle(e)}>
+                                    <i className="iconfont">&#xe616;</i>
+                                </a>
+                                :
+                                <a className='liked-btn' onClick={(e)=>this.likeArticle(e)}>
+                                    <i className="iconfont">&#xe617;</i>
+                                </a>
+                        }
                     </div>
                     <br />
                     <br />
@@ -368,10 +447,12 @@ export default class Article extends React.Component{
                             ?
                             <div>
                                 <p className="comment-signin">
-                                    <button className="btn btn-info login">
+                                    <button className="btn btn-info login" onClick={this.popDiv('form','back')}>
                                         登录后发表评论
                                     </button>
                                 </p>
+                                <div id="back"></div>
+                                <div id="form"> sjciosjcv </div>
                             </div>
                             :
                             <div className="comment-reply">
@@ -416,21 +497,17 @@ export default class Article extends React.Component{
                             this.state.articleComment.map((comment,i) => {
                                 return(
                                     <div>
+                                        <br/>
+                                        <br/>
                                         <div className="content-shelf-comments"
                                              key={i}>
-                                            <a>
-                                                <strong>
-                                                    <a>
-                                                        {this.state.commentUser[i]}
-                                                    </a>
-                                                </strong>
-                                            </a>
-                                            <p> </p>
+                                            <p className="span6-h"><i className="iconfont span6-icon">&#xe639;</i>&nbsp;{this.state.commentUser[i]}</p>
+                                            <br/><p className="span6-p">{comment.c_text}</p>
                                             <br/>
-                                            <span className="span3">评论时间 {formatDate(article.c_date)}</span>&nbsp;&nbsp;
-                                            <span className="span2">喜欢 {article.c_like}</span>&nbsp;&nbsp;
+                                            <span className="span5 pull-right"><i className="iconfont">&#xe617;</i>&nbsp;&nbsp;&nbsp;&nbsp;评论时间 {formatDate(comment.c_date)}</span>&nbsp;&nbsp;
                                             <br/><br/>
                                         </div>
+                                        <br/>
                                         <br/>
                                     </div>
                                 )

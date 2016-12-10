@@ -8,7 +8,7 @@ import {Link,browserHistory } from 'react-router';
 import $ from 'jquery';
 import {API_ROOT} from '../../config';
 import Alert from 'react-s-alert';
-import Footer from '../HomeArticle/footer';
+import Footer from '../HomeArticleHot/footer';
 
 import * as actionCreators from '../../actions/auth';
 // import SNSLogin from './snsLogin'; // 第三方登录，后期可加   <SNSLogin logins={sns.logins}/>

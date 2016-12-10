@@ -6,8 +6,8 @@ import $ from 'jquery';
 import markIt from'../WriteArticle/marked';
 
 import Alert from 'react-s-alert';
-import Nav from '../HomeArticle/navbar';
-import Footer from '../HomeArticle/footer';
+import Nav from '../HomeArticleHot/navbar';
+import Footer from '../HomeArticleHot/footer';
 import {API_ROOT} from '../../config';
 import {defaultAvatar} from '../../assets/imgs/userimg.png';
 import {Link,browserHistory } from 'react-router';

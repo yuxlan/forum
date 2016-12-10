@@ -86,7 +86,7 @@ export default class Home extends Component{
                 this.setState({articleIds:data.t_ids});
                 console.log('articleIds:',this.state.articleIds);
                 let articleIds = this.state.articleIds.split('&');
-                let articleIdsByHot = articleIds[0];
+                let articleIdsByHot = articleIds[1];
                 let articlesByHot = articleIdsByHot.toString().split(',');
                 console.log('articlesByHot:',articlesByHot);
                 return this.getArticleDetails(articlesByHot)
