@@ -9,7 +9,7 @@ import { validateEmail, validateUsername } from '../../utiles/misc';
 import {API_ROOT} from '../../config';
 import $ from 'jquery';
 import Alert from 'react-s-alert';
-import Footer from '../HomeArticle/footer';
+import Footer from '../HomeArticleHot/footer';
 
 function mapStateToProps(state) {
     return{

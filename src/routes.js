@@ -5,8 +5,11 @@ import {Route,IndexRoute} from 'react-router';
 
 import App from './components/App'; // 应用入口
 import Home from './components/Home'; // 主页
-import HomeArticle from './components/HomeArticle';//显示文章的主页
-import HomeQuestion from './components/HomeQuestion';//显示问题主页
+import HomeArticle from './components/HomeArticleNew';//显示文章的主页
+import HomeQuestion from './components/HomeQuestionNew';//显示问题主页
+import HomeArticleHot from './components/HomeArticleHot';//显示最热文章
+import HomeQuestionHot from './components/HomeQuestionHot';//显示最热问答
+
 import Login from './components/Login'; // 登录
 import Register from './components/Register'; // 注册
 
@@ -35,6 +38,8 @@ export default ()=>(
         <IndexRoute component={Home}/>
         <Route path='/homearticle' components={HomeArticle}/>
         <Route path='/homequestion' components={HomeQuestion}/>
+        <Route path='/homearticlehot' components={HomeArticleHot}/>
+        <Route path='/homequestionhot' components={HomeQuestionHot}/>
         <Route path='/login' component={Login}/>
         <Route path='/register' component={Register}/>
         <Route path='/hintverifyemail' component={HintVerifyEmail}/>

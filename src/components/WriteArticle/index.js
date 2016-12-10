@@ -9,7 +9,7 @@ import * as actions from '../../actions'
 import {parseArticle} from '../../utiles'
 import $ from 'jquery'
 import {API_ROOT} from '../../config'
-import Nav from '../HomeArticle/navbar';
+import Nav from '../HomeArticleHot/navbar';
 import Alert from 'react-s-alert';
 
 const mapStateToProps = (state) => {

@@ -90,8 +90,8 @@ export default class Navbar extends React.Component{
                                     <span> </span>
                                     <ul className="bar-hide-ul">
                                         <li><a href="">所有文章</a></li>
-                                        <li><a href="">最新文章</a></li>
-                                        <li><a href="">热门文章</a></li>
+                                        <li><Link to='/homearticlehot'>热门文章</Link></li>
+                                        <li><Link to='/homearticle'>最新文章</Link></li>
                                         <li><a href="">推荐文章</a></li>
                                     </ul>
                                 </li>
@@ -99,8 +99,8 @@ export default class Navbar extends React.Component{
                                     <span> </span>
                                     <ul className="bar-hide-ul">
                                         <li><a href="">所有问答</a></li>
-                                        <li><a href="">已解决问答</a></li>
-                                        <li><a href="">未解决问答</a></li>
+                                        <li><Link to='/homequestion'>最新问答</Link></li>
+                                        <li><Link to='/homequestionhot'>热门问答</Link></li>
                                         <li><a href="">优质问答</a></li>
                                     </ul>
                                 </li>
