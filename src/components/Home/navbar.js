@@ -108,10 +108,16 @@ export default class Navbar extends React.Component{
                         </nav>
                         <nav className="users">
                             <a href="#">
-                        <span className="users-icon">
-                            <img src={StarIcon} alt=""/>
-                            求助
-                        </span>
+                                {
+                                    sessionStorage.getItem('u_id') === null
+                                        ?
+                                        <span>&nbsp;</span>
+                                        :
+                                        <span className="users-icon">
+                                            <img src={StarIcon} alt=""/>
+                                            <Link to='/writeq'>提问题</Link>
+                                        </span>
+                                }
                             </a>
                             &nbsp;&nbsp;&nbsp;&nbsp;
                             <a href="#">

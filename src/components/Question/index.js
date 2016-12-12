@@ -51,12 +51,12 @@ export default class Question extends React.Component{
         this.fetchArticleData(id);
     }
 
-    fetchArticleData(t_id){
+    fetchArticleData(q_id){
         let article = new Array();
         let url = API_ROOT + 'q/query';
         $.get(
             url,
-            {t_id:t_id},
+            {q_id:q_id},
             function(data){
                 console.log('get article details by its certain id:',data);
                 article[0] = data;

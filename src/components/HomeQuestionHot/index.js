@@ -37,6 +37,7 @@ export default class Home extends Component{
             tagList:[],
             articleIds:'',
             articleDetail:[],
+            articleAnswer:[],
         }
     }
 
@@ -65,7 +66,7 @@ export default class Home extends Component{
             {t_tags:t_tags},
             function (data) {
                 console.log('get all article ids by all tags:',data);
-                this.setState({articleIds:data.t_ids});
+                this.setState({articleIds:data.q_ids});
                 console.log('articleIds:',this.state.articleIds);
                 let articleIds = this.state.articleIds.split('&');
                 let articleIdsByHot = articleIds[0];
@@ -80,6 +81,7 @@ export default class Home extends Component{
     getArticleDetails(articlesByHot){
         let articleDetailUrl = API_ROOT + 'q/query';
         let articleDetail = new Array();
+        let articleAnswer = new Array();
         for(let i=0; i<articlesByHot.length; i++){
             $.get(
                 articleDetailUrl,
@@ -87,8 +89,10 @@ export default class Home extends Component{
                 function (data) {
                     console.log('get all article details by their ids:',data);
                     articleDetail[i] = data;
+                    articleAnswer[i] = data.q_answers.split(',');
                     console.log('get all article details and put them into the array:',articleDetail);
                     this.setState({articleDetail:articleDetail});
+                    this.setState({articleAnswer:articleAnswer});
                     console.log('articleDetails:',this.state.articleDetail);
                 }.bind(this)
             )
@@ -165,20 +169,20 @@ export default class Home extends Component{
                             <dl className="topBar-nav topBar-NL content-t_NL_ATL">
                                 <dt className="topBar--pointer content-t_NL_ATL">全部问题</dt>
                                 <dt className="topBar--pointer content-t_NL_ATL">
-                                    <Link to='/homearticle'>最新</Link>
+                                    <Link to='/homequestion'>最新</Link>
                                 </dt>
                                 <dt>
-                                    <Link to='/homearticlehot'>最热</Link>
+                                    <Link to='/homequestionhot'>最热</Link>
                                 </dt>
                             </dl>
                         </div>
                     </div>
 
                     {
-                        this.state.articleIds === ''
+                        this.state.articleIds === '&'
                             ?
                             <div className="text-center home-container">
-                                <br/><br/><br/><br/><br/><br/><br/><br/><img src={Loading}/>
+                                <br/><br/><br/><br/><br/><br/><br/><br/>
                             </div>
                             :
                             <div className="content-shelf-container">
@@ -196,10 +200,10 @@ export default class Home extends Component{
                                                         </Link>
                                                     </strong>
                                                 </a>
-                                                <p></p><br/>
+                                                <p> </p><br/>
                                                 <span className="span1">收藏 {question.q_star}</span>&nbsp;&nbsp;
                                                 <span className="span2">喜欢 {question.q_like}</span>&nbsp;&nbsp;
-                                                <span className="span4">已有回答 {question.q_answers}</span>&nbsp;&nbsp;
+                                                <span className="span4">已有回答 {this.state.articleAnswer[i]}</span>&nbsp;&nbsp;
                                                 <br/><br/>
                                             </div>
                                             <br/>
@@ -208,7 +212,8 @@ export default class Home extends Component{
                                 })}
                             </div>
                     }
-                </div>)</div></div></div></div><ScrollTop/><Footer />
+                </div>
+                    <br /><br /></div><br /><br /></div><br /><br /></div><br /><br /></div><br /><br /><ScrollTop/><Footer />
             </div>
         )
     }

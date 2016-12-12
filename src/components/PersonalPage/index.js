@@ -175,9 +175,9 @@ export default class Admin extends React.Component{
                                     <i className="fa fa-comments"> </i>我的评论
                                 </Link>
                             <div className="fix"></div>
-                                <a href="#" className="controller-item" activeClassName="active" title="" >
+                                <Link to='/personalpage/questions' className="controller-item" activeClassName="active" title="" >
                                     <i className="iconfont">&#xe64a;</i>我的问答
-                                </a>
+                                </Link>
                             <div className="fix"></div>
                                 <a href="#" className="controller-item" activeClassName="active" title="" >
                                     <i className="iconfont">&#xe644;</i>我的关注
@@ -204,7 +204,7 @@ export default class Admin extends React.Component{
                                 </Link>
                             <div className="fix"></div>
                         </div>
-                    </div>
+                    </div><br /><br /><br />
                 </div>
 
                 <div>

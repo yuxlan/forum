@@ -188,8 +188,21 @@ export default class Register extends React.Component {
             function (data) {
                 console.log('getUserInfo:',data);
                 if(data.code == 1){
+                    sessionStorage.setItem('u_id',data.u_id);
                     sessionStorage.setItem('u_name',data.u_name);
                     sessionStorage.setItem('u_email',data.u_email);
+                    sessionStorage.setItem('u_email_confirm',data.u_email_confirm);
+                    sessionStorage.setItem('u_level',data.u_level);
+                    sessionStorage.setItem('u_reputation',data.u_reputation);
+                    sessionStorage.setItem('u_realname',data.u_realname);
+                    sessionStorage.setItem('u_blog',data.u_blog);
+                    sessionStorage.setItem('u_github',data.u_github);
+                    sessionStorage.setItem('u_articles',data.u_articles);
+                    sessionStorage.setItem('u_questions',data.u_questions);
+                    sessionStorage.setItem('u_answers',data.u_answers);
+                    sessionStorage.setItem('u_watchusers',data.u_watchusers);
+                    sessionStorage.setItem('u_tags',data.u_tags);
+                    sessionStorage.setItem('u_intro',data.u_intro);
                     $.post(verifyurl,{u_id:sessionStorage.getItem('u_id'),u_email:sessionStorage.getItem('u_email'),u_verify:sessionStorage.getItem('verify')},
                         function (data) {
                             console.log('sendVerifyEmail:',data);

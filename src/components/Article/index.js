@@ -37,6 +37,7 @@ export default class Article extends React.Component{
             article:[],
             articleComment:[],
             commentUser:[],
+            articleAuth:'',
             showModal:false,
             commentContent:'',
             openedForm:null,
@@ -58,6 +59,7 @@ export default class Article extends React.Component{
     fetchArticleData(t_id){
         let article = new Array();
         let url = API_ROOT + 't/query';
+        let authUrl = API_ROOT + 'u/query';
         let likeUrl = API_ROOT + 't/query_pro';
         let u_id = sessionStorage.getItem('u_id');
         let u_psw = sessionStorage.getItem('u_psw');
@@ -68,11 +70,15 @@ export default class Article extends React.Component{
                 console.log('get article details by its certain id:',data);
                 article[0] = data;
                 this.setState({article:article});
+                $.get(authUrl,{u_id:data.u_id},
+                    function (data) {
+                        this.setState({articleAuth:data.u_name});
+                }.bind(this));
                 console.log('get this article detail message:',this.state.article);
                 this.fetchArticleComments();
             }.bind(this)
             );
-        $.get(
+        $.post(
             likeUrl,
             {t_id:t_id,u_id:u_id,u_psw:u_psw},
             function (data) {
@@ -87,6 +93,7 @@ export default class Article extends React.Component{
     }
 
     fetchArticleComments(){
+        console.log('articleComment:',this.state.article[0].t_comments);
         let commentIds = this.state.article[0].t_comments.split(',');
         console.log('article comments ids:',commentIds);
         return this.fetchArticleCommentsDetail(commentIds);
@@ -144,6 +151,7 @@ export default class Article extends React.Component{
             function (data) {
                 console.log('add comment:', data);
                 if (data.code == 1) {
+                    console.log('article id:',ec_id);
                     let content = '评论成功';
                     let type = 'success';
                     if (content !== '' && type) {
@@ -164,8 +172,7 @@ export default class Article extends React.Component{
                                 Alert.error(content)
                         }
                     }
-                    console.log('article id:',ec_id);
-                    this.fetchArticleData(id);
+                    return this.fetchArticleData(ec_id);
                 } else {
                     let content = data.codeState;
                     let type = 'error';
@@ -217,6 +224,27 @@ export default class Article extends React.Component{
                 console.log('like article:',data);
                 if(data.code == 1){
                     this.setState({isLike:true})
+                }else {
+                    let content = data.codeState;
+                    let type = 'warning';
+                    if (content !== '' && type) {
+                        switch (type) {
+                            case 'error':
+                                Alert.error(content);
+                                break;
+                            case 'success':
+                                Alert.success(content);
+                                break;
+                            case 'info':
+                                Alert.info(content);
+                                break;
+                            case 'warning':
+                                Alert.warning(content);
+                                break;
+                            default:
+                                Alert.error(content)
+                        }
+                    }
                 }
             }.bind(this)
         )
@@ -280,19 +308,6 @@ export default class Article extends React.Component{
         this.setState({
             commentContent:''
         })
-    }
-
-    popDiv(showId,backId) {
-        document.getElementById(showId).style.display = 'block';
-        document.getElementById(backId).style.display = 'block';
-
-        var backdiv = document.getElementById(backId);
-        backId.style.width = document.body.scrollwidth;
-        $("#"+backId).height($(document).height());
-    }
-    hideDiv(showId,backId) {
-        document.getElementById(showId).style.display = 'none';
-        document.getElementById(backId).style.display = 'none';
     }
 
     isDisabled(){
@@ -409,10 +424,13 @@ export default class Article extends React.Component{
                         </h1>
                         <div className="counts">
                             <span className="views-count">
-                                收藏{article.t_star}
+                                作者&nbsp;&nbsp;{this.state.articleAuth}
+                            </span>&nbsp;
+                            <span className="views-count">
+                                收藏&nbsp;&nbsp;{article.t_star}
                             </span>&nbsp;
                             <span className="comments-count">
-                                喜欢{article.t_like}
+                                喜欢&nbsp;&nbsp;{article.t_like}
                             </span>&nbsp;
                             <span className="likes-count">
                                 {formatDate(article.t_date_latest)}
@@ -427,34 +445,35 @@ export default class Article extends React.Component{
                     <br />
                     <br />
 
-                    <div className="article-like">
-                        {
-                            this.state.isLike ?
-                                <a className='liked-btn' onClick={(e)=>this.unLikeArticle(e)}>
-                                    <i className="iconfont">&#xe616;</i>
-                                </a>
-                                :
-                                <a className='liked-btn' onClick={(e)=>this.likeArticle(e)}>
-                                    <i className="iconfont">&#xe617;</i>
-                                </a>
-                        }
-                    </div>
-                    <br />
-                    <br />
 
                     <div className="comment-container clearfix">
                         { sessionStorage.getItem('u_id') === null
                             ?
                             <div>
                                 <p className="comment-signin">
-                                    <button className="btn btn-info login" onClick={this.popDiv('form','back')}>
+                                    <button className="btn btn-info login">
                                         登录后发表评论
                                     </button>
                                 </p>
-                                <div id="back"></div>
-                                <div id="form"> sjciosjcv </div>
                             </div>
                             :
+                            <div>
+
+                                <div className="article-like">
+                                    {
+                                        this.state.isLike ?
+                                            <button className='liked-btn' onClick={(e)=>this.unLikeArticle(e)}>
+                                                <i className="iconfont">&#xe616;</i>
+                                            </button>
+                                            :
+                                            <button className='liked-btn' onClick={(e)=>this.likeArticle(e)}>
+                                                <i className="iconfont">&#xe617;</i>
+                                            </button>
+                                    }
+                                </div>
+                                <br />
+                                <br />
+
                             <div className="comment-reply">
                                 <a className="reply-avatar" href="">
                                         <img src={ defaultAvatar}/>
@@ -475,43 +494,45 @@ export default class Article extends React.Component{
                                                 onClick={(e)=>this.handleSubmitComment(e)}>
                                             发表
                                         </button>
-                                        <button className="btn btn-danger pull-right"
+                                        <button className="btn btn-warning pull-right"
                                                 onClick={(e)=>this.clearText(e)}>
                                             清空
                                         </button>
                                     </div>
                                 </form>
                             </div>
+                            </div>
                         }
                         {
-                            this.state.articleComment !== [] ?
+                            this.state.article[0].t_comments = '' ?
                                 <div className="comment-des clearfix">
                                     {this.state.articleComment.length}条评论
                                 </div>
                                 :
-                                <div className="comment-des clearfix">
-                                    0条评论
-                                </div>
-                        }
-                        {
-                            this.state.articleComment.map((comment,i) => {
-                                return(
-                                    <div>
-                                        <br/>
-                                        <br/>
-                                        <div className="content-shelf-comments"
-                                             key={i}>
-                                            <p className="span6-h"><i className="iconfont span6-icon">&#xe639;</i>&nbsp;{this.state.commentUser[i]}</p>
-                                            <br/><p className="span6-p">{comment.c_text}</p>
-                                            <br/>
-                                            <span className="span5 pull-right"><i className="iconfont">&#xe617;</i>&nbsp;&nbsp;&nbsp;&nbsp;评论时间 {formatDate(comment.c_date)}</span>&nbsp;&nbsp;
-                                            <br/><br/>
-                                        </div>
-                                        <br/>
-                                        <br/>
+                                <div>
+                                    <div className="comment-des clearfix">
+                                        0条评论
                                     </div>
-                                )
-                            })
+                                    {
+                                    this.state.articleComment.map((comment,i) => {
+                                        return(
+                                            <div>
+                                                <br/>
+                                                <br/>
+                                                <div className="content-shelf-comments"
+                                                     key={i}>
+                                                    <p className="span6-h"><i className="iconfont span6-icon">&#xe639;</i>&nbsp;{this.state.commentUser[i]}</p>
+                                                    <br/><p className="span6-p">{comment.c_text}</p>
+                                                    <br/>
+                                                    <span className="span5 pull-right"><i className="iconfont">&#xe617;</i>&nbsp;&nbsp;&nbsp;&nbsp;评论时间 {formatDate(comment.c_date)}</span>&nbsp;&nbsp;
+                                                    <br/><br/>
+                                                </div>
+                                                <br/>
+                                                <br/>
+                                            </div>
+                                        )
+                                    })}
+                                </div>
                         }
                     </div>
                 </div></div></div></div></div>)

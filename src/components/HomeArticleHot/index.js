@@ -12,6 +12,7 @@ import {Link,browserHistory} from 'react-router';
 import $ from 'jquery';
 import {API_ROOT} from '../../config';
 import Loading from '../../assets/imgs/tiny.gif';
+import {formatDate} from '../../utiles';
 
 const mapStateToProps = (state) => {
 
@@ -176,7 +177,7 @@ export default class Home extends Component{
                     </div>
 
                     {
-                        this.state.articleIds === ''
+                        this.state.articleIds === '&'
                             ?
                             <div className="text-center home-container">
                                 <br/><br/><br/><br/><br/><br/><br/><br/><img src={Loading}/>
@@ -201,7 +202,10 @@ export default class Home extends Component{
                                                 <span className="span1">收藏 {article.t_star}</span>&nbsp;&nbsp;
                                                 <span className="span3">喜欢 {article.t_like}</span>&nbsp;&nbsp;
                                                 <span
-                                                    className="span2">标签{article.t_tags}&nbsp;&nbsp;</span>&nbsp;&nbsp;
+                                                    className="span2">标签&nbsp;&nbsp;{article.t_tags}</span>&nbsp;&nbsp;&nbsp;&nbsp;
+                                                <span>
+                                                            {formatDate(article.t_date_latest)}
+                                                                        </span>
                                                 <br/><br/>
                                             </div>
                                             <br/>
@@ -210,7 +214,8 @@ export default class Home extends Component{
                                 })}
                             </div>
                     }
-                </div>)</div></div></div></div><ScrollTop/><Footer />
+                </div>
+                    <br /><br /></div><br /><br /></div><br /><br /></div><br /><br /></div><br /><br /><ScrollTop/><Footer />
             </div>
         )
     }

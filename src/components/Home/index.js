@@ -7,10 +7,9 @@ import {connect} from 'react-redux';
 import $ from 'jquery';
 
 import * as Actions from '../../actions';
-import {customTime,formatDate} from '../../utiles';
+import {formatDate} from '../../utiles';
 import {API_ROOT} from '../../config';
 
-import Tags from './tags';
 import Nav from './navbar';
 import Footer from './footer';
 import ScrollTop from '../ScrollTop';
@@ -55,6 +54,8 @@ export default class Home extends Component{
             tagList:[],
             articleIds:'',
             articleDetail:[],
+            articleAuth:[],
+            articleAuthName:[],
         }
     }
 
@@ -97,7 +98,9 @@ export default class Home extends Component{
     // 取文章的详情
     getArticleDetails(articlesByHot){
         let articleDetailUrl = API_ROOT + 't/query';
+        let url = API_ROOT + 'u/query';
         let articleDetail = new Array();
+        let articleAuth = new Array();
         for(let i=0; i<articlesByHot.length; i++){
             $.get(
                 articleDetailUrl,
@@ -107,7 +110,12 @@ export default class Home extends Component{
                     articleDetail[i] = data;
                     console.log('get all article details and put them into the array:',articleDetail);
                     this.setState({articleDetail:articleDetail});
-                    console.log('articleDetails:',this.state.articleDetail);
+                    $.get(url,{u_id:data.u_id},
+                        function (data) {
+                            articleAuth[i] = data.u_name;
+                            this.setState({articleAuth:articleAuth});
+                        }.bind(this));
+                    console.log('articleDetails:',this.state.articleDetail,'articleAuthId:',this.state.articleAuth);
                 }.bind(this)
             )
         }
@@ -297,7 +305,8 @@ export default class Home extends Component{
                                         <br /><br />
                                         <div className="live-lesson">
                                             <div className="live-img">
-                                                <a href=""> article </a>
+                                                <div className="live-img-div-1">
+                                                </div>
                                             </div>
                                             <ul className="article-list list-unstyled clearfix">
                                                 {
@@ -308,17 +317,15 @@ export default class Home extends Component{
                                                                 key={i}>
                                                                 <div className="articleList-item">
                                                                     <p className="list-top">
-                                                        <span className="time">
-                                                            {formatDate(article.t_date_latest)}
+                                                        <span className="time home-article">
+                                                            作者：&nbsp;&nbsp;{this.state.articleAuth[i]}
                                                         </span>
                                                                     </p>
                                                                     <h2 className="title">
-                                                                        <strong>
                                                                             <Link to={'/article/' + article.t_id}
-                                                                                  className="link-title">
+                                                                                  className="link-title home-article-title">
                                                                                 {article.t_title}
                                                                             </Link>
-                                                                        </strong>
                                                                     </h2>
                                                                     <p className="list-footer">
                                                         <span className="visit-count">
@@ -328,8 +335,11 @@ export default class Home extends Component{
                                                             喜欢 {article.t_like}
                                                         </span>&nbsp;&nbsp;&nbsp;&nbsp;
                                                                         <span>
-                                                            标签{article.t_tags}&nbsp;&nbsp;
-                                                        </span>
+                                                            标签&nbsp;&nbsp;{article.t_tags}
+                                                        </span>&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                        <span>
+                                                            {formatDate(article.t_date_latest)}
+                                                                        </span>
                                                                         <br/>
                                                                         <Link to=""/>
                                                                     </p>
