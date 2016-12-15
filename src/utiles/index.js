@@ -1,4 +1,14 @@
 import {API_ROOT} from '../config.js';
+import $ from 'jquery';
+
+// 获取密钥
+export function getSecretKey(e) {
+    let url = API_ROOT + 'safe/secret_key';
+    $.get(url,
+        function (data) {
+            return data;
+        })
+}
 
 // 计算文章或者问答的发布时间
 export function customTime(item){

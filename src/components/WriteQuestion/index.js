@@ -179,11 +179,11 @@ export default class WriteArticle extends React.Component{
     }
 
     addArticles(u_id,u_psw,u_title,u_text,t_tags){
-        let url = API_ROOT + 't/add';
+        let url = API_ROOT + 'q/add';
         let userUrl = API_ROOT + 'u/query';
         let user_id = sessionStorage.getItem('u_id');
         $.post(
-            url, {u_id:u_id,u_psw:u_psw,t_title:u_title,t_text:u_text,t_tags:t_tags,secret_key:this.state.key},
+            url, {u_id:u_id,u_psw:u_psw,q_title:u_title,q_text:u_text,q_tags:t_tags,secret_key:this.state.key},
             function(data){
                 console.log('add articles:',data);
                 if(data.code == 1) {
@@ -191,9 +191,9 @@ export default class WriteArticle extends React.Component{
                         function (data) {
                             console.log('getUserInfo:', data);
                             if (data.code == 1) {
-                                sessionStorage.removeItem('u_articles');
-                                sessionStorage.setItem('u_articles', data.u_articles);
-                                let content = '上传文章成功';
+                                sessionStorage.removeItem('u_questions');
+                                sessionStorage.setItem('u_questions', data.u_questions);
+                                let content = '成功提出问题';
                                 let type = 'success';
                                 if (content !== '' && type) {
                                     switch (type) {
@@ -213,9 +213,9 @@ export default class WriteArticle extends React.Component{
                                             Alert.error(content)
                                     }
                                 }
-                                browserHistory.push('/personalpage/articles');
+                                browserHistory.push('/personalpage/questions');
                             } else {
-                                let content = '上传文章失败';
+                                let content = '提出问题失败';
                                 let type = 'error';
                                 if (content !== '' && type) {
                                     switch (type) {
@@ -238,7 +238,7 @@ export default class WriteArticle extends React.Component{
                             }
                         })
                 } else {
-                    let content = '上传文章失败';
+                    let content = '提出问题失败';
                     let type = 'error';
                     if(content !== '' && type) {
                         switch (type) {
@@ -277,7 +277,7 @@ export default class WriteArticle extends React.Component{
     }
 
     render(){
-        let {insert,changeData,downloadURL,clearAll,save,adminTagList,tagList} = this.props;
+        let {insert,changeData,downloadURL,clearAll,save,adminTagList} = this.props;
         console.log(this.state.tags);
         var class1,class2;
         class1 = "col-xs-6";
@@ -289,16 +289,15 @@ export default class WriteArticle extends React.Component{
                 <hr/>
                 <div className="background-admin">
                     <form>
-                    <input className="markdown-input" placeholder="输入文章标题" ref='text_title'
+                    <input className="markdown-input" placeholder="输入问题标题" ref='text_title'
                            onChange={(e) => this.changePostValue(e,'text_title')}/>
                         <hr className="markdown-hr"/>
                         <input className="markdown-input-1" placeholder="输入标签，以‘，’相隔，例：JavaScript，数据库" ref='text_tags'
                                onChange={(e) => this.changePostValue(e,'text_tags')}/>
-                    <div className="pull-right">
-                        <a className="btn btn-default" href={downloadURL} download="README.md" onMouseEnter={changeData}><i className="icon1-markdown"> </i>导出md</a>&nbsp; &nbsp;
-                        <button className="btn btn-info controller-item" onClick={(e)=>this.uploadFile(e)}><i className="fa fa-save"> </i>发布博客</button>
-                        <a>&nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;</a>
-                    </div>
+                        <div className="pull-right">
+                            <button className="btn btn-info controller-item" onClick={(e)=>this.uploadFile(e)}><i className="fa fa-save"> </i>提问题</button>
+                            <a>&nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;</a>
+                        </div>
                     </form>
                 </div>
                 <div id="app">

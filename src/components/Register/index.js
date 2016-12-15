@@ -1,15 +1,17 @@
-// 注册表单
+// 用户注册，注册时实现验证邮箱功能
 
 import React from 'react';
 import {Link,browserHistory} from 'react-router';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import * as Actions from '../../actions';
-import { validateEmail, validateUsername } from '../../utiles/misc';
-import {API_ROOT} from '../../config';
 import $ from 'jquery';
+
 import Alert from 'react-s-alert';
 import Footer from '../HomeArticleHot/footer';
+
+import {API_ROOT} from '../../config';
+import * as Actions from '../../actions';
+import { validateEmail, validateUsername } from '../../utiles/misc';
 
 function mapStateToProps(state) {
     return{
@@ -30,6 +32,7 @@ export default class Register extends React.Component {
         super(props);
         const redirectRoute = '/login';
         this.state = {
+            key:'',
             verifyNum:'',
             u_name:'',
             u_email:'',
@@ -41,14 +44,15 @@ export default class Register extends React.Component {
             u_psw_error_text: null,
             psw_again_error_text: null,
             verify_error_text: null,
-            redirectTo: redirectRoute,
             disabled: true,
+            redirectTo: redirectRoute,
         };
     }
 
     componentDidMount(){
         console.log('get verify first');
 
+        // 获取验证码
         let url = API_ROOT + 'public/get_verify';
         $.get(url,
             function (data) {
@@ -56,8 +60,17 @@ export default class Register extends React.Component {
                 this.setState({verifyNum:data});
             }.bind(this)
         )
+
+        // 获取密钥
+        let Surl = API_ROOT + 'safe/secret_key';
+        $.get(Surl,
+            function (data) {
+                this.setState({key:data});
+                console.log('key:',this.state.key);
+            }.bind(this));
     }
 
+    // 更换验证码
     changeVerifyNum(e){
         let url = API_ROOT + 'public/get_verify';
         $.get(url,
@@ -68,6 +81,7 @@ export default class Register extends React.Component {
         )
     }
 
+    // 验证输入
     isDisabled() {
         let u_name_is_valid = false;
         let u_email_is_valid = false;
@@ -173,6 +187,7 @@ export default class Register extends React.Component {
         });
     }
 
+    // enter快捷键
     _handleKeyPress(e){
         if (e.key === 'Enter') {
             if (!this.state.disabled) {
@@ -181,6 +196,7 @@ export default class Register extends React.Component {
         }
     }
 
+    // 获取用户信息
     getUserInfo(u_id){
         let url = API_ROOT + 'u/query';
         let verifyurl = API_ROOT + 'u/email/verify';
@@ -188,9 +204,43 @@ export default class Register extends React.Component {
             function (data) {
                 console.log('getUserInfo:',data);
                 if(data.code == 1){
+                    sessionStorage.setItem('u_id',data.u_id);
                     sessionStorage.setItem('u_name',data.u_name);
                     sessionStorage.setItem('u_email',data.u_email);
-                    $.post(verifyurl,{u_id:sessionStorage.getItem('u_id'),u_email:sessionStorage.getItem('u_email'),u_verify:sessionStorage.getItem('verify')},
+                    sessionStorage.setItem('u_email_confirm',data.u_email_confirm);
+                    sessionStorage.setItem('u_level',data.u_level);
+                    sessionStorage.setItem('u_reputation',data.u_reputation);
+                    sessionStorage.setItem('u_realname',data.u_realname);
+                    sessionStorage.setItem('u_blog',data.u_blog);
+                    sessionStorage.setItem('u_github',data.u_github);
+                    sessionStorage.setItem('u_articles',data.u_articles);
+                    sessionStorage.setItem('u_questions',data.u_questions);
+                    sessionStorage.setItem('u_answers',data.u_answers);
+                    sessionStorage.setItem('u_watchusers',data.u_watchusers);
+                    sessionStorage.setItem('u_tags',data.u_tags);
+                    sessionStorage.setItem('u_intro',data.u_intro);
+                    let content = '注册成功';
+                    let type = 'success';
+                    if(content !== '' && type) {
+                        switch (type) {
+                            case 'error':
+                                Alert.error(content);
+                                break;
+                            case 'success':
+                                Alert.success(content);
+                                break;
+                            case 'info':
+                                Alert.info(content);
+                                break;
+                            case 'warning':
+                                Alert.warning(content);
+                                break;
+                            default:
+                                Alert.error(content)
+                        }
+                    }
+                    browserHistory.push('/');
+                  /*  $.post(verifyurl,{u_id:sessionStorage.getItem('u_id'),u_email:sessionStorage.getItem('u_email'),u_verify:sessionStorage.getItem('verify'),secret_key:this.state.key},
                         function (data) {
                             console.log('sendVerifyEmail:',data);
                             if(data.code == 1){
@@ -217,7 +267,7 @@ export default class Register extends React.Component {
                                     }
                                 }
                             }
-                        })
+                        })*/
                 }else{
                     let content = data.codeState;
                     let type = 'error';
@@ -242,10 +292,11 @@ export default class Register extends React.Component {
                 }})
     };
 
+    // 注册信息
     registerUser(u_email,u_name,u_psw){
         sessionStorage.setItem('u_psw',u_psw);
         let url = API_ROOT + 'sign_up';
-        $.post(url,{u_email:u_email,u_name:u_name,u_psw:u_psw},
+        $.post(url,{u_email:u_email,u_name:u_name,u_psw:u_psw,secret_key:this.state.key},
             function(data){
                 console.log('userRegister',data);
                 if(data.code == 1) {
@@ -276,10 +327,9 @@ export default class Register extends React.Component {
             }.bind(this))
     };
 
+    // 处理登录按钮事件
     login(e) {
         e.preventDefault();
-      //  const {actions} = this.props;
-       // actions.registerUser(this.state.u_email, this.state.u_name, this.state.u_psw, this.state.redirectTo);
         this.registerUser(this.state.u_email, this.state.u_name, this.state.u_psw);
     }
 

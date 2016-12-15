@@ -2,40 +2,48 @@
 
 import React from 'react';
 import {connect} from 'react-redux';
+import {Link,browserHistory } from 'react-router';
 import $ from 'jquery';
-import markIt from'../WriteArticle/marked';
-
 import Alert from 'react-s-alert';
+
+import markIt from'../WriteArticle/marked';
 import Nav from '../HomeArticleHot/navbar';
 import Footer from '../HomeArticleHot/footer';
-import {API_ROOT} from '../../config';
-import {defaultAvatar} from '../../assets/imgs/userimg.png';
-import {Link,browserHistory } from 'react-router';
 import ScrollTop from '../ScrollTop'
+
+import {API_ROOT} from '../../config';
+import {customTime,formatDate} from '../../utiles';
+
+import {defaultAvatar} from '../../assets/imgs/userimg.png';
 
 const mapStateToProps = state =>{
     return {
-      /*  auth:state.auth.u_id,
-        articleDetail:state.articleDetail.toJS(),
-        prenextArticle:state.prenextArticle.toJS(),
-        commentList:state.commentList.toJS(),*/
+        //  auth:state.auth.u_id,
+        //  articleDetail:state.articleDetail.toJS(),
+        //  prenextArticle:state.prenextArticle.toJS(),
+        //  commentList:state.commentList.toJS(),
     }
 };
 
 const mapDispatchToProps = dispatch => {
-      return {
-       //   actions:bindActionCreators(Actions,dispatch)
-      }
+    return {
+        //     actions:bindActionCreators(Actions,dispatch)
+    }
 };
 
 @connect(mapStateToProps,mapDispatchToProps)
-export default class Question extends React.Component{
+export default class Article extends React.Component{
     constructor(props){
         super(props);
         this.state = {
+            key:'',
             article:[],
-            showModal:false,
+            articleComment:[],
             commentContent:'',
+            commentUser:[],
+            articleAuth:'',
+            isLike:false,
+            showModal:false,
             openedForm:null,
             u_loginname: '',
             u_psw:'',
@@ -46,35 +54,134 @@ export default class Question extends React.Component{
     }
 
     componentDidMount(){
+        // 获取密钥
+        let url = API_ROOT + 'safe/secret_key';
+        $.get(url,
+            function (data) {
+                this.setState({key:data});
+                console.log('key:',this.state.key);
+            }.bind(this));
+
+        // 获取传值过来的文章id
         const {params:{id}} = this.props;
         console.log('article id:',id);
         this.fetchArticleData(id);
     }
 
-    fetchArticleData(t_id){
-        let article = new Array();
+    // 获取文章详情
+    fetchArticleData(q_id){
         let url = API_ROOT + 'q/query';
+        let authUrl = API_ROOT + 'u/query';
+        let likeUrl = API_ROOT + 'q/query_pro';
+
+        let u_id = sessionStorage.getItem('u_id');
+        let u_psw = sessionStorage.getItem('u_psw');
+
+        let article = new Array();
+
         $.get(
             url,
-            {t_id:t_id},
+            {q_id:q_id},
             function(data){
                 console.log('get article details by its certain id:',data);
                 article[0] = data;
                 this.setState({article:article});
+
+                // 存储获取到的文章作者id
+                $.get(authUrl,{u_id:data.u_id},
+                    function (data) {
+                        this.setState({articleAuth:data.u_name});
+                    }.bind(this));
                 console.log('get this article detail message:',this.state.article);
+
+                let answerIds = data.q_answers.split(',');
+                console.log('article comments ids:',answerIds);
+                return this.fetchArticleCommentsDetail(answerIds);
             }.bind(this)
-            )
+        );
+
+        // 确定当前用户与本篇文章的关系
+        $.post(
+            likeUrl,
+            {t_id:q_id,u_id:u_id,u_psw:u_psw,secret_key:this.state.key},
+            function (data) {
+                console.log('get article and user relationshape:',data);
+                if(data.q_like_state == 1){
+                    this.setState({isLike:true})
+                }else {
+                    this.setState({isLike:false})
+                }
+            }.bind(this)
+        )
     }
 
+    /*  fetchArticleComments(){
+     console.log('articleComment:',this.state.article[0].t_comments);
+     let commentIds = this.state.article[0].t_comments.split(',');
+     console.log('article comments ids:',commentIds);
+     return this.fetchArticleCommentsDetail(commentIds);
+     }*/
+
+    // 获取问题回答详情
+    fetchArticleCommentsDetail(answerIds){
+        let url = API_ROOT + 'a/query';
+        let userUrl = API_ROOT + 'u/query';
+
+        let articleComment = new Array();
+        let commentUser = new Array();
+
+        for(let i=0; i<answerIds.length; i++){
+            $.get(
+                url,
+                {c_id:answerIds[i]},
+                function (data) {
+                    console.log('get all comments details by their ids:',data);
+                    articleComment[i] = data;
+                    console.log('get all article details and put them into the array:',articleComment,);
+
+                    // 获取某条评论的用户
+                    let u_id = data.u_id;
+                    $.get(
+                        userUrl,
+                        {u_id:u_id},
+                        function (data) {
+                            commentUser[i] = data.u_name;
+                            this.setState({commentUser:commentUser});
+                            console.log('commentUser:',this.state.commentUser);
+                        }.bind(this)
+                    );
+                    this.setState({articleComment:articleComment});
+                    console.log('articleDetails:',this.state.articleComment,'commentUser:',this.state.commentUser);
+                }.bind(this)
+            )
+        }
+    }
+
+    /*   fecthCommentUser(u_id,i){
+     let url = API_ROOT + 'u/query';
+     let commentUser = new Array();
+     $.get(
+     url,
+     {u_id:u_id},
+     function (data) {
+     commentUser[i] = data.u_name;
+     this.setState({commentUser:commentUser});
+     console.log('commentUser:',this.state.commentUser);
+     }.bind(this)
+     );
+     }*/
+
+    // 添加答案
     addComment(u_id,u_psw,ec_type,ec_id,c_text){
-        let url = API_ROOT + 'c/add';
+        let url = API_ROOT + 'a/add';
         $.post(
             url,
-            {u_id:u_id,u_psw:u_psw,ec_type:ec_type,ec_id:ec_id,c_text:c_text},
+            {u_id:u_id,u_psw:u_psw,q_id:ec_id,a_text:c_text,secret_key:this.state.key},
             function (data) {
                 console.log('add comment:', data);
                 if (data.code == 1) {
-                    let content = '评论成功';
+                    console.log('article id:',ec_id);
+                    let content = '回答成功';
                     let type = 'success';
                     if (content !== '' && type) {
                         switch (type) {
@@ -94,7 +201,7 @@ export default class Question extends React.Component{
                                 Alert.error(content)
                         }
                     }
-                    browserHistory.push('/article/' + ec_id);
+                    return this.fetchArticleData(ec_id);
                 } else {
                     let content = data.codeState;
                     let type = 'error';
@@ -120,23 +227,86 @@ export default class Question extends React.Component{
             })
     }
 
+    // 处理添加评论的按钮事件
     handleSubmitComment(e){
         e.preventDefault();
         const {params:{id}} = this.props;
         let u_id = sessionStorage.getItem('u_id');
         let u_psw = sessionStorage.getItem('u_psw');
-        let ec_type = 'question';
+        let ec_type = 'article';
         let ec_id = id;
         let c_text = this.state.commentContent;
+        console.log('commentContent:',this.state.commentContent);
         this.addComment(u_id,u_psw,ec_type,ec_id,c_text);
     }
 
+    // 喜欢一篇文章
+    likeArticle(e){
+        const {params:{id}} = this.props;
+        let url = API_ROOT + 'q/star';
+        let u_id = sessionStorage.getItem('u_id');
+        let u_psw = sessionStorage.getItem('u_psw');
+        let t_id = id;
+        let u_act = '1';
+        $.post(
+            url,
+            {u_id:u_id,u_psw:u_psw,q_id:t_id,u_act:u_act,secret_key:this.state.key},
+            function (data) {
+                console.log('like article:',data);
+                if(data.code == 1){
+                    this.setState({isLike:true})
+                }else {
+                    let content = data.codeState;
+                    let type = 'warning';
+                    if (content !== '' && type) {
+                        switch (type) {
+                            case 'error':
+                                Alert.error(content);
+                                break;
+                            case 'success':
+                                Alert.success(content);
+                                break;
+                            case 'info':
+                                Alert.info(content);
+                                break;
+                            case 'warning':
+                                Alert.warning(content);
+                                break;
+                            default:
+                                Alert.error(content)
+                        }
+                    }
+                }
+            }.bind(this)
+        )
+    }
+
+    // 取消喜欢一篇文章
+    unLikeArticle(e){
+        const {params:{id}} = this.props;
+        let url = API_ROOT + 'q/star';
+        let u_id = sessionStorage.getItem('u_id');
+        let u_psw = sessionStorage.getItem('u_psw');
+        let t_id = id;
+        let u_act = '0';
+        $.post(
+            url,
+            {u_id:u_id,u_psw:u_psw,q_id:t_id,u_act:u_act,secret_key:this.state.key},
+            function (data) {
+                console.log('unlike article:',data);
+                if(data.code == 1){
+                    this.setState({isLike:false})
+                }
+            }.bind(this)
+        )
+    }
+
+    // 添加回复
     handleSubmitReply(e,c_id,content){
         e.preventDefault();
         const {actions} = this.props;
         actions.addReply(c_id,{content})
     }
-
     handleSubmit(submitComment){
         return (e) =>{
             submitComment(e,this.state.commentContent);
@@ -146,24 +316,27 @@ export default class Question extends React.Component{
         }
     }
 
+    // 获取文本框内的值得变化
     handleCommentContentChange(e){
+        e.preventDefault();
         this.setState({
             commentContent:e.target.value
         })
     }
 
+    // 登录后评论，打开登录表单
     closeLoginModal(e){
         this.setState({
             showModal:false
         })
     }
-
     openLoginModal(){
         this.setState({
             showModal:true
         })
     }
 
+    // 清空文本
     clearText(e){
         e.preventDefault();
         this.setState({
@@ -171,6 +344,7 @@ export default class Question extends React.Component{
         })
     }
 
+    // 判断是否可以是按钮可用
     isDisabled(){
         let u_loginname_is_valid = false;
         let u_psw_is_valid = false;
@@ -207,6 +381,7 @@ export default class Question extends React.Component{
 
     }
 
+    // 获取文本框内的值得变化
     changeValue(e,type) {
         const value = e.target.value;
         const next_state = {};
@@ -216,10 +391,11 @@ export default class Question extends React.Component{
         });
     }
 
+    // 本页面用户登录
     loginUser(u_loginname,u_psw) {
         let url = API_ROOT + 'sign_in';
         sessionStorage.setItem('u_psw',u_psw);
-        $.post(url,{u_loginname:u_loginname,u_psw:u_psw},
+        $.post(url,{u_loginname:u_loginname,u_psw:u_psw,secret_key:this.state.key},
             function(data){
                 console.log('userLogin',data);
                 if(data.code == 1) {
@@ -238,7 +414,6 @@ export default class Question extends React.Component{
                     sessionStorage.setItem('u_watchusers',data.u_watchusers);
                     sessionStorage.setItem('u_tags',data.u_tags);
                     sessionStorage.setItem('u_intro',data.u_intro);
-                    browserHistory.push('/');
                 }else {
                     let content = data.codeState;
                     let type = 'error';
@@ -262,103 +437,166 @@ export default class Question extends React.Component{
                     }
                 }})
     }
-
     login(e) {
         e.preventDefault();
-        // const {actions} = this.props;
-        // actions.loginUser(this.state.u_loginname,this.state.u_psw, this.state.redirectTo);
         this.loginUser(this.state.u_loginname,this.state.u_psw);
     }
 
     render(){
         return (
-        <div className="home-container" >
-            <Alert stack={{limit:1}} position='top-right' timeout={3000}/>
-            <Nav/>
-            {
-            this.state.article.map((question, i) => {
-                return(
-                <div className="outer-container" key={i}><div className="wrap-container"><div className="content-outer"><div className="content-inner"><div className="article-box">
-                    <div className="article-container">
-                        <h1 className="title">
-                            {question.q_title}
-                        </h1>
-                        <div className="counts">
+            <div className="home-container" >
+                <Alert stack={{limit:1}} position='top-right' timeout={3000}/>
+                <Nav/>
+                {
+                    this.state.article.map((article, i) => {
+                        return(
+                            <div className="outer-container" key={i}><div className="wrap-container"><div className="content-outer"><div className="content-inner"><div className="article-box">
+                                <div className="article-container">
+                                    <h1 className="title">
+                                        {article.q_title}
+                                    </h1>
+                                    <div className="counts">
                             <span className="views-count">
-                                收藏{question.q_star}
+                                作者&nbsp;&nbsp;{this.state.articleAuth}
+                            </span>&nbsp;
+                                        <span className="views-count">
+                                收藏&nbsp;&nbsp;{article.q_star}
+                            </span>&nbsp;
+                                        <span className="comments-count">
+                                喜欢&nbsp;&nbsp;{article.q_like}
+                            </span>&nbsp;
+                                        <span className="comments-count">
+                                标签&nbsp;&nbsp;{article.q_tags}
+                            </span>&nbsp;
+                                        <span className="likes-count">
+                                {formatDate(article.q_date_latest)}
                             </span>
-                            <span className="comments-count">
-                                评论{question.q_comments}
-                            </span>
-                            <span className="likes-count">
-                                喜欢{question.q_like}
-                            </span>
-                        </div>
-                        <div className="markdown-content">
-                            <br/>
-                            <div dangerouslySetInnerHTML={{__html: markIt(question.q_text)}}></div>
-                            <br/>
-                        </div>
-                    </div>
-                    <br />
-                    <br />
+                                    </div>
+                                    <div className="markdown-content">
+                                        <br/>
+                                        <div dangerouslySetInnerHTML={{__html: markIt(article.q_text)}}></div>
+                                        <br/>
+                                    </div>
+                                </div>
+                                <br />
+                                <br />
+                                {
+                                    this.state.article[0].q_answers = '' ?
+                                        <div>
+                                            <div className="comment-des clearfix">
+                                                0条回答
+                                            </div>
+                                        </div>
+                                        :
+                                        <div>
+                                            <div className="comment-des clearfix">
+                                                {this.state.articleComment.length}条回答
+                                            </div>
+                                            {
+                                                this.state.articleComment.map((comment,i) => {
+                                                    return(
+                                                        <div>
+                                                            <br/>
+                                                            <br/>
+                                                            <div className="content-shelf-comments"
+                                                                 key={i}>
+                                                                <p className="span6-h"><i className="iconfont span6-icon">&#xe639;</i>&nbsp;{this.state.commentUser[i]}</p>
+                                                                <br/><p className="span6-p">{comment.a_text}</p>
+                                                                <br/>
+                                                                <span className="span5 pull-right"><i className="iconfont">&#xe617;</i>&nbsp;&nbsp;&nbsp;&nbsp;回答时间 {formatDate(comment.a_date)}</span>&nbsp;&nbsp;
+                                                                <br/><br/>
+                                                            </div>
+                                                            <br/>
+                                                            <br/>
+                                                        </div>
+                                                    )
+                                                })}
+                                        </div>
+                                }
 
-                    <div className="article-like">
-                        <a href="javascript:;" className='liked-btn'>
-                            <i className="fa fa-thumbs-up"> </i>
-                        </a>
-                    </div>
-                    <br />
-                    <br />
+                                <div className="comment-container clearfix">
+                                    { sessionStorage.getItem('u_id') === null
+                                        ?
+                                            <div className='panel panel-default width'>
+                                                <div className='panel-body'>
+                                                    <form className="form" method="post">
+                                                        <div className="form-group">
+                                                            <input type="text"
+                                                                   className='form-control'
+                                                                   ref="u_loginname"
+                                                                   placeholder='输入用户名或邮箱'
+                                                                   onChange={(e) => this.changeValue(e,'u_loginname')}/>
+                                                        </div>
+                                                        <div className="form-group">
+                                                            <input type="password"
+                                                                   className='form-control'
+                                                                   ref="u_psw"
+                                                                   placeholder='输入密码'
+                                                                   onChange={(e) => this.changeValue(e,'u_psw')}/>
+                                                        </div>
+                                                        <p className="comment-signin">
+                                                            <button className="btn-info btn register-login-btn"
+                                                                    type="submit"
+                                                                    disabled={this.state.disabled}
+                                                                    onClick={(e) => this.login(e)}>
+                                                                登录后才能回答
+                                                            </button>
+                                                        </p>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        :
+                                        <div>
 
-                    <div className="comment-container clearfix">
-                        { sessionStorage.getItem('u_id') === null
-                            ?
-                            <div>
-                                <p className="comment-signin">
-                                    <button className="btn btn-info login">
-                                        登录后发表评论
-                                    </button>
-                                </p>
-                            </div>
-                            :
-                            <div className="comment-reply">
-                                <a className="reply-avatar" href="">
-                                        <img src={ defaultAvatar}/>
-                                </a>
-                                <form className="comment-form">
-                                    <div className="comment-content">
+                                            <div className="article-like">
+                                                {
+                                                    this.state.isLike ?
+                                                        <a className='liked-btn' onClick={(e)=>this.unLikeArticle(e)}>
+                                                            <i className="iconfont">&#xe616;</i>
+                                                        </a>
+                                                        :
+                                                        <a className='liked-btn' onClick={(e)=>this.likeArticle(e)}>
+                                                            <i className="iconfont">&#xe617;</i>
+                                                        </a>
+                                                }
+                                            </div>
+                                            <br />
+                                            <br />
+
+                                            <div className="comment-reply">
+                                                <a className="reply-avatar" href="">
+                                                    <img src={ defaultAvatar}/>
+                                                </a>
+                                                <form className="comment-form">
+                                                    <div className="comment-content">
                                     <textarea
-                                        maxLength="1000"
                                         required
-                                        placeholder="写下你的评论…"
-                                        onChange={this.handleCommentContentChange}
-                                        id="comment_content">
+                                        placeholder="回答…"
+                                        ref="cText"
+                                        onChange={(e) => this.handleCommentContentChange(e)}>
                                     </textarea>
-                                    </div>
-                                    <div className="button-container clearfix">
-                                        <button type="submit"
-                                               className="btn btn-info pull-right"
-                                                onClick={this.handleSubmitComment}>
-                                            发表
-                                        </button>
-                                        <button className="btn btn-danger pull-right"
-                                                onClick={this.clearText}>
-                                            清空
-                                        </button>
-                                    </div>
-                                </form>
-                            </div>
-                        }
-                        <div className="comment-des clearfix">
-                            {question.q_comments || 0}条评论
-                        </div>
-                    </div>
-                </div></div></div></div></div>)
-            })}
-            <ScrollTop/>
-            <Footer/>
-        </div>
+                                                    </div>
+                                                    <div className="button-container clearfix">
+                                                        <button type="submit"
+                                                                className="btn btn-info pull-right"
+                                                                onClick={(e)=>this.handleSubmitComment(e)}>
+                                                            发表
+                                                        </button>
+                                                        <button className="btn btn-warning pull-right"
+                                                                onClick={(e)=>this.clearText(e)}>
+                                                            清空
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div></div></div></div></div>)
+                    })}
+                <ScrollTop/>
+                <Footer/>
+            </div>
         )
     }
 }

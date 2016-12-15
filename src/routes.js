@@ -14,16 +14,18 @@ import Login from './components/Login'; // 登录
 import Register from './components/Register'; // 注册
 
 import WriteArticle from './components/WriteArticle';// 写文章
+import WriteQuestion from './components/WriteQuestion';// 提问题
 
 import Article from './components/Article';//文章详情页
 import Question from './components/Question';//问答详情页
 
 import PersonalPage from './components/PersonalPage';// 个人中心
-import UserPage from './components/PersonalPage/userPage';//个人页面
-import UserArticles from './components/PersonalPage/userArticles';//我的文章
-import UserTags from './components/PersonalPage/userTags';//管理标签
-import UserComments from './components/PersonalPage/userComments';//我的评论
-import UserSetting from './components/PersonalPage/userSetting';//个人设置
+import UserPage from './components/PersonalPage/UserPage';//个人页面
+import UserArticles from './components/PersonalPage/UserArticles';//我的文章
+import UserQuestions from './components/PersonalPage/UserQuestions';//我的问答
+import UserTags from './components/PersonalPage/UserTags';//管理标签
+import UserComments from './components/PersonalPage/UserComments';//我的评论
+import UserSetting from './components/PersonalPage/UserSetting';//个人设置
 import UserReputation from './components/PersonalPage/userReputation';//声望记录
 
 import HintVerifyEmail from './components/VerifyEmail/hintVerifyEmail';// 验证邮箱
@@ -45,11 +47,13 @@ export default ()=>(
         <Route path='/hintverifyemail' component={HintVerifyEmail}/>
         <Route path='/verifyemail' component={VerifyEmail}/>
         <Route path='/write' component={WriteArticle} />
+        <Route path='/writeq' component={WriteQuestion} />
         <Article path="/article/:id" component={Article} />
         <Question path="/question/:id" component={Question}/>
         <PersonalPage path='/personalpage' component={PersonalPage}>
             <IndexRoute component={UserPage} />
             <Route path='articles' component={UserArticles} />
+            <Route path='questions' component={UserQuestions} />
             <Route path='tags' component={UserTags} />
             <Route path='comments' component={UserComments} />
             <Route path='users' component={UserSetting} />

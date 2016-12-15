@@ -175,15 +175,15 @@ export default class Admin extends React.Component{
                                     <i className="fa fa-comments"> </i>我的评论
                                 </Link>
                             <div className="fix"></div>
-                                <a href="#" className="controller-item" activeClassName="active" title="" >
+                                <Link to='/personalpage/questions' className="controller-item" activeClassName="active" title="" >
                                     <i className="iconfont">&#xe64a;</i>我的问答
-                                </a>
+                                </Link>
                             <div className="fix"></div>
                                 <a href="#" className="controller-item" activeClassName="active" title="" >
                                     <i className="iconfont">&#xe644;</i>我的关注
                                 </a>
                             <div className="fix"></div>
-                                <Link to="/reputation" className="controller-item" activeClassName="active" title="" >
+                                <Link to="/personalpage/reputation" className="controller-item" activeClassName="active" title="" >
                                     <i className="iconfont">&#xe62d;</i>我的声望
                                 </Link>
                             <div className="fix"></div>
@@ -203,14 +203,14 @@ export default class Admin extends React.Component{
                                     <i className="iconfont">&#xe632;</i>返回首页
                                 </Link>
                             <div className="fix"></div>
-                        </div>
-                    </div>
+                        </div><br /><br /><br /><br /><br /><br /><br />
+                    </div><br /><br /><br />
                 </div>
 
                 <div>
-                    {children}
+                    {children}<br /><br /><br /><br /><br /><br /><br />
                 </div>
-
+                <br /><br /><br /><br /><br /><br /><br />
                 <br /><br /><br /><br /><br /><br /><br />
                 <ScrollTop/>
                 <Footer/>
