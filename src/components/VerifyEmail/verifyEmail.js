@@ -9,6 +9,7 @@ class VerifyEmail extends React.Component{
     constructor(props){
         super(props);
         this.state = {
+            key:'',
             u_email:'',
             u_verify:'',
             u_email_error_text: null,

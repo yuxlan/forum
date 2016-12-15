@@ -11,6 +11,7 @@ export default class UserSetting extends Component{
         this.handleSubmit = this.handleSubmit.bind(this);
         this.updateUserInfo = this.updateUserInfo.bind(this);
         this.state = {
+            key:'',
             userrealname:'',
             userblog:'',
             usergithub:'',
@@ -20,14 +21,20 @@ export default class UserSetting extends Component{
     }
 
     componentDidMount(){
-
+        // 获取密钥
+        let Surl = API_ROOT + 'safe/secret_key';
+        $.get(Surl,
+            function (data) {
+                this.setState({key:data});
+                console.log('key:',this.state.key);
+            }.bind(this));
     }
 
     updateUserInfo(u_id,u_psw,u_realname,u_blog,u_github,u_intro){
         let url = API_ROOT + 'u/update';
         let userurl = API_ROOT + 'u/query';
         $.post(url,
-            {u_id:u_id,u_psw:u_psw,u_realname:u_realname,u_blog:u_blog,u_github:u_github,u_intro:u_intro},
+            {u_id:u_id,u_psw:u_psw,u_realname:u_realname,u_blog:u_blog,u_github:u_github,u_intro:u_intro,secret_key:this.state.key},
             function(data){
                 console.log('upDateUserInfo:',data);
                 if(data.code == 1){

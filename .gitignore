@@ -2,6 +2,8 @@ node_modules/
 npm-debug.log
 logs/*
 public/*
+!public/iconfont.js
+!public/fonts
 !public/favicon.jpg
 !public/animate.js
 !public/app_configure.js
@@ -11,6 +13,9 @@ public/*
 !public/index.js
 !public/jquery.js
 !public/jquery-1.12.4.min.js
+!public/jquery-2.1.4.min.js
+!public/jquery-3.1.0.min.js
+!public/login.js
 !public/main.js
 !public/require.js
 !public/slide_show.js

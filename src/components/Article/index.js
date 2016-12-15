@@ -2,30 +2,32 @@
 
 import React from 'react';
 import {connect} from 'react-redux';
+import {Link,browserHistory } from 'react-router';
 import $ from 'jquery';
-import markIt from'../WriteArticle/marked';
-
 import Alert from 'react-s-alert';
+
+import markIt from'../WriteArticle/marked';
 import Nav from '../HomeArticleHot/navbar';
 import Footer from '../HomeArticleHot/footer';
-import {API_ROOT} from '../../config';
-import {defaultAvatar} from '../../assets/imgs/userimg.png';
-import {Link,browserHistory } from 'react-router';
 import ScrollTop from '../ScrollTop'
+
+import {API_ROOT} from '../../config';
 import {customTime,formatDate} from '../../utiles';
+
+import {defaultAvatar} from '../../assets/imgs/userimg.png';
 
 const mapStateToProps = state =>{
     return {
-      /*  auth:state.auth.u_id,
-        articleDetail:state.articleDetail.toJS(),
-        prenextArticle:state.prenextArticle.toJS(),
-        commentList:state.commentList.toJS(),*/
+      //  auth:state.auth.u_id,
+      //  articleDetail:state.articleDetail.toJS(),
+      //  prenextArticle:state.prenextArticle.toJS(),
+      //  commentList:state.commentList.toJS(),
     }
 };
 
 const mapDispatchToProps = dispatch => {
       return {
-       //   actions:bindActionCreators(Actions,dispatch)
+     //     actions:bindActionCreators(Actions,dispatch)
       }
 };
 
@@ -34,35 +36,49 @@ export default class Article extends React.Component{
     constructor(props){
         super(props);
         this.state = {
+            key:'',
             article:[],
             articleComment:[],
+            commentContent:'',
             commentUser:[],
             articleAuth:'',
+            isLike:false,
             showModal:false,
-            commentContent:'',
             openedForm:null,
             u_loginname: '',
             u_psw:'',
             u_loginname_error_text:null,
             u_psw_error_text:null,
             disabled: true,
-            isLike:false,
         }
     }
 
     componentDidMount(){
+        // 获取密钥
+        let url = API_ROOT + 'safe/secret_key';
+        $.get(url,
+            function (data) {
+                this.setState({key:data});
+                console.log('key:',this.state.key);
+            }.bind(this));
+
+        // 获取传值过来的文章id
         const {params:{id}} = this.props;
         console.log('article id:',id);
         this.fetchArticleData(id);
     }
 
+    // 获取文章详情
     fetchArticleData(t_id){
-        let article = new Array();
         let url = API_ROOT + 't/query';
         let authUrl = API_ROOT + 'u/query';
         let likeUrl = API_ROOT + 't/query_pro';
+
         let u_id = sessionStorage.getItem('u_id');
         let u_psw = sessionStorage.getItem('u_psw');
+
+        let article = new Array();
+
         $.get(
             url,
             {t_id:t_id},
@@ -70,17 +86,24 @@ export default class Article extends React.Component{
                 console.log('get article details by its certain id:',data);
                 article[0] = data;
                 this.setState({article:article});
+
+                // 存储获取到的文章作者id
                 $.get(authUrl,{u_id:data.u_id},
                     function (data) {
                         this.setState({articleAuth:data.u_name});
                 }.bind(this));
                 console.log('get this article detail message:',this.state.article);
-                this.fetchArticleComments();
+
+                let commentIds = data.t_comments.split(',');
+                console.log('article comments ids:',commentIds);
+                return this.fetchArticleCommentsDetail(commentIds);
             }.bind(this)
             );
+
+        // 确定当前用户与本篇文章的关系
         $.post(
             likeUrl,
-            {t_id:t_id,u_id:u_id,u_psw:u_psw},
+            {t_id:t_id,u_id:u_id,u_psw:u_psw,secret_key:this.state.key},
             function (data) {
                 console.log('get article and user relationshape:',data);
                 if(data.t_recommend_bool == 1){
@@ -92,18 +115,21 @@ export default class Article extends React.Component{
         )
     }
 
-    fetchArticleComments(){
+  /*  fetchArticleComments(){
         console.log('articleComment:',this.state.article[0].t_comments);
         let commentIds = this.state.article[0].t_comments.split(',');
         console.log('article comments ids:',commentIds);
         return this.fetchArticleCommentsDetail(commentIds);
-    }
+    }*/
 
+    // 获取文章评论详情
     fetchArticleCommentsDetail(commentIds){
         let url = API_ROOT + 'c/query';
         let userUrl = API_ROOT + 'u/query';
+
         let articleComment = new Array();
         let commentUser = new Array();
+
         for(let i=0; i<commentIds.length; i++){
             $.get(
                 url,
@@ -111,8 +137,10 @@ export default class Article extends React.Component{
                 function (data) {
                     console.log('get all comments details by their ids:',data);
                     articleComment[i] = data;
-                    let u_id = data.u_id;
                     console.log('get all article details and put them into the array:',articleComment,);
+
+                    // 获取某条评论的用户
+                    let u_id = data.u_id;
                     $.get(
                         userUrl,
                         {u_id:u_id},
@@ -143,11 +171,12 @@ export default class Article extends React.Component{
         );
     }*/
 
+    // 添加评论
     addComment(u_id,u_psw,ec_type,ec_id,c_text){
         let url = API_ROOT + 'c/add';
         $.post(
             url,
-            {u_id:u_id,u_psw:u_psw,ec_type:ec_type,ec_id:ec_id,c_text:c_text},
+            {u_id:u_id,u_psw:u_psw,ec_type:ec_type,ec_id:ec_id,c_text:c_text,secret_key:this.state.key},
             function (data) {
                 console.log('add comment:', data);
                 if (data.code == 1) {
@@ -198,6 +227,7 @@ export default class Article extends React.Component{
             })
     }
 
+    // 处理添加评论的按钮事件
     handleSubmitComment(e){
         e.preventDefault();
         const {params:{id}} = this.props;
@@ -210,6 +240,7 @@ export default class Article extends React.Component{
         this.addComment(u_id,u_psw,ec_type,ec_id,c_text);
     }
 
+    // 喜欢一篇文章
     likeArticle(e){
         const {params:{id}} = this.props;
         let url = API_ROOT + 't/recommend';
@@ -219,7 +250,7 @@ export default class Article extends React.Component{
         let u_act = '1';
         $.post(
             url,
-            {u_id:u_id,u_psw:u_psw,t_id:t_id,u_act:u_act},
+            {u_id:u_id,u_psw:u_psw,t_id:t_id,u_act:u_act,secret_key:this.state.key},
             function (data) {
                 console.log('like article:',data);
                 if(data.code == 1){
@@ -250,6 +281,7 @@ export default class Article extends React.Component{
         )
     }
 
+    // 取消喜欢一篇文章
     unLikeArticle(e){
         const {params:{id}} = this.props;
         let url = API_ROOT + 't/recommend';
@@ -259,7 +291,7 @@ export default class Article extends React.Component{
         let u_act = '0';
         $.post(
             url,
-            {u_id:u_id,u_psw:u_psw,t_id:t_id,u_act:u_act},
+            {u_id:u_id,u_psw:u_psw,t_id:t_id,u_act:u_act,secret_key:this.state.key},
             function (data) {
                 console.log('unlike article:',data);
                 if(data.code == 1){
@@ -269,12 +301,12 @@ export default class Article extends React.Component{
         )
     }
 
+    // 添加回复
     handleSubmitReply(e,c_id,content){
         e.preventDefault();
         const {actions} = this.props;
         actions.addReply(c_id,{content})
     }
-
     handleSubmit(submitComment){
         return (e) =>{
             submitComment(e,this.state.commentContent);
@@ -284,6 +316,7 @@ export default class Article extends React.Component{
         }
     }
 
+    // 获取文本框内的值得变化
     handleCommentContentChange(e){
         e.preventDefault();
         this.setState({
@@ -291,18 +324,19 @@ export default class Article extends React.Component{
         })
     }
 
+    // 登录后评论，打开登录表单
     closeLoginModal(e){
         this.setState({
             showModal:false
         })
     }
-
     openLoginModal(){
         this.setState({
             showModal:true
         })
     }
 
+    // 清空文本
     clearText(e){
         e.preventDefault();
         this.setState({
@@ -310,6 +344,7 @@ export default class Article extends React.Component{
         })
     }
 
+    // 判断是否可以是按钮可用
     isDisabled(){
         let u_loginname_is_valid = false;
         let u_psw_is_valid = false;
@@ -346,6 +381,7 @@ export default class Article extends React.Component{
 
     }
 
+    // 获取文本框内的值得变化
     changeValue(e,type) {
         const value = e.target.value;
         const next_state = {};
@@ -355,10 +391,11 @@ export default class Article extends React.Component{
         });
     }
 
+    // 本页面用户登录
     loginUser(u_loginname,u_psw) {
         let url = API_ROOT + 'sign_in';
         sessionStorage.setItem('u_psw',u_psw);
-        $.post(url,{u_loginname:u_loginname,u_psw:u_psw},
+        $.post(url,{u_loginname:u_loginname,u_psw:u_psw,secret_key:this.state.key},
             function(data){
                 console.log('userLogin',data);
                 if(data.code == 1) {
@@ -377,7 +414,6 @@ export default class Article extends React.Component{
                     sessionStorage.setItem('u_watchusers',data.u_watchusers);
                     sessionStorage.setItem('u_tags',data.u_tags);
                     sessionStorage.setItem('u_intro',data.u_intro);
-                    browserHistory.push('/');
                 }else {
                     let content = data.codeState;
                     let type = 'error';
@@ -401,11 +437,8 @@ export default class Article extends React.Component{
                     }
                 }})
     }
-
     login(e) {
         e.preventDefault();
-        // const {actions} = this.props;
-        // actions.loginUser(this.state.u_loginname,this.state.u_psw, this.state.redirectTo);
         this.loginUser(this.state.u_loginname,this.state.u_psw);
     }
 
@@ -432,6 +465,9 @@ export default class Article extends React.Component{
                             <span className="comments-count">
                                 喜欢&nbsp;&nbsp;{article.t_like}
                             </span>&nbsp;
+                            <span className="comments-count">
+                                标签&nbsp;&nbsp;{article.t_tags}
+                            </span>&nbsp;
                             <span className="likes-count">
                                 {formatDate(article.t_date_latest)}
                             </span>
@@ -444,17 +480,69 @@ export default class Article extends React.Component{
                     </div>
                     <br />
                     <br />
-
-
+                    {
+                        this.state.article[0].t_comments = '' ?
+                            <div>
+                                <div className="comment-des clearfix">
+                                    0条评论
+                                </div>
+                            </div>
+                            :
+                            <div>
+                                <div className="comment-des clearfix">
+                                    {this.state.articleComment.length}条评论
+                                </div>
+                                {
+                                    this.state.articleComment.map((comment,i) => {
+                                        return(
+                                            <div>
+                                                <br/>
+                                                <br/>
+                                                <div className="content-shelf-comments"
+                                                     key={i}>
+                                                    <p className="span6-h"><i className="iconfont span6-icon">&#xe639;</i>&nbsp;{this.state.commentUser[i]}</p>
+                                                    <br/><p className="span6-p">{comment.c_text}</p>
+                                                    <br/>
+                                                    <span className="span5 pull-right"><i className="iconfont">&#xe617;</i>&nbsp;&nbsp;&nbsp;&nbsp;评论时间 {formatDate(comment.c_date)}</span>&nbsp;&nbsp;
+                                                    <br/><br/>
+                                                </div>
+                                                <br/>
+                                                <br/>
+                                            </div>
+                                        )
+                                    })}
+                            </div>
+                    }
                     <div className="comment-container clearfix">
                         { sessionStorage.getItem('u_id') === null
                             ?
-                            <div>
-                                <p className="comment-signin">
-                                    <button className="btn btn-info login">
-                                        登录后发表评论
-                                    </button>
-                                </p>
+                            <div className='panel panel-default width'>
+                                <div className='panel-body'>
+                                    <form className="form" method="post">
+                                        <div className="form-group">
+                                            <input type="text"
+                                                   className='form-control'
+                                                   ref="u_loginname"
+                                                   placeholder='输入用户名或邮箱'
+                                                   onChange={(e) => this.changeValue(e,'u_loginname')}/>
+                                        </div>
+                                        <div className="form-group">
+                                            <input type="password"
+                                                   className='form-control'
+                                                   ref="u_psw"
+                                                   placeholder='输入密码'
+                                                   onChange={(e) => this.changeValue(e,'u_psw')}/>
+                                        </div>
+                                        <p className="comment-signin">
+                                            <button className="btn-info btn register-login-btn"
+                                                    type="submit"
+                                                    disabled={this.state.disabled}
+                                                    onClick={(e) => this.login(e)}>
+                                                登录后才能评论
+                                            </button>
+                                        </p>
+                                    </form>
+                                </div>
                             </div>
                             :
                             <div>
@@ -462,13 +550,13 @@ export default class Article extends React.Component{
                                 <div className="article-like">
                                     {
                                         this.state.isLike ?
-                                            <button className='liked-btn' onClick={(e)=>this.unLikeArticle(e)}>
+                                            <a className='liked-btn' onClick={(e)=>this.unLikeArticle(e)}>
                                                 <i className="iconfont">&#xe616;</i>
-                                            </button>
+                                            </a>
                                             :
-                                            <button className='liked-btn' onClick={(e)=>this.likeArticle(e)}>
+                                            <a className='liked-btn' onClick={(e)=>this.likeArticle(e)}>
                                                 <i className="iconfont">&#xe617;</i>
-                                            </button>
+                                            </a>
                                     }
                                 </div>
                                 <br />
@@ -502,37 +590,6 @@ export default class Article extends React.Component{
                                 </form>
                             </div>
                             </div>
-                        }
-                        {
-                            this.state.article[0].t_comments = '' ?
-                                <div className="comment-des clearfix">
-                                    {this.state.articleComment.length}条评论
-                                </div>
-                                :
-                                <div>
-                                    <div className="comment-des clearfix">
-                                        0条评论
-                                    </div>
-                                    {
-                                    this.state.articleComment.map((comment,i) => {
-                                        return(
-                                            <div>
-                                                <br/>
-                                                <br/>
-                                                <div className="content-shelf-comments"
-                                                     key={i}>
-                                                    <p className="span6-h"><i className="iconfont span6-icon">&#xe639;</i>&nbsp;{this.state.commentUser[i]}</p>
-                                                    <br/><p className="span6-p">{comment.c_text}</p>
-                                                    <br/>
-                                                    <span className="span5 pull-right"><i className="iconfont">&#xe617;</i>&nbsp;&nbsp;&nbsp;&nbsp;评论时间 {formatDate(comment.c_date)}</span>&nbsp;&nbsp;
-                                                    <br/><br/>
-                                                </div>
-                                                <br/>
-                                                <br/>
-                                            </div>
-                                        )
-                                    })}
-                                </div>
                         }
                     </div>
                 </div></div></div></div></div>)

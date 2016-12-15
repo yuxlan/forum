@@ -51,6 +51,7 @@ export default class Home extends Component{
     constructor(props){
         super(props);
         this.state={
+            key:'',
             tagList:[],
             articleIds:'',
             articleDetail:[],
@@ -61,6 +62,14 @@ export default class Home extends Component{
 
     componentDidMount(){
         console.log('component will mount,get the data first.');
+
+        // 获取密钥
+        let url = API_ROOT + 'safe/secret_key';
+        $.get(url,
+            function (data) {
+                this.setState({key:data});
+                console.log('key:',this.state.key);
+            }.bind(this));
 
         // 取到所有的tags
         let tagUrl = API_ROOT + 'public/tags';

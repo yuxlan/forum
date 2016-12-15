@@ -38,6 +38,7 @@ export default class Home extends Component{
             articleIds:'',
             articleDetail:[],
             articleAnswer:[],
+            questionAnswer:[],
         }
     }
 
@@ -63,7 +64,7 @@ export default class Home extends Component{
         let articleIdUrl = API_ROOT + 'q/display';
         $.get(
             articleIdUrl,
-            {t_tags:t_tags},
+            {q_tags:t_tags},
             function (data) {
                 console.log('get all article ids by all tags:',data);
                 this.setState({articleIds:data.q_ids});
@@ -85,7 +86,7 @@ export default class Home extends Component{
         for(let i=0; i<articlesByHot.length; i++){
             $.get(
                 articleDetailUrl,
-                {t_id:articlesByHot[i]},
+                {q_id:articlesByHot[i]},
                 function (data) {
                     console.log('get all article details by their ids:',data);
                     articleDetail[i] = data;
@@ -93,11 +94,27 @@ export default class Home extends Component{
                     console.log('get all article details and put them into the array:',articleDetail);
                     this.setState({articleDetail:articleDetail});
                     this.setState({articleAnswer:articleAnswer});
-                    console.log('articleDetails:',this.state.articleDetail);
+                    console.log('articleDetails:',this.state.articleDetail,'questionAnswer:',this.state.articleAnswer);
+                    return this.getQuestionAnswer()
                 }.bind(this)
             )
         }
     }
+
+    // 问题的回答
+    getQuestionAnswer(){
+        let url = API_ROOT + 'a/query';
+        let questionAnswer = new Array();
+        for (let i=0;i<this.state.articleAnswer.length;i++){
+            $.get(url,{a_id:this.state.articleAnswer[i]},
+                function (data) {
+                console.log('get all question ids:',data);
+                questionAnswer[i] = data;
+                this.setState({questionAnswer:questionAnswer});
+            }.bind(this))
+        }
+    }
+
     handleChange(e,option,isAdd=false){
         e.preventDefault();
         const {actions} = this.props;
@@ -204,7 +221,7 @@ export default class Home extends Component{
                                                 <p> </p><br/>
                                                 <span className="span1">收藏 {question.q_star}</span>&nbsp;&nbsp;
                                                 <span className="span2">喜欢 {question.q_like}</span>&nbsp;&nbsp;
-                                                <span className="span4">已有回答 {this.state.articleAnswer[i]}</span>&nbsp;&nbsp;
+                                                <span className="span4">已有回答 {this.state.questionAnswer.length}</span>&nbsp;&nbsp;
                                                 <br/><br/>
                                             </div>
                                             <br/>

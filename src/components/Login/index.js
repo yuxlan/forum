@@ -32,6 +32,7 @@ export default class Login extends React.Component{
         super(props);
         const redirectRoute = '/';
         this.state = {
+            key:'',
             u_loginname: '',
             u_psw:'',
             u_loginname_error_text:null,
@@ -39,6 +40,16 @@ export default class Login extends React.Component{
             redirectTo:redirectRoute,
             disabled: true,
         };
+    }
+
+    componentDidMount(){
+        // 获取密钥
+        let url = API_ROOT + 'safe/secret_key';
+        $.get(url,
+            function (data) {
+                this.setState({key:data});
+                console.log('key:',this.state.key);
+            }.bind(this));
     }
 
     isDisabled(){
@@ -97,7 +108,7 @@ export default class Login extends React.Component{
     loginUser(u_loginname,u_psw) {
         let url = API_ROOT + 'sign_in';
         sessionStorage.setItem('u_psw',u_psw);
-        $.post(url,{u_loginname:u_loginname,u_psw:u_psw},
+        $.post(url,{u_loginname:u_loginname,u_psw:u_psw,secret_key:this.state.key},
             function(data){
                 console.log('userLogin',data);
                 if(data.code == 1) {

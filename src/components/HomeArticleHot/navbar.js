@@ -130,7 +130,7 @@ export default class Navbar extends React.Component{
                                             <li><Link to="/personalpage">user_{sessionStorage.getItem('u_name')}</Link></li>
                                             <li><hr /></li>
                                             <li><Link to="/personalpage/articles">我的文章</Link></li>
-                                            <li><Link to="/personalpage/articles">我的问答</Link></li>
+                                            <li><Link to="/personalpage/questions">我的问答</Link></li>
                                             <li><Link to="/personalpage/users">个人设置</Link></li>
                                             <li><hr /></li>
                                             <li><a href="#" onClick={e => this.logout(e)}>退出</a></li>

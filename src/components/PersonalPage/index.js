@@ -183,7 +183,7 @@ export default class Admin extends React.Component{
                                     <i className="iconfont">&#xe644;</i>我的关注
                                 </a>
                             <div className="fix"></div>
-                                <Link to="/reputation" className="controller-item" activeClassName="active" title="" >
+                                <Link to="/personalpage/reputation" className="controller-item" activeClassName="active" title="" >
                                     <i className="iconfont">&#xe62d;</i>我的声望
                                 </Link>
                             <div className="fix"></div>
@@ -203,14 +203,14 @@ export default class Admin extends React.Component{
                                     <i className="iconfont">&#xe632;</i>返回首页
                                 </Link>
                             <div className="fix"></div>
-                        </div>
+                        </div><br /><br /><br /><br /><br /><br /><br />
                     </div><br /><br /><br />
                 </div>
 
                 <div>
-                    {children}
+                    {children}<br /><br /><br /><br /><br /><br /><br />
                 </div>
-
+                <br /><br /><br /><br /><br /><br /><br />
                 <br /><br /><br /><br /><br /><br /><br />
                 <ScrollTop/>
                 <Footer/>

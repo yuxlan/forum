@@ -8,6 +8,7 @@ import api from '../api'
 import {showMsg} from './other'
 import {commentsNumberAdd} from './article'
 
+// 获取评论列表
 export const getCommentList = (id) => {
     return {
         type:types.COMMENT_LIST,
@@ -15,6 +16,7 @@ export const getCommentList = (id) => {
     }
 };
 
+// 添加评论
 export function addComment(comment){
     return (dispatch,getState) => {
         return api.addNewComment(comment)
@@ -34,6 +36,7 @@ export function addComment(comment){
     }
 }
 
+
 function receiveAddComment(comment){
     return {
         type:types.ADD_COMMENT_SUCCESS,
@@ -41,6 +44,7 @@ function receiveAddComment(comment){
     }
 }
 
+// 回复
 export function addReply(cid,reply){
     return (dispatch,getState) => {
         return api.addNewReply(cid,reply)

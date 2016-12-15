@@ -33,10 +33,18 @@ export default class UserArticles extends React.Component{
         this.state={
             articleIds:'',
             articleDetail:[],
+            key:'',
         }
     }
 
     componentDidMount(){
+        // 获取密钥
+        let Surl = API_ROOT + 'safe/secret_key';
+        $.get(Surl,
+            function (data) {
+                this.setState({key:data});
+                console.log('key:',this.state.key);
+            }.bind(this));
         let userArticlesIds = sessionStorage.getItem('u_articles').split('&');
         let userArticles = userArticlesIds.toString().split(',');
         let articleDetailUrl = API_ROOT + 't/query';
@@ -69,7 +77,7 @@ export default class UserArticles extends React.Component{
         let url = API_ROOT + 't/del';
         let userUrl = API_ROOT + 'u/query';
         let user_id = sessionStorage.getItem('u_id');
-        $.post(url,{u_id:user_id,u_psw:sessionStorage.getItem('u_psw'),t_id:t_id},
+        $.post(url,{u_id:user_id,u_psw:sessionStorage.getItem('u_psw'),t_id:t_id,secret_key:this.state.key},
             function (data) {
                 console.log('delete article:',data);
                 if(data.code == 1){
@@ -156,22 +164,17 @@ export default class UserArticles extends React.Component{
                 <br />
                 <div className="panel admin-panel">
                     <div className="panel-head">
-                        <strong className="icon-reorder"> 文章列表</strong>
-                    </div>
-                    <br />
-                    <div className="padding border-bottom">
-                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        <strong className="icon-reorder"> 文章列表</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                         <button type="button" className="button border-yellow"
                                 onClick={(e) => this.addArticle(e)}>
-                            <span className="icon-plus-square-o"> </span> 添加文章</button><br/>
+                            <span className="icon-plus-square-o"> </span> 添加文章</button>
                     </div>
-                    <br />
                     <table className="table table-hover text-center">
                         <tr className="text-center">
                             <th width="5%" className="text-center">&nbsp;序号</th>
                             <th width="9%" className="text-center">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;标题</th>
                             <th width="13%" className="text-center">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;创作时间</th>
-                            <th width="13%" className="text-center">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;最近更新时间</th>
+                            <th width="13%" className="text-center">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;最近更新时间</th>
                             <th width="30%" className="text-center">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;操作</th>
                         </tr>
                             {

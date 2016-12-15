@@ -29,6 +29,7 @@ export default class WriteArticle extends React.Component{
     constructor(props){
         super(props);
         this.state = {
+            key:'',
             text:'',
             tags:[],
             downloadURL:'',
@@ -53,6 +54,13 @@ export default class WriteArticle extends React.Component{
     //    if(adminTagList.items.length <1){
     //        actions.getAdminTagList();
     //    }
+        // 获取密钥
+        let Surl = API_ROOT + 'safe/secret_key';
+        $.get(Surl,
+            function (data) {
+                this.setState({key:data});
+                console.log('key:',this.state.key);
+            }.bind(this));
     }
 
     tag(item){
@@ -175,7 +183,7 @@ export default class WriteArticle extends React.Component{
         let userUrl = API_ROOT + 'u/query';
         let user_id = sessionStorage.getItem('u_id');
         $.post(
-            url, {u_id:u_id,u_psw:u_psw,q_title:u_title,q_text:u_text,q_tags:t_tags},
+            url, {u_id:u_id,u_psw:u_psw,q_title:u_title,q_text:u_text,q_tags:t_tags,secret_key:this.state.key},
             function(data){
                 console.log('add articles:',data);
                 if(data.code == 1) {

@@ -31,18 +31,27 @@ export default class UserArticles extends React.Component{
         this.addArticle = this.addArticle.bind(this);
         this.updateArticle = this.updateArticle.bind(this);
         this.state={
+            key:'',
             articleIds:'',
             articleDetail:[],
             articleAnswer:[],
+            questionAnswer:[],
         }
     }
 
     componentDidMount(){
+        // 获取密钥
+        let Surl = API_ROOT + 'safe/secret_key';
+        $.get(Surl,
+            function (data) {
+                this.setState({key:data});
+                console.log('key:',this.state.key);
+            }.bind(this));
         let userArticlesIds = sessionStorage.getItem('u_questions').split('&');
         let userArticles = userArticlesIds.toString().split(',');
         let articleDetailUrl = API_ROOT + 'q/query';
         let articleDetail = new Array();
-     //   let articleAnswer = new Array();
+        let articleAnswer = new Array();
         for(let i=0; i<(userArticles.length-1); i++){
             $.get(
                 articleDetailUrl,
@@ -51,13 +60,28 @@ export default class UserArticles extends React.Component{
                     this.setState({articleIds:sessionStorage.getItem('u_questions')});
                     console.log('get all article details by their ids:',data);
                     articleDetail[i] = data;
-       //             articleAnswer[i] = data.q_answers.split(',');
+                    articleAnswer[i] = data.q_answers.split(',');
                     console.log('get all article details and put them into the array:',articleDetail);
                     this.setState({articleDetail:articleDetail});
-       //             this.setState({articleAnswer:articleAnswer});
+                    this.setState({articleAnswer:articleAnswer});
                     console.log('articleDetails:',this.state.articleDetail);
+                    return this.getQuestionAnswer()
                 }.bind(this)
             )
+        }
+    }
+
+    // 问题的回答
+    getQuestionAnswer(){
+        let url = API_ROOT + 'a/query';
+        let questionAnswer = new Array();
+        for (let i=0;i<this.state.articleAnswer.length;i++){
+            $.get(url,{a_id:this.state.articleAnswer[i]},
+                function (data) {
+                    console.log('get all question ids:',data);
+                    questionAnswer[i] = data;
+                    this.setState({questionAnswer:questionAnswer});
+                }.bind(this))
         }
     }
 
@@ -73,7 +97,7 @@ export default class UserArticles extends React.Component{
         let url = API_ROOT + 'q/del';
         let userUrl = API_ROOT + 'u/query';
         let user_id = sessionStorage.getItem('u_id');
-        $.post(url,{u_id:user_id,u_psw:sessionStorage.getItem('u_psw'),q_id:q_id},
+        $.post(url,{u_id:user_id,u_psw:sessionStorage.getItem('u_psw'),q_id:q_id,secret_key:this.state.key},
             function (data) {
                 console.log('delete article:',data);
                 if(data.code == 1){
@@ -160,13 +184,8 @@ export default class UserArticles extends React.Component{
                 <br />
                 <div className="panel admin-panel">
                     <div className="panel-head">
-                        <strong className="icon-reorder"> 文章列表</strong>
+                        <strong className="icon-reorder"> 问答列表</strong>
                     </div>
-                    <br />
-                    <div className="padding border-bottom">
-                        &nbsp;&nbsp;&nbsp;&nbsp;
-                    </div>
-                    <br />
                     <table className="table table-hover text-center">
                         <tr className="text-center">
                             <th width="5%" className="text-center">&nbsp;序号</th>
@@ -183,7 +202,7 @@ export default class UserArticles extends React.Component{
                                         <td>{i + 1}</td>
                                         <td><Link to={'/article/' + article.q_id}>{article.q_title}</Link></td>
                                         <td>{formatDate(article.q_date)}</td>
-                                        <td>{this.state.articleAnswer.length}</td>
+                                        <td>{this.state.questionAnswer.length}</td>
                                         <td>
                                             <div className="button-group">
                                                 <button className="button border-main" onClick={(e) => this.updateArticle(userArticlesId)}>
