@@ -16,22 +16,6 @@ import {customTime,formatDate} from '../../utiles';
 
 import {defaultAvatar} from '../../assets/imgs/userimg.png';
 
-const mapStateToProps = state =>{
-    return {
-      //  auth:state.auth.u_id,
-      //  articleDetail:state.articleDetail.toJS(),
-      //  prenextArticle:state.prenextArticle.toJS(),
-      //  commentList:state.commentList.toJS(),
-    }
-};
-
-const mapDispatchToProps = dispatch => {
-      return {
-     //     actions:bindActionCreators(Actions,dispatch)
-      }
-};
-
-@connect(mapStateToProps,mapDispatchToProps)
 export default class Article extends React.Component{
     constructor(props){
         super(props);
@@ -43,6 +27,7 @@ export default class Article extends React.Component{
             commentUser:[],
             articleAuth:'',
             isLike:false,
+            isRecommend:false,
             showModal:false,
             openedForm:null,
             u_loginname: '',
@@ -59,7 +44,7 @@ export default class Article extends React.Component{
         $.get(url,
             function (data) {
                 this.setState({key:data});
-                console.log('key:',this.state.key);
+             //   console.log('key:',this.state.key);
             }.bind(this));
 
         // 获取传值过来的文章id
@@ -79,6 +64,7 @@ export default class Article extends React.Component{
 
         let article = new Array();
 
+        // 通过传值的id获取文章详情，data.t_comments have some problems;
         $.get(
             url,
             {t_id:t_id},
@@ -110,6 +96,11 @@ export default class Article extends React.Component{
                     this.setState({isLike:true})
                 }else {
                     this.setState({isLike:false})
+                }
+                if(data.t_star_bool == 1){
+                    this.setState({isRecommend:true})
+                }else {
+                    this.setState({isRecommend:false})
                 }
             }.bind(this)
         )
@@ -256,7 +247,7 @@ export default class Article extends React.Component{
                 if(data.code == 1){
                     this.setState({isLike:true})
                 }else {
-                    let content = data.codeState;
+                    let content = '您的声望值不够';
                     let type = 'warning';
                     if (content !== '' && type) {
                         switch (type) {
@@ -296,6 +287,67 @@ export default class Article extends React.Component{
                 console.log('unlike article:',data);
                 if(data.code == 1){
                     this.setState({isLike:false})
+                }
+            }.bind(this)
+        )
+    }
+
+    // 收藏一篇文章
+    starArticle(e){
+        const {params:{id}} = this.props;
+        let url = API_ROOT + 't/star';
+        let u_id = sessionStorage.getItem('u_id');
+        let u_psw = sessionStorage.getItem('u_psw');
+        let t_id = id;
+        let u_act = '1';
+        $.post(
+            url,
+            {u_id:u_id,u_psw:u_psw,t_id:t_id,u_act:u_act,secret_key:this.state.key},
+            function (data) {
+                console.log('like article:',data);
+                if(data.code == 1){
+                    this.setState({isRecommend:true})
+                }else {
+                    let content = data.codeState;
+                    let type = 'warning';
+                    if (content !== '' && type) {
+                        switch (type) {
+                            case 'error':
+                                Alert.error(content);
+                                break;
+                            case 'success':
+                                Alert.success(content);
+                                break;
+                            case 'info':
+                                Alert.info(content);
+                                break;
+                            case 'warning':
+                                Alert.warning(content);
+                                break;
+                            default:
+                                Alert.error(content)
+                        }
+                    }
+                }
+            }.bind(this)
+        )
+    }
+
+    // 取消收藏一篇文章
+    unStarArticle(e){
+        const {params:{id}} = this.props;
+        let url = API_ROOT + 't/star';
+        let u_id = sessionStorage.getItem('u_id');
+        let u_psw = sessionStorage.getItem('u_psw');
+        let t_id = id;
+        let u_act = '0';
+        $.post(
+            url,
+            {u_id:u_id,u_psw:u_psw,t_id:t_id,u_act:u_act,secret_key:this.state.key},
+            function (data) {
+                console.log('unlike article:',data);
+                if(data.code == 1){
+                    this.setState({isRecommend:false})
                 }
             }.bind(this)
         )
@@ -455,6 +507,26 @@ export default class Article extends React.Component{
                         <h1 className="title">
                             {article.t_title}
                         </h1>
+                            {
+                                sessionStorage.getItem('u_id') === null ?
+                                    <div>
+                                    </div>
+                                    :
+                                    <div>
+                                        {
+                                            this.state.isRecommend ?
+                                                <button className='btn-success btn pull-right'
+                                                        onClick={(e) => this.unStarArticle(e)}>
+                                                    <p>&nbsp;&nbsp;取消收藏&nbsp;&nbsp;</p>
+                                                </button>
+                                                :
+                                                <button className='btn-success btn pull-right'
+                                                        onClick={(e) => this.starArticle(e)}>
+                                                    <p>&nbsp;&nbsp;收藏&nbsp;&nbsp;</p>
+                                                </button>
+                                        }
+                                    </div>
+                            }
                         <div className="counts">
                             <span className="views-count">
                                 作者&nbsp;&nbsp;{this.state.articleAuth}
@@ -474,40 +546,41 @@ export default class Article extends React.Component{
                         </div>
                         <div className="markdown-content">
                             <br/>
-                            <div dangerouslySetInnerHTML={{__html: markIt(article.t_text)}}></div>
-                            <br/>
+                            <div className="detail-content" dangerouslySetInnerHTML={{__html: markIt(article.t_text)}}></div>
                         </div>
                     </div>
                     <br />
                     <br />
                     {
-                        this.state.article[0].t_comments = '' ?
+                        this.state.article[0].t_comments == '' ?
                             <div>
                                 <div className="comment-des clearfix">
                                     0条评论
+                                    <hr/>
                                 </div>
                             </div>
                             :
                             <div>
                                 <div className="comment-des clearfix">
                                     {this.state.articleComment.length}条评论
+                                    <hr/>
                                 </div>
                                 {
                                     this.state.articleComment.map((comment,i) => {
                                         return(
                                             <div>
                                                 <br/>
-                                                <br/>
                                                 <div className="content-shelf-comments"
                                                      key={i}>
                                                     <p className="span6-h"><i className="iconfont span6-icon">&#xe639;</i>&nbsp;{this.state.commentUser[i]}</p>
                                                     <br/><p className="span6-p">{comment.c_text}</p>
                                                     <br/>
-                                                    <span className="span5 pull-right"><i className="iconfont">&#xe617;</i>&nbsp;&nbsp;&nbsp;&nbsp;评论时间 {formatDate(comment.c_date)}</span>&nbsp;&nbsp;
+                                                    <span className="span5 pull-right">
+                                                        <a><i className="iconfont">&#xe617;</i></a>&nbsp;&nbsp;&nbsp;&nbsp;
+                                                        <a><i className="iconfont">&#xe61e;</i></a>&nbsp;&nbsp;&nbsp;&nbsp;
+                                                        评论时间 {formatDate(comment.c_date)}</span>&nbsp;&nbsp;
                                                     <br/><br/>
                                                 </div>
-                                                <br/>
-                                                <br/>
                                             </div>
                                         )
                                     })}
@@ -516,34 +589,11 @@ export default class Article extends React.Component{
                     <div className="comment-container clearfix">
                         { sessionStorage.getItem('u_id') === null
                             ?
-                            <div className='panel panel-default width'>
-                                <div className='panel-body'>
-                                    <form className="form" method="post">
-                                        <div className="form-group">
-                                            <input type="text"
-                                                   className='form-control'
-                                                   ref="u_loginname"
-                                                   placeholder='输入用户名或邮箱'
-                                                   onChange={(e) => this.changeValue(e,'u_loginname')}/>
-                                        </div>
-                                        <div className="form-group">
-                                            <input type="password"
-                                                   className='form-control'
-                                                   ref="u_psw"
-                                                   placeholder='输入密码'
-                                                   onChange={(e) => this.changeValue(e,'u_psw')}/>
-                                        </div>
-                                        <p className="comment-signin">
-                                            <button className="btn-info btn register-login-btn"
-                                                    type="submit"
-                                                    disabled={this.state.disabled}
-                                                    onClick={(e) => this.login(e)}>
-                                                登录后才能评论
-                                            </button>
-                                        </p>
-                                    </form>
-                                </div>
-                            </div>
+                            <p className="comment-signin">
+                                <button className="btn-info btn text-center">
+                                    登录后才能评论
+                                </button>
+                            </p>
                             :
                             <div>
 
@@ -551,11 +601,11 @@ export default class Article extends React.Component{
                                     {
                                         this.state.isLike ?
                                             <a className='liked-btn' onClick={(e)=>this.unLikeArticle(e)}>
-                                                <i className="iconfont">&#xe616;</i>
+                                                <i className="iconfont">&#xe616;</i><p>取消</p>
                                             </a>
                                             :
                                             <a className='liked-btn' onClick={(e)=>this.likeArticle(e)}>
-                                                <i className="iconfont">&#xe617;</i>
+                                                <i className="iconfont">&#xe617;</i><p>赞</p>
                                             </a>
                                     }
                                 </div>

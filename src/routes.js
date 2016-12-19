@@ -9,6 +9,7 @@ import HomeArticle from './components/HomeArticleNew';//显示文章的主页
 import HomeQuestion from './components/HomeQuestionNew';//显示问题主页
 import HomeArticleHot from './components/HomeArticleHot';//显示最热文章
 import HomeQuestionHot from './components/HomeQuestionHot';//显示最热问答
+import SearchShow from './components/SearchShow' ;//显示搜索内容
 
 import Login from './components/Login'; // 登录
 import Register from './components/Register'; // 注册
@@ -26,7 +27,8 @@ import UserQuestions from './components/PersonalPage/UserQuestions';//我的问�
 import UserTags from './components/PersonalPage/UserTags';//管理标签
 import UserComments from './components/PersonalPage/UserComments';//我的评论
 import UserSetting from './components/PersonalPage/UserSetting';//个人设置
-import UserReputation from './components/PersonalPage/userReputation';//声望记录
+import UserReputation from './components/PersonalPage/UserReputation';//声望记录
+import UserSafe from './components/PersonalPage/UserSafe';//用户安全中心
 
 import HintVerifyEmail from './components/VerifyEmail/hintVerifyEmail';// 验证邮箱
 import VerifyEmail from './components/VerifyEmail/verifyEmail';// 验证成功
@@ -42,6 +44,7 @@ export default ()=>(
         <Route path='/homequestion' components={HomeQuestion}/>
         <Route path='/homearticlehot' components={HomeArticleHot}/>
         <Route path='/homequestionhot' components={HomeQuestionHot}/>
+        <Route path='/search' components={SearchShow}/>
         <Route path='/login' component={Login}/>
         <Route path='/register' component={Register}/>
         <Route path='/hintverifyemail' component={HintVerifyEmail}/>
@@ -58,6 +61,7 @@ export default ()=>(
             <Route path='comments' component={UserComments} />
             <Route path='users' component={UserSetting} />
             <Route path='reputation' component={UserReputation} />
+            <Route path='safe' components={UserSafe} />
         </PersonalPage>
     </Route>
 )

@@ -1,16 +1,17 @@
-// 登录
+// 用户登录，通过用户名或者注册邮箱
 
 import React from 'react';
-import {bindActionCreators} from 'redux';
-import * as Actions from '../../actions';
-import {connect} from 'react-redux';
 import {Link,browserHistory } from 'react-router';
+import {bindActionCreators} from 'redux';
+import {connect} from 'react-redux';
 import $ from 'jquery';
-import {API_ROOT} from '../../config';
 import Alert from 'react-s-alert';
+
+import {API_ROOT} from '../../config';
+import * as Actions from '../../actions';
+
 import Footer from '../HomeArticleHot/footer';
 
-import * as actionCreators from '../../actions/auth';
 // import SNSLogin from './snsLogin'; // 第三方登录，后期可加   <SNSLogin logins={sns.logins}/>
 
 function mapStateToProps(state) {
@@ -48,10 +49,11 @@ export default class Login extends React.Component{
         $.get(url,
             function (data) {
                 this.setState({key:data});
-                console.log('key:',this.state.key);
+                //console.log('key:',this.state.key);
             }.bind(this));
     }
 
+    // 处理登录按钮状态
     isDisabled(){
         let u_loginname_is_valid = false;
         let u_psw_is_valid = false;
@@ -88,6 +90,7 @@ export default class Login extends React.Component{
 
     }
 
+    // 改变文本框的输入值
     changeValue(e,type) {
         const value = e.target.value;
         const next_state = {};
@@ -97,6 +100,7 @@ export default class Login extends React.Component{
         });
     }
 
+    // 处理enter快捷键
     _handleKeyPress(e) {
         if (e.key === 'Enter') {
             if (!this.state.disabled) {
@@ -105,12 +109,13 @@ export default class Login extends React.Component{
         }
     }
 
+    // 用户登录
     loginUser(u_loginname,u_psw) {
         let url = API_ROOT + 'sign_in';
         sessionStorage.setItem('u_psw',u_psw);
         $.post(url,{u_loginname:u_loginname,u_psw:u_psw,secret_key:this.state.key},
             function(data){
-                console.log('userLogin',data);
+                //console.log('userLogin',data);
                 if(data.code == 1) {
                      sessionStorage.setItem('u_id',data.u_id);
                      sessionStorage.setItem('u_name',data.u_name);

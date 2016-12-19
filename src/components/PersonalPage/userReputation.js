@@ -1,29 +1,13 @@
-import React from 'react'
-import {Link,browserHistory} from 'react-router';
-import {bindActionCreators} from 'redux'
-import {connect} from 'react-redux'
+// 查询用户的声望变化记录历史
+
+import React from 'react';
 import $ from 'jquery';
 import Alert from 'react-s-alert';
 
-import {API_ROOT} from '../../utiles';
-import {customTime,formatDate} from '../../utiles';
-import * as Actions from '../../actions'
+import {API_ROOT} from '../../config';
+import {formatDate} from '../../utiles';
 
-const mapStateToProps =  (state) => {
-    return {
-     //   auth:state.auth.toJS(),
-     //   adminQueryReputation:state.adminQueryReputation.toJS(),
-    }
-};
-
-const mapDispatchToProps = (dispatch) => {
-    return {
-     //   actions:bindActionCreators(Actions,dispatch)
-    }
-};
-
-@connect(mapStateToProps,mapDispatchToProps)
-export default class userReputation extends React.Component{
+export default class UserReputation extends React.Component{
     constructor(props){
         super(props);
         this.state={
@@ -41,15 +25,17 @@ export default class userReputation extends React.Component{
                 console.log('key:',this.state.key);
             }.bind(this));
 
+        // 通过u_id,u_psw获取用户历史声望记录
         let u_id = sessionStorage.getItem('u_id');
         let u_psw = sessionStorage.getItem('u_psw');
-        this.queryReputationHistory(u_id,u_psw)
+        return this.queryReputationHistory(u_id,u_psw);
     }
 
-    // 查询声望记录
+    // 查询用户历史声望记录
     queryReputationHistory(u_id,u_psw){
         let url = API_ROOT + 'u/rep/history';
-        $.post(url,{u_id:u_id,u_psw:u_psw,secret_key:this.state.key},
+        $.post(url,
+            {secret_key:this.state.key,u_id:u_id,u_psw:u_psw},
             function (data) {
                 console.log('user reputation history change:',data);
                 if(data.code == 1){

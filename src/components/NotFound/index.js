@@ -1,3 +1,5 @@
+// 处理404错误
+
 import React from 'react';
 
 class NotFound extends React.Component {

@@ -1,19 +1,19 @@
-import React,{Component} from 'react'
-import {bindActionCreators} from 'redux'
-import {connect} from 'react-redux'
-import * as Actions from '../../actions'
-import Tags from './tags'
-import Nav from './navbar'
-import Footer from './footer'
-import LoadMore from './loadMore'
-import ScrollTop from '../ScrollTop'
+// 显示问题的列表，按照问题的热度进行排序
+
+import React,{Component} from 'react';
 import {Link,browserHistory} from 'react-router';
+import {bindActionCreators} from 'redux';
+import {connect} from 'react-redux';
 import $ from 'jquery';
+
 import {API_ROOT} from '../../config';
-import Loading from '../../assets/imgs/tiny.gif';
+import * as Actions from '../../actions';
+
+import Nav from './navbar';
+import Footer from './footer';
+import ScrollTop from '../ScrollTop';
 
 const mapStateToProps = (state) => {
-
     return {
         tagList:state.tagList.toJS(),
         articleList:state.articleList.toJS(),
@@ -43,16 +43,16 @@ export default class Home extends Component{
     }
 
     componentDidMount(){
-        console.log('component will mount,get the data first.');
+        console.log('get the question first,by the hot');
 
         // 取到所有的tags
         let tagUrl = API_ROOT + 'public/tags';
         $.get(
             tagUrl,
             function (data) {
-                console.log('is already get all tags:',data);
+                //console.log('is already get all tags:',data);
                 this.setState({tagList:data});
-                console.log('is already get all tags and set its tate:',this.state.tagList);
+                //console.log('is already get all tags and set its tate:',this.state.tagList);
             }.bind(this)
         );
 
@@ -66,13 +66,13 @@ export default class Home extends Component{
             articleIdUrl,
             {q_tags:t_tags},
             function (data) {
-                console.log('get all article ids by all tags:',data);
+                //console.log('get all article ids by all tags:',data);
                 this.setState({articleIds:data.q_ids});
-                console.log('articleIds:',this.state.articleIds);
+                //console.log('articleIds:',this.state.articleIds);
                 let articleIds = this.state.articleIds.split('&');
                 let articleIdsByHot = articleIds[0];
                 let articlesByHot = articleIdsByHot.toString().split(',');
-                console.log('articlesByHot:',articlesByHot);
+                //console.log('articlesByHot:',articlesByHot);
                 return this.getArticleDetails(articlesByHot)
             }.bind(this)
         );
@@ -88,13 +88,13 @@ export default class Home extends Component{
                 articleDetailUrl,
                 {q_id:articlesByHot[i]},
                 function (data) {
-                    console.log('get all article details by their ids:',data);
+                    //console.log('get all article details by their ids:',data);
                     articleDetail[i] = data;
                     articleAnswer[i] = data.q_answers.split(',');
-                    console.log('get all article details and put them into the array:',articleDetail);
+                    //console.log('get all article details and put them into the array:',articleDetail);
                     this.setState({articleDetail:articleDetail});
                     this.setState({articleAnswer:articleAnswer});
-                    console.log('articleDetails:',this.state.articleDetail);
+                    //console.log('articleDetails:',this.state.articleDetail);
                     return this.getQuestionAnswer()
                 }.bind(this)
             )
@@ -108,13 +108,14 @@ export default class Home extends Component{
         for (let i=0;i<this.state.articleAnswer.length;i++){
             $.get(url,{a_id:this.state.articleAnswer[i]},
                 function (data) {
-                    console.log('get all question ids:',data);
+                    //console.log('get all question ids:',data);
                     questionAnswer[i] = data;
                     this.setState({questionAnswer:questionAnswer});
                 }.bind(this))
         }
     }
 
+    // 改变选择的标签，按照标签获取问题
     handleChange(e,option,isAdd=false){
         e.preventDefault();
         const {actions} = this.props;
@@ -123,7 +124,6 @@ export default class Home extends Component{
     }
 
     render(){
-
         return (
             <div className="home-container">
                 <Nav/>
