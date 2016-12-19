@@ -16,22 +16,6 @@ import {customTime,formatDate} from '../../utiles';
 
 import {defaultAvatar} from '../../assets/imgs/userimg.png';
 
-const mapStateToProps = state =>{
-    return {
-        //  auth:state.auth.u_id,
-        //  articleDetail:state.articleDetail.toJS(),
-        //  prenextArticle:state.prenextArticle.toJS(),
-        //  commentList:state.commentList.toJS(),
-    }
-};
-
-const mapDispatchToProps = dispatch => {
-    return {
-        //     actions:bindActionCreators(Actions,dispatch)
-    }
-};
-
-@connect(mapStateToProps,mapDispatchToProps)
 export default class Article extends React.Component{
     constructor(props){
         super(props);
@@ -43,6 +27,8 @@ export default class Article extends React.Component{
             commentUser:[],
             articleAuth:'',
             isLike:false,
+            isLikeComment:false,
+            isRecommend:false,
             showModal:false,
             openedForm:null,
             u_loginname: '',
@@ -110,6 +96,11 @@ export default class Article extends React.Component{
                     this.setState({isLike:true})
                 }else {
                     this.setState({isLike:false})
+                }
+                if(data.q_star_bool == 1){
+                    this.setState({isRecommend:true})
+                }else {
+                    this.setState({isRecommend:false})
                 }
             }.bind(this)
         )
@@ -240,10 +231,10 @@ export default class Article extends React.Component{
         this.addComment(u_id,u_psw,ec_type,ec_id,c_text);
     }
 
-    // 喜欢一篇文章
+    // 喜欢一篇问题
     likeArticle(e){
         const {params:{id}} = this.props;
-        let url = API_ROOT + 'q/star';
+        let url = API_ROOT + 'q/like';
         let u_id = sessionStorage.getItem('u_id');
         let u_psw = sessionStorage.getItem('u_psw');
         let t_id = id;
@@ -281,8 +272,69 @@ export default class Article extends React.Component{
         )
     }
 
-    // 取消喜欢一篇文章
+    // 取消喜欢一篇问题
     unLikeArticle(e){
+        const {params:{id}} = this.props;
+        let url = API_ROOT + 'q/like';
+        let u_id = sessionStorage.getItem('u_id');
+        let u_psw = sessionStorage.getItem('u_psw');
+        let t_id = id;
+        let u_act = '0';
+        $.post(
+            url,
+            {u_id:u_id,u_psw:u_psw,q_id:t_id,u_act:u_act,secret_key:this.state.key},
+            function (data) {
+                console.log('unlike article:',data);
+                if(data.code == 1){
+                    this.setState({isLike:false})
+                }
+            }.bind(this)
+        )
+    }
+
+    // 收藏一篇问题
+    starArticle(e){
+        const {params:{id}} = this.props;
+        let url = API_ROOT + 'q/star';
+        let u_id = sessionStorage.getItem('u_id');
+        let u_psw = sessionStorage.getItem('u_psw');
+        let t_id = id;
+        let u_act = '1';
+        $.post(
+            url,
+            {u_id:u_id,u_psw:u_psw,q_id:t_id,u_act:u_act,secret_key:this.state.key},
+            function (data) {
+                console.log('like article:',data);
+                if(data.code == 1){
+                    this.setState({isRecommend:true})
+                }else {
+                    let content = '您的声望值不够';
+                    let type = 'warning';
+                    if (content !== '' && type) {
+                        switch (type) {
+                            case 'error':
+                                Alert.error(content);
+                                break;
+                            case 'success':
+                                Alert.success(content);
+                                break;
+                            case 'info':
+                                Alert.info(content);
+                                break;
+                            case 'warning':
+                                Alert.warning(content);
+                                break;
+                            default:
+                                Alert.error(content)
+                        }
+                    }
+                }
+            }.bind(this)
+        )
+    }
+
+    // 取消收藏一篇问题
+    unStarArticle(e){
         const {params:{id}} = this.props;
         let url = API_ROOT + 'q/star';
         let u_id = sessionStorage.getItem('u_id');
@@ -295,7 +347,7 @@ export default class Article extends React.Component{
             function (data) {
                 console.log('unlike article:',data);
                 if(data.code == 1){
-                    this.setState({isLike:false})
+                    this.setState({isRecommend:false})
                 }
             }.bind(this)
         )
@@ -455,33 +507,52 @@ export default class Article extends React.Component{
                                     <h1 className="title">
                                         {article.q_title}
                                     </h1>
+                                    {
+                                        sessionStorage.getItem('u_id') === null ?
+                                            <div>
+                                            </div>
+                                            :
+                                            <div>
+                                                {
+                                                    this.state.isRecommend ?
+                                                        <button className='btn-success btn pull-right'
+                                                                onClick={(e) => this.unStarArticle(e)}>
+                                                            <p>&nbsp;&nbsp;取消收藏&nbsp;&nbsp;</p>
+                                                        </button>
+                                                        :
+                                                        <button className='btn-success btn pull-right'
+                                                                onClick={(e) => this.starArticle(e)}>
+                                                            <p>&nbsp;&nbsp;收藏&nbsp;&nbsp;</p>
+                                                        </button>
+                                                }
+                                            </div>
+                                    }
                                     <div className="counts">
-                            <span className="views-count">
-                                作者&nbsp;&nbsp;{this.state.articleAuth}
-                            </span>&nbsp;
                                         <span className="views-count">
-                                收藏&nbsp;&nbsp;{article.q_star}
-                            </span>&nbsp;
+                                            作者&nbsp;&nbsp;{this.state.articleAuth}
+                                        </span>&nbsp;
+                                        <span className="views-count">
+                                            收藏&nbsp;&nbsp;{article.q_star}
+                                        </span>&nbsp;
                                         <span className="comments-count">
-                                喜欢&nbsp;&nbsp;{article.q_like}
-                            </span>&nbsp;
+                                            喜欢&nbsp;&nbsp;{article.q_like}
+                                        </span>&nbsp;
                                         <span className="comments-count">
-                                标签&nbsp;&nbsp;{article.q_tags}
-                            </span>&nbsp;
+                                            标签&nbsp;&nbsp;{article.q_tags}
+                                        </span>&nbsp;
                                         <span className="likes-count">
-                                {formatDate(article.q_date_latest)}
-                            </span>
+                                            {formatDate(article.q_date_latest)}
+                                        </span>
                                     </div>
                                     <div className="markdown-content">
                                         <br/>
-                                        <div dangerouslySetInnerHTML={{__html: markIt(article.q_text)}}></div>
-                                        <br/>
+                                        <div className="detail-content" dangerouslySetInnerHTML={{__html: markIt(article.q_text)}}></div>
                                     </div>
                                 </div>
                                 <br />
                                 <br />
                                 {
-                                    this.state.article[0].q_answers = '' ?
+                                    this.state.article[0].q_answers == '' ?
                                         <div>
                                             <div className="comment-des clearfix">
                                                 0条回答
@@ -497,17 +568,18 @@ export default class Article extends React.Component{
                                                     return(
                                                         <div>
                                                             <br/>
-                                                            <br/>
                                                             <div className="content-shelf-comments"
                                                                  key={i}>
                                                                 <p className="span6-h"><i className="iconfont span6-icon">&#xe639;</i>&nbsp;{this.state.commentUser[i]}</p>
                                                                 <br/><p className="span6-p">{comment.a_text}</p>
                                                                 <br/>
-                                                                <span className="span5 pull-right"><i className="iconfont">&#xe617;</i>&nbsp;&nbsp;&nbsp;&nbsp;回答时间 {formatDate(comment.a_date)}</span>&nbsp;&nbsp;
+                                                                <span className="span5 pull-right">
+                                                                    <a><i className="iconfont">&#xe631;</i></a>&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                    <a><i className="iconfont">&#xe617;</i></a>&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                    <a><i className="iconfont">&#xe61e;</i></a>&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                    回答时间 {formatDate(comment.a_date)}</span>&nbsp;&nbsp;
                                                                 <br/><br/>
                                                             </div>
-                                                            <br/>
-                                                            <br/>
                                                         </div>
                                                     )
                                                 })}
@@ -517,34 +589,11 @@ export default class Article extends React.Component{
                                 <div className="comment-container clearfix">
                                     { sessionStorage.getItem('u_id') === null
                                         ?
-                                            <div className='panel panel-default width'>
-                                                <div className='panel-body'>
-                                                    <form className="form" method="post">
-                                                        <div className="form-group">
-                                                            <input type="text"
-                                                                   className='form-control'
-                                                                   ref="u_loginname"
-                                                                   placeholder='输入用户名或邮箱'
-                                                                   onChange={(e) => this.changeValue(e,'u_loginname')}/>
-                                                        </div>
-                                                        <div className="form-group">
-                                                            <input type="password"
-                                                                   className='form-control'
-                                                                   ref="u_psw"
-                                                                   placeholder='输入密码'
-                                                                   onChange={(e) => this.changeValue(e,'u_psw')}/>
-                                                        </div>
-                                                        <p className="comment-signin">
-                                                            <button className="btn-info btn register-login-btn"
-                                                                    type="submit"
-                                                                    disabled={this.state.disabled}
-                                                                    onClick={(e) => this.login(e)}>
-                                                                登录后才能回答
-                                                            </button>
-                                                        </p>
-                                                    </form>
-                                                </div>
-                                            </div>
+                                        <p className="comment-signin">
+                                            <button className="btn-info btn text-center">
+                                                登录后才能回答
+                                            </button>
+                                        </p>
                                         :
                                         <div>
 
@@ -552,11 +601,11 @@ export default class Article extends React.Component{
                                                 {
                                                     this.state.isLike ?
                                                         <a className='liked-btn' onClick={(e)=>this.unLikeArticle(e)}>
-                                                            <i className="iconfont">&#xe616;</i>
+                                                            <i className="iconfont">&#xe616;</i><p>取消</p>
                                                         </a>
                                                         :
                                                         <a className='liked-btn' onClick={(e)=>this.likeArticle(e)}>
-                                                            <i className="iconfont">&#xe617;</i>
+                                                            <i className="iconfont">&#xe617;</i><p>赞同</p>
                                                         </a>
                                                 }
                                             </div>
@@ -569,12 +618,12 @@ export default class Article extends React.Component{
                                                 </a>
                                                 <form className="comment-form">
                                                     <div className="comment-content">
-                                    <textarea
-                                        required
-                                        placeholder="回答…"
-                                        ref="cText"
-                                        onChange={(e) => this.handleCommentContentChange(e)}>
-                                    </textarea>
+                                                        <textarea
+                                                            required
+                                                            placeholder="回答…"
+                                                            ref="cText"
+                                                            onChange={(e) => this.handleCommentContentChange(e)}>
+                                                        </textarea>
                                                     </div>
                                                     <div className="button-container clearfix">
                                                         <button type="submit"

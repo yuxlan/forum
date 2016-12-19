@@ -47,6 +47,7 @@ export default class UserArticles extends React.Component{
                 this.setState({key:data});
                 console.log('key:',this.state.key);
             }.bind(this));
+
         let userArticlesIds = sessionStorage.getItem('u_questions').split('&');
         let userArticles = userArticlesIds.toString().split(',');
         let articleDetailUrl = API_ROOT + 'q/query';

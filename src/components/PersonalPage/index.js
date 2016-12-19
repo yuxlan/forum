@@ -3,7 +3,9 @@ import {Link,browserHistory} from 'react-router';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import Alert from 'react-s-alert';
+import $ from 'jquery';
 
+import {API_ROOT} from '../../config';
 import * as actionCreators from '../../actions/auth';
 
 import Footer from '../Home/footer';
@@ -26,9 +28,20 @@ const mapDispatchToProps = (dispatch) => {
 export default class Admin extends React.Component{
     constructor(props){
         super(props);
+        this.state={
+            key:'',
+        }
     }
 
     componentDidMount(){
+        // 获取密钥
+        let url = API_ROOT + 'safe/secret_key';
+        $.get(url,
+            function (data) {
+                this.setState({key:data});
+                console.log('key:',this.state.key);
+            }.bind(this));
+
         if(sessionStorage.getItem('u_email_confirm') == 0 ) {
             let content = '您的邮箱还未验证，存在一定风险，请前往验证';
             let type = 'warning';
@@ -63,9 +76,7 @@ export default class Admin extends React.Component{
     }
 
     render(){
-        const {auth,children} = this.props;
-        console.log(auth);
-
+        const {children} = this.props;
         return (
             <div className="personal">
                 <Link to="/verifyemail">
@@ -191,9 +202,9 @@ export default class Admin extends React.Component{
                                     <i className="fa fa-tags"> </i>标签管理
                                 </Link>
                             <div className="fix"></div>
-                                <a href="#" className="controller-item" activeClassName="active" title="" >
-                                    <i className="iconfont">&#xe648;</i>安全中心
-                                </a>
+                                <Link to="/personalpage/safe" className="controller-item" activeClassName="active" title="" >
+                                    <i className="iconfont">&#xe648;</i>更改密码
+                                </Link>
                             <div className="fix"></div>
                                 <a href="#" className="controller-item" activeClassName="active" title="" >
                                     <i className="iconfont">&#xe60c;</i>联系客服

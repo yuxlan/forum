@@ -61,14 +61,14 @@ export default class Home extends Component{
     }
 
     componentDidMount(){
-        console.log('component will mount,get the data first.');
+        console.log('the forum is alreay to show');
 
         // 获取密钥
         let url = API_ROOT + 'safe/secret_key';
         $.get(url,
             function (data) {
                 this.setState({key:data});
-                console.log('key:',this.state.key);
+                //console.log('key:',this.state.key);
             }.bind(this));
 
         // 取到所有的tags
@@ -76,9 +76,9 @@ export default class Home extends Component{
         $.get(
             tagUrl,
             function (data) {
-                console.log('is already get all tags:',data);
+                //console.log('is already get all tags:',data);
                 this.setState({tagList:data});
-                console.log('is already get all tags and set its tate:',this.state.tagList);
+                //console.log('is already get all tags and set its tate:',this.state.tagList);
             }.bind(this)
         );
 
@@ -92,13 +92,13 @@ export default class Home extends Component{
             articleIdUrl,
             {t_tags:t_tags},
             function (data) {
-                console.log('get all article ids by all tags:',data);
+                //console.log('get all article ids by all tags:',data);
                 this.setState({articleIds:data.t_ids});
-                console.log('articleIds:',this.state.articleIds);
+                //console.log('articleIds:',this.state.articleIds);
                 let articleIds = this.state.articleIds.split('&');
                 let articleIdsByHot = articleIds[1];
                 let articlesByHot = articleIdsByHot.toString().split(',');
-                console.log('articlesByHot:',articlesByHot);
+                //console.log('articlesByHot:',articlesByHot);
                 return this.getArticleDetails(articlesByHot)
             }.bind(this)
         );
@@ -108,34 +108,39 @@ export default class Home extends Component{
     getArticleDetails(articlesByHot){
         let articleDetailUrl = API_ROOT + 't/query';
         let url = API_ROOT + 'u/query';
+
         let articleDetail = new Array();
         let articleAuth = new Array();
+
         for(let i=0; i<articlesByHot.length; i++){
             $.get(
                 articleDetailUrl,
                 {t_id:articlesByHot[i]},
                 function (data) {
-                    console.log('get all article details by their ids:',data);
+                    //console.log('get all article details by their ids:',data);
                     articleDetail[i] = data;
-                    console.log('get all article details and put them into the array:',articleDetail);
+                    //console.log('get all article details and put them into the array:',articleDetail);
                     this.setState({articleDetail:articleDetail});
-                    $.get(url,{u_id:data.u_id},
+                    $.get(url,
+                        {u_id:data.u_id},
                         function (data) {
                             articleAuth[i] = data.u_name;
                             this.setState({articleAuth:articleAuth});
                         }.bind(this));
-                    console.log('articleDetails:',this.state.articleDetail,'articleAuthId:',this.state.articleAuth);
+                    //console.log('articleDetails:',this.state.articleDetail,'articleAuthId:',this.state.articleAuth);
                 }.bind(this)
             )
         }
     }
 
+    // 改变选择的标签
     handleChange(e,option,isAdd=false){
         e.preventDefault();
         const {actions} = this.props;
         actions.changeOptions(option);
     }
 
+    // 退出登录
     logout(e){
         e.preventDefault();
         sessionStorage.removeItem('u_id','u_name');
@@ -315,6 +320,7 @@ export default class Home extends Component{
                                         <div className="live-lesson">
                                             <div className="live-img">
                                                 <div className="live-img-div-1">
+                                                    <span>&nbsp;&nbsp;优质推荐</span>
                                                 </div>
                                             </div>
                                             <ul className="article-list list-unstyled clearfix">
@@ -326,15 +332,15 @@ export default class Home extends Component{
                                                                 key={i}>
                                                                 <div className="articleList-item">
                                                                     <p className="list-top">
-                                                        <span className="time home-article">
-                                                            作者：&nbsp;&nbsp;{this.state.articleAuth[i]}
-                                                        </span>
+                                                                        <span className="time home-article">
+                                                                            作者：&nbsp;&nbsp;{this.state.articleAuth[i]}
+                                                                        </span>
                                                                     </p>
                                                                     <h2 className="title">
-                                                                            <Link to={'/article/' + article.t_id}
-                                                                                  className="link-title home-article-title">
-                                                                                {article.t_title}
-                                                                            </Link>
+                                                                        <Link to={'/article/' + article.t_id}
+                                                                              className="link-title home-article-title">
+                                                                            {article.t_title}
+                                                                        </Link>
                                                                     </h2>
                                                                     <p className="list-footer">
                                                         <span className="visit-count">
