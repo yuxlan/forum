@@ -194,12 +194,12 @@ export default class Admin extends React.Component{
                                     <i className="iconfont">&#xe644;</i>我的关注
                                 </a>
                             <div className="fix"></div>
-                                <Link to="/personalpage/reputation" className="controller-item" activeClassName="active" title="" >
-                                    <i className="iconfont">&#xe62d;</i>我的声望
+                                <Link to="/personalpage/star" className="controller-item" activeClassName="active" title="" >
+                                    <i className="fa fa-tags"> </i>我的收藏
                                 </Link>
                             <div className="fix"></div>
-                                <Link to="/tags" className="controller-item" activeClassName="active" title="" >
-                                    <i className="fa fa-tags"> </i>标签管理
+                                <Link to="/personalpage/reputation" className="controller-item" activeClassName="active" title="" >
+                                    <i className="iconfont">&#xe62d;</i>我的声望
                                 </Link>
                             <div className="fix"></div>
                                 <Link to="/personalpage/safe" className="controller-item" activeClassName="active" title="" >
