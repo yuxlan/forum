@@ -127,7 +127,7 @@ forum
 │   │   │   ├── UserComments.js            || 个人评论管理
 │   │   │   ├── UserQuestion.js            || 个人问答管理
 │   │   │   ├── UserReputation.js          || 个人声望管理
-│   │   │   ├── UserTags.js                || 个人标签管理
+│   │   │   ├── UserStar.js                || 个人标签管理
 │   │   │   ├── UserSettiong.js            || 个人信息更改
 │   │   │   ├── UserPage.js                || 个人主要信息显示
 │   │   │   └── index.js                   || 整合，父组件

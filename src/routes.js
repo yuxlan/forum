@@ -24,7 +24,7 @@ import PersonalPage from './components/PersonalPage';// 个人中心
 import UserPage from './components/PersonalPage/UserPage';//个人页面
 import UserArticles from './components/PersonalPage/UserArticles';//我的文章
 import UserQuestions from './components/PersonalPage/UserQuestions';//我的问答
-import UserTags from './components/PersonalPage/UserTags';//管理标签
+import UserStar from './components/PersonalPage/UserStar';//我的收藏
 import UserComments from './components/PersonalPage/UserComments';//我的评论
 import UserSetting from './components/PersonalPage/UserSetting';//个人设置
 import UserReputation from './components/PersonalPage/UserReputation';//声望记录
@@ -57,11 +57,11 @@ export default ()=>(
             <IndexRoute component={UserPage} />
             <Route path='articles' component={UserArticles} />
             <Route path='questions' component={UserQuestions} />
-            <Route path='tags' component={UserTags} />
             <Route path='comments' component={UserComments} />
             <Route path='users' component={UserSetting} />
             <Route path='reputation' component={UserReputation} />
             <Route path='safe' components={UserSafe} />
+            <Route path='star' components={UserStar}/>
         </PersonalPage>
     </Route>
 )

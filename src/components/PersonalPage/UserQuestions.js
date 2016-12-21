@@ -49,11 +49,11 @@ export default class UserArticles extends React.Component{
             }.bind(this));
 
         let userArticlesIds = sessionStorage.getItem('u_questions').split('&');
-        let userArticles = userArticlesIds.toString().split(',');
+        let userArticles = userArticlesIds[0].toString().split(',');
         let articleDetailUrl = API_ROOT + 'q/query';
         let articleDetail = new Array();
         let articleAnswer = new Array();
-        for(let i=0; i<(userArticles.length-1); i++){
+        for(let i=0; i<userArticles.length; i++){
             $.get(
                 articleDetailUrl,
                 {q_id:userArticles[i]},
@@ -201,7 +201,7 @@ export default class UserArticles extends React.Component{
                                 return(
                                     <tr key={i}>
                                         <td>{i + 1}</td>
-                                        <td><Link to={'/article/' + article.q_id}>{article.q_title}</Link></td>
+                                        <td><Link to={'/question/' + article.q_id}>{article.q_title}</Link></td>
                                         <td>{formatDate(article.q_date)}</td>
                                         <td>{this.state.questionAnswer.length}</td>
                                         <td>
