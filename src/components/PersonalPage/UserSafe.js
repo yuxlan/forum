@@ -8,8 +8,6 @@ import {API_ROOT} from '../../config';
 export default class UserSafe extends Component{
     constructor(props){
         super(props);
-        this.handleSubmit = this.handleSubmit.bind(this);
-        this.updateUserInfo = this.updateUserInfo.bind(this);
         this.state = {
             key:'',
             u_psw_before:'',
@@ -44,6 +42,67 @@ export default class UserSafe extends Component{
         });
     }
 
+    handleSubmit(e){
+        let u_id = sessionStorage.getItem('u_id');
+        let u_psw_before = this.state.u_psw_before;
+        let u_psw = this.state.u_psw;
+        this.changePassword(u_id,u_psw_before,u_psw);
+    }
+
+    changePassword(u_id,u_psw_before,u_psw){
+        let url=API_ROOT+'u/psw/change';
+        $.post(
+            url,
+            {u_id:u_id,u_psw_before:u_psw_before,u_psw:u_psw,secret_key:this.state.key},
+            function (data) {
+                if(data.code=1){
+                    let content = '修改密码成功，请重新登录';
+                    let type = 'success';
+                    if(content !== '' && type) {
+                        switch (type) {
+                            case 'error':
+                                Alert.error(content);
+                                break;
+                            case 'success':
+                                Alert.success(content);
+                                break;
+                            case 'info':
+                                Alert.info(content);
+                                break;
+                            case 'warning':
+                                Alert.warning(content);
+                                break;
+                            default:
+                                Alert.error(content)
+                        }
+                    }
+                    sessionStorage.removeItem('u_id','u_intro','u_tags','u_watchusers','u_answers','u_questions','u_articles','u_github','u_blog','u_name','u_email','u_email_confirm','u_level','u_reputation','u_realname',);
+                    browserHistory.push('/login');
+                }else {
+                    let content = '修改失败';
+                    let type = 'error';
+                    if(content !== '' && type) {
+                        switch (type) {
+                            case 'error':
+                                Alert.error(content);
+                                break;
+                            case 'success':
+                                Alert.success(content);
+                                break;
+                            case 'info':
+                                Alert.info(content);
+                                break;
+                            case 'warning':
+                                Alert.warning(content);
+                                break;
+                            default:
+                                Alert.error(content)
+                        }
+                    }
+                }
+            }
+        )
+    }
 
     render(){
         return (
@@ -64,7 +123,7 @@ export default class UserSafe extends Component{
                                     <label>原始密码：</label>
                                 </div>
                                 <div className="field">
-                                    <input type="text"
+                                    <input type="password"
                                            className="input"
                                            ref="u_psw_before"
                                            onChange={(e) => this.changeValue(e,'u_psw_before')}/>
@@ -76,7 +135,7 @@ export default class UserSafe extends Component{
                                     <label>新密码：</label>
                                 </div>
                                 <div className="field">
-                                    <input type="text"
+                                    <input type="password"
                                            className="input"
                                            ref="u_psw"
                                            onChange={(e) => this.changeValue(e,'u_psw')}/>
@@ -87,7 +146,7 @@ export default class UserSafe extends Component{
                                     <label>确认新密码：</label>
                                 </div>
                                 <div className="field">
-                                    <input type="text" className="input" ref="u_psw_again"
+                                    <input type="password" className="input" ref="u_psw_again"
                                            onChange={(e) => this.changeValue(e,'u_psw_again')}/>
                                     <div className="tips"></div>
                                 </div>
@@ -98,7 +157,9 @@ export default class UserSafe extends Component{
                                 </div>
                                 <div className="field">
                                     <button className="button bg-main icon-check-square-o"
-                                            type="submit"> 提交</button>
+                                            type="submit"
+                                            onClick={(e)=>this.handleSubmit(e)}>
+                                        确认修改</button>
                                 </div>
                             </div>
                         </form>

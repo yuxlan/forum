@@ -80084,12 +80084,16 @@
 
 	        _this.handleSubmit = _this.handleSubmit.bind(_this);
 	        _this.updateUserInfo = _this.updateUserInfo.bind(_this);
+	        _this.changeRealName = _this.changeRealName.bind(_this);
+	        _this.changeBlog = _this.changeBlog.bind(_this);
+	        _this.changeGithub = _this.changeGithub.bind(_this);
+	        _this.changeIntro = _this.changeIntro.bind(_this);
 	        _this.state = {
 	            key: '',
-	            userrealname: '',
-	            userblog: '',
-	            usergithub: '',
-	            userintro: '',
+	            userrealname: sessionStorage.getItem('u_realname'),
+	            userblog: sessionStorage.getItem('u_blog'),
+	            usergithub: sessionStorage.getItem('u_github'),
+	            userintro: sessionStorage.getItem('u_intro'),
 	            disabled: true
 	        };
 	        return _this;
@@ -80209,6 +80213,26 @@
 	            });
 	        }
 	    }, {
+	        key: 'changeIntro',
+	        value: function changeIntro(e) {
+	            this.setState({ userintro: e.target.value });
+	        }
+	    }, {
+	        key: 'changeGithub',
+	        value: function changeGithub(e) {
+	            this.setState({ usergithub: e.target.value });
+	        }
+	    }, {
+	        key: 'changeBlog',
+	        value: function changeBlog(e) {
+	            this.setState({ userblog: e.target.value });
+	        }
+	    }, {
+	        key: 'changeRealName',
+	        value: function changeRealName(e) {
+	            this.setState({ userrealname: e.target.value });
+	        }
+	    }, {
 	        key: 'render',
 	        value: function render() {
 	            var _this3 = this;
@@ -80260,11 +80284,11 @@
 	                                    'div',
 	                                    { className: 'field' },
 	                                    _react2.default.createElement('input', { type: 'text',
+	                                        value: this.state.userrealname,
 	                                        className: 'input',
 	                                        ref: 'userrealname',
-	                                        onChange: function onChange(e) {
-	                                            return _this3.changeValue(e, 'userrealname');
-	                                        } }),
+	                                        placeholder: sessionStorage.getItem('u_realname'),
+	                                        onChange: this.changeRealName }),
 	                                    _react2.default.createElement('div', { className: 'tips' })
 	                                )
 	                            ),
@@ -80284,11 +80308,11 @@
 	                                    'div',
 	                                    { className: 'field' },
 	                                    _react2.default.createElement('input', { type: 'text',
+	                                        value: this.state.userblog,
 	                                        className: 'input',
 	                                        ref: 'userblog',
-	                                        onChange: function onChange(e) {
-	                                            return _this3.changeValue(e, 'userblog');
-	                                        } })
+	                                        placeholder: sessionStorage.getItem('u_blog'),
+	                                        onChange: this.changeBlog })
 	                                )
 	                            ),
 	                            _react2.default.createElement(
@@ -80306,10 +80330,12 @@
 	                                _react2.default.createElement(
 	                                    'div',
 	                                    { className: 'field' },
-	                                    _react2.default.createElement('input', { type: 'text', className: 'input', ref: 'usergithub',
-	                                        onChange: function onChange(e) {
-	                                            return _this3.changeValue(e, 'usergithub');
-	                                        } }),
+	                                    _react2.default.createElement('input', { type: 'text',
+	                                        value: this.state.usergithub,
+	                                        className: 'input',
+	                                        ref: 'usergithub',
+	                                        placeholder: sessionStorage.getItem('u_github'),
+	                                        onChange: this.changeGithub }),
 	                                    _react2.default.createElement('div', { className: 'tips' })
 	                                )
 	                            ),
@@ -80330,10 +80356,11 @@
 	                                    { className: 'field' },
 	                                    _react2.default.createElement(
 	                                        'textarea',
-	                                        { className: 'input', ref: 'userintro',
-	                                            onChange: function onChange(e) {
-	                                                return _this3.changeValue(e, 'userintro');
-	                                            } },
+	                                        { className: 'input',
+	                                            value: this.state.userintro,
+	                                            ref: 'userintro',
+	                                            placeholder: sessionStorage.getItem('u_intro'),
+	                                            onChange: this.changeIntro },
 	                                        ' '
 	                                    ),
 	                                    _react2.default.createElement('div', { className: 'tips' })
@@ -80638,8 +80665,6 @@
 
 	        var _this = _possibleConstructorReturn(this, (UserSafe.__proto__ || Object.getPrototypeOf(UserSafe)).call(this, props));
 
-	        _this.handleSubmit = _this.handleSubmit.bind(_this);
-	        _this.updateUserInfo = _this.updateUserInfo.bind(_this);
 	        _this.state = {
 	            key: '',
 	            u_psw_before: '',
@@ -80677,6 +80702,66 @@
 	            next_state[type] = value;
 	            this.setState(next_state, function () {
 	                _this2.isDisabled();
+	            });
+	        }
+	    }, {
+	        key: 'handleSubmit',
+	        value: function handleSubmit(e) {
+	            var u_id = sessionStorage.getItem('u_id');
+	            var u_psw_before = this.state.u_psw_before;
+	            var u_psw = this.state.u_psw;
+	            this.changePassword(u_id, u_psw_before, u_psw);
+	        }
+	    }, {
+	        key: 'changePassword',
+	        value: function changePassword(u_id, u_psw_before, u_psw) {
+	            var url = _config.API_ROOT + 'u/psw/change';
+	            _jquery2.default.post(url, { u_id: u_id, u_psw_before: u_psw_before, u_psw: u_psw, secret_key: this.state.key }, function (data) {
+	                if (data.code = 1) {
+	                    var content = '修改密码成功，请重新登录';
+	                    var type = 'success';
+	                    if (content !== '' && type) {
+	                        switch (type) {
+	                            case 'error':
+	                                _reactSAlert2.default.error(content);
+	                                break;
+	                            case 'success':
+	                                _reactSAlert2.default.success(content);
+	                                break;
+	                            case 'info':
+	                                _reactSAlert2.default.info(content);
+	                                break;
+	                            case 'warning':
+	                                _reactSAlert2.default.warning(content);
+	                                break;
+	                            default:
+	                                _reactSAlert2.default.error(content);
+	                        }
+	                    }
+	                    sessionStorage.removeItem('u_id', 'u_intro', 'u_tags', 'u_watchusers', 'u_answers', 'u_questions', 'u_articles', 'u_github', 'u_blog', 'u_name', 'u_email', 'u_email_confirm', 'u_level', 'u_reputation', 'u_realname');
+	                    _reactRouter.browserHistory.push('/login');
+	                } else {
+	                    var _content = '修改失败';
+	                    var _type = 'error';
+	                    if (_content !== '' && _type) {
+	                        switch (_type) {
+	                            case 'error':
+	                                _reactSAlert2.default.error(_content);
+	                                break;
+	                            case 'success':
+	                                _reactSAlert2.default.success(_content);
+	                                break;
+	                            case 'info':
+	                                _reactSAlert2.default.info(_content);
+	                                break;
+	                            case 'warning':
+	                                _reactSAlert2.default.warning(_content);
+	                                break;
+	                            default:
+	                                _reactSAlert2.default.error(_content);
+	                        }
+	                    }
+	                }
 	            });
 	        }
 	    }, {
@@ -80730,7 +80815,7 @@
 	                                _react2.default.createElement(
 	                                    'div',
 	                                    { className: 'field' },
-	                                    _react2.default.createElement('input', { type: 'text',
+	                                    _react2.default.createElement('input', { type: 'password',
 	                                        className: 'input',
 	                                        ref: 'u_psw_before',
 	                                        onChange: function onChange(e) {
@@ -80754,7 +80839,7 @@
 	                                _react2.default.createElement(
 	                                    'div',
 	                                    { className: 'field' },
-	                                    _react2.default.createElement('input', { type: 'text',
+	                                    _react2.default.createElement('input', { type: 'password',
 	                                        className: 'input',
 	                                        ref: 'u_psw',
 	                                        onChange: function onChange(e) {
@@ -80777,7 +80862,7 @@
 	                                _react2.default.createElement(
 	                                    'div',
 	                                    { className: 'field' },
-	                                    _react2.default.createElement('input', { type: 'text', className: 'input', ref: 'u_psw_again',
+	                                    _react2.default.createElement('input', { type: 'password', className: 'input', ref: 'u_psw_again',
 	                                        onChange: function onChange(e) {
 	                                            return _this3.changeValue(e, 'u_psw_again');
 	                                        } }),
@@ -80802,8 +80887,11 @@
 	                                    _react2.default.createElement(
 	                                        'button',
 	                                        { className: 'button bg-main icon-check-square-o',
-	                                            type: 'submit' },
-	                                        ' \u63D0\u4EA4'
+	                                            type: 'submit',
+	                                            onClick: function onClick(e) {
+	                                                return _this3.handleSubmit(e);
+	                                            } },
+	                                        '\u786E\u8BA4\u4FEE\u6539'
 	                                    )
 	                                )
 	                            )

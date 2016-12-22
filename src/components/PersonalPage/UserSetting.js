@@ -10,12 +10,16 @@ export default class UserSetting extends Component{
         super(props);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.updateUserInfo = this.updateUserInfo.bind(this);
+        this.changeRealName = this.changeRealName.bind(this);
+        this.changeBlog = this.changeBlog.bind(this);
+        this.changeGithub = this.changeGithub.bind(this);
+        this.changeIntro = this.changeIntro.bind(this);
         this.state = {
             key:'',
-            userrealname:'',
-            userblog:'',
-            usergithub:'',
-            userintro:'',
+            userrealname:sessionStorage.getItem('u_realname'),
+            userblog:sessionStorage.getItem('u_blog'),
+            usergithub:sessionStorage.getItem('u_github'),
+            userintro:sessionStorage.getItem('u_intro'),
             disabled:true,
         }
     }
@@ -131,6 +135,18 @@ export default class UserSetting extends Component{
         });
     }
 
+    changeIntro(e){
+        this.setState({userintro:e.target.value})
+    }
+    changeGithub(e){
+        this.setState({usergithub:e.target.value})
+    }
+    changeBlog(e){
+        this.setState({userblog:e.target.value})
+    }
+    changeRealName(e){
+        this.setState({userrealname:e.target.value})
+    }
 
     render(){
         return (
@@ -152,9 +168,11 @@ export default class UserSetting extends Component{
                             </div>
                             <div className="field">
                                 <input type="text"
+                                       value={this.state.userrealname}
                                        className="input"
                                        ref="userrealname"
-                                       onChange={(e) => this.changeValue(e,'userrealname')}/>
+                                       placeholder={sessionStorage.getItem('u_realname')}
+                                       onChange={this.changeRealName}/>
                                 <div className="tips"></div>
                             </div>
                         </div>
@@ -164,9 +182,11 @@ export default class UserSetting extends Component{
                             </div>
                             <div className="field">
                                 <input type="text"
+                                       value={this.state.userblog}
                                        className="input"
                                        ref="userblog"
-                                       onChange={(e) => this.changeValue(e,'userblog')}/>
+                                       placeholder={sessionStorage.getItem('u_blog')}
+                                       onChange={this.changeBlog}/>
                             </div>
                         </div>
                         <div className="form-group">
@@ -174,8 +194,12 @@ export default class UserSetting extends Component{
                                 <label>GitHub地址：</label>
                             </div>
                             <div className="field">
-                                <input type="text" className="input" ref="usergithub"
-                                       onChange={(e) => this.changeValue(e,'usergithub')}/>
+                                <input type="text"
+                                       value={this.state.usergithub}
+                                       className="input"
+                                       ref="usergithub"
+                                       placeholder={sessionStorage.getItem('u_github')}
+                                       onChange={this.changeGithub}/>
                                 <div className="tips"></div>
                             </div>
                         </div>
@@ -184,8 +208,11 @@ export default class UserSetting extends Component{
                                 <label>自我介绍：</label>
                             </div>
                             <div className="field">
-                                <textarea className="input" ref="userintro"
-                                          onChange={(e) => this.changeValue(e,'userintro')}> </textarea>
+                                <textarea className="input"
+                                          value={this.state.userintro}
+                                          ref="userintro"
+                                          placeholder={sessionStorage.getItem('u_intro')}
+                                          onChange={this.changeIntro}> </textarea>
                                 <div className="tips"></div>
                             </div>
                         </div>
