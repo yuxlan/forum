@@ -75805,8 +75805,8 @@
 	            commentContent: '',
 	            commentUser: [],
 	            articleAuth: '',
-	            isLike: false,
-	            isRecommend: false,
+	            isLike: '',
+	            isRecommend: '',
 	            showModal: false,
 	            openedForm: null,
 	            u_loginname: '',
@@ -75870,14 +75870,14 @@
 	            _jquery2.default.post(likeUrl, { t_id: t_id, u_id: u_id, u_psw: u_psw, secret_key: this.state.key }, function (data) {
 	                console.log('get article and user relationshape:', data);
 	                if (data.t_recommend_bool == 1) {
-	                    this.setState({ isLike: true });
+	                    this.setState({ isLike: '1' });
 	                } else {
-	                    this.setState({ isLike: false });
+	                    this.setState({ isLike: '0' });
 	                }
 	                if (data.t_star_bool == 1) {
-	                    this.setState({ isRecommend: true });
+	                    this.setState({ isRecommend: '1' });
 	                } else {
-	                    this.setState({ isRecommend: false });
+	                    this.setState({ isRecommend: '0' });
 	                }
 	            }.bind(this));
 	        }
@@ -75969,7 +75969,7 @@
 	                                _reactSAlert2.default.error(content);
 	                        }
 	                    }
-	                    return this.fetchArticleData(ec_id);
+	                    this.fetchArticleData(ec_id);
 	                } else {
 	                    var _content = data.codeState;
 	                    var _type = 'error';
@@ -76340,27 +76340,35 @@
 	                                            sessionStorage.getItem('u_id') === null ? _react2.default.createElement('div', null) : _react2.default.createElement(
 	                                                'div',
 	                                                null,
-	                                                _this5.state.isRecommend ? _react2.default.createElement(
+	                                                _this5.state.isRecommend == '' ? _react2.default.createElement(
 	                                                    'button',
-	                                                    { className: 'btn-success btn pull-right',
-	                                                        onClick: function onClick(e) {
-	                                                            return _this5.unStarArticle(e);
-	                                                        } },
-	                                                    _react2.default.createElement(
-	                                                        'p',
-	                                                        null,
-	                                                        '\xA0\xA0\u53D6\u6D88\u6536\u85CF\xA0\xA0'
-	                                                    )
+	                                                    null,
+	                                                    ' '
 	                                                ) : _react2.default.createElement(
-	                                                    'button',
-	                                                    { className: 'btn-success btn pull-right',
-	                                                        onClick: function onClick(e) {
-	                                                            return _this5.starArticle(e);
-	                                                        } },
-	                                                    _react2.default.createElement(
-	                                                        'p',
-	                                                        null,
-	                                                        '\xA0\xA0\u6536\u85CF\xA0\xA0'
+	                                                    'div',
+	                                                    null,
+	                                                    _this5.state.isRecommend == '1' ? _react2.default.createElement(
+	                                                        'button',
+	                                                        { className: 'btn-success btn pull-right',
+	                                                            onClick: function onClick(e) {
+	                                                                return _this5.unStarArticle(e);
+	                                                            } },
+	                                                        _react2.default.createElement(
+	                                                            'p',
+	                                                            null,
+	                                                            '\xA0\xA0\u53D6\u6D88\u6536\u85CF\xA0\xA0'
+	                                                        )
+	                                                    ) : _react2.default.createElement(
+	                                                        'button',
+	                                                        { className: 'btn-success btn pull-right',
+	                                                            onClick: function onClick(e) {
+	                                                                return _this5.starArticle(e);
+	                                                            } },
+	                                                        _react2.default.createElement(
+	                                                            'p',
+	                                                            null,
+	                                                            '\xA0\xA0\u6536\u85CF\xA0\xA0'
+	                                                        )
 	                                                    )
 	                                                )
 	                                            ),
@@ -76505,7 +76513,7 @@
 	                                                _react2.default.createElement(
 	                                                    'div',
 	                                                    { className: 'article-like' },
-	                                                    _this5.state.isLike ? _react2.default.createElement(
+	                                                    _this5.state.isLike == '1' ? _react2.default.createElement(
 	                                                        'a',
 	                                                        { className: 'liked-btn', onClick: function onClick(e) {
 	                                                                return _this5.unLikeArticle(e);
@@ -78719,7 +78727,7 @@
 	                                sessionStorage.setItem('u_articles', data.u_articles);
 	                                _this3.setState({ articleIds: sessionStorage.getItem('u_articles') });
 	                                var userArticlesIds = sessionStorage.getItem('u_articles').split('&');
-	                                var userArticles = userArticlesIds.toString().split(',');
+	                                var userArticles = userArticlesIds[0].toString().split(',');
 	                                var articleDetailUrl = _config.API_ROOT + 't/query';
 	                                var articleDetail = new Array();
 
@@ -79108,7 +79116,7 @@
 	                                sessionStorage.setItem('u_questions', data.u_questions);
 	                                _this4.setState({ articleIds: sessionStorage.getItem('u_questions') });
 	                                var userArticlesIds = sessionStorage.getItem('u_questions').split('&');
-	                                var userArticles = userArticlesIds.toString().split(',');
+	                                var userArticles = userArticlesIds[0].toString().split(',');
 	                                var articleDetailUrl = _config.API_ROOT + 'q/query';
 	                                var articleDetail = new Array();
 

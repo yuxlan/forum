@@ -112,7 +112,7 @@ export default class UserArticles extends React.Component{
                                 sessionStorage.setItem('u_articles', data.u_articles);
                                 this.setState({articleIds:sessionStorage.getItem('u_articles')});
                                 let userArticlesIds = sessionStorage.getItem('u_articles').split('&');
-                                let userArticles = userArticlesIds.toString().split(',');
+                                let userArticles = userArticlesIds[0].toString().split(',');
                                 let articleDetailUrl = API_ROOT + 't/query';
                                 let articleDetail = new Array();
                                 for(let i=0; i<(userArticles.length-1); i++){
