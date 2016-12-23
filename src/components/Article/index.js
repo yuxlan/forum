@@ -26,8 +26,8 @@ export default class Article extends React.Component{
             commentContent:'',
             commentUser:[],
             articleAuth:'',
-            isLike:false,
-            isRecommend:false,
+            isLike:'',
+            isRecommend:'',
             showModal:false,
             openedForm:null,
             u_loginname: '',
@@ -93,14 +93,14 @@ export default class Article extends React.Component{
             function (data) {
                 console.log('get article and user relationshape:',data);
                 if(data.t_recommend_bool == 1){
-                    this.setState({isLike:true})
+                    this.setState({isLike:'1'})
                 }else {
-                    this.setState({isLike:false})
+                    this.setState({isLike:'0'})
                 }
                 if(data.t_star_bool == 1){
-                    this.setState({isRecommend:true})
+                    this.setState({isRecommend:'1'})
                 }else {
-                    this.setState({isRecommend:false})
+                    this.setState({isRecommend:'0'})
                 }
             }.bind(this)
         )
@@ -192,7 +192,7 @@ export default class Article extends React.Component{
                                 Alert.error(content)
                         }
                     }
-                    return this.fetchArticleData(ec_id);
+                    this.fetchArticleData(ec_id);
                 } else {
                     let content = data.codeState;
                     let type = 'error';
@@ -514,16 +514,23 @@ export default class Article extends React.Component{
                                     :
                                     <div>
                                         {
-                                            this.state.isRecommend ?
-                                                <button className='btn-success btn pull-right'
-                                                        onClick={(e) => this.unStarArticle(e)}>
-                                                    <p>&nbsp;&nbsp;取消收藏&nbsp;&nbsp;</p>
-                                                </button>
+                                            this.state.isRecommend == '' ?
+                                                <button> </button>
                                                 :
-                                                <button className='btn-success btn pull-right'
-                                                        onClick={(e) => this.starArticle(e)}>
-                                                    <p>&nbsp;&nbsp;收藏&nbsp;&nbsp;</p>
-                                                </button>
+                                                <div>
+                                                    {
+                                                        this.state.isRecommend == '1' ?
+                                                            <button className='btn-success btn pull-right'
+                                                                    onClick={(e) => this.unStarArticle(e)}>
+                                                                <p>&nbsp;&nbsp;取消收藏&nbsp;&nbsp;</p>
+                                                            </button>
+                                                            :
+                                                            <button className='btn-success btn pull-right'
+                                                                    onClick={(e) => this.starArticle(e)}>
+                                                                <p>&nbsp;&nbsp;收藏&nbsp;&nbsp;</p>
+                                                            </button>
+                                                    }
+                                                </div>
                                         }
                                     </div>
                             }
@@ -599,7 +606,7 @@ export default class Article extends React.Component{
 
                                 <div className="article-like">
                                     {
-                                        this.state.isLike ?
+                                        this.state.isLike == '1' ?
                                             <a className='liked-btn' onClick={(e)=>this.unLikeArticle(e)}>
                                                 <i className="iconfont">&#xe616;</i><p>取消</p>
                                             </a>
