@@ -127,7 +127,8 @@ forum
 │   │   │   ├── UserComments.js            || 个人评论管理
 │   │   │   ├── UserQuestion.js            || 个人问答管理
 │   │   │   ├── UserReputation.js          || 个人声望管理
-│   │   │   ├── UserStar.js                || 个人标签管理
+│   │   │   ├── UserStar.js                || 个人收藏管理
+│   │   │   ├── UserSafe.js                || 修改密码
 │   │   │   ├── UserSettiong.js            || 个人信息更改
 │   │   │   ├── UserPage.js                || 个人主要信息显示
 │   │   │   └── index.js                   || 整合，父组件
@@ -139,6 +140,12 @@ forum
 │   │   │   ├── controller.js              || 编辑器工具栏
 │   │   │   ├── marked.js                  || markdown语法
 │   │   │   └── index.js                   || 编辑器主要部分
+│   │   ├── WriteQuestion                  || 写问题
+│   │   │   ├── controller.js              || 编辑器工具栏
+│   │   │   ├── marked.js                  || markdown语法
+│   │   │   └── index.js                   || 编辑器主要部分
+│   │   ├── SearchShow                     || 搜索结果
+│   │   │   └── index.js		
 │   │   ├── App.js                         || 组件入口文件
 │   │   ├── AuthenticatedComponent.js      || 判断已经登录
 │   │   └── not AuthenticatedComponent.js  || 处理未登录状态
